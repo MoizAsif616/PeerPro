@@ -37,6 +37,9 @@ android {
     buildFeatures {
         compose = true
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -63,4 +66,11 @@ dependencies {
     implementation (libs.material)
     // OR for Material 3
     implementation (libs.material3)
+    // For Kotlin extensions
+    implementation (libs.androidx.core.ktx.v180)
+    implementation (libs.androidx.fragment.ktx)  // For commit lambda
+    implementation (libs.androidx.core.ktx.v190)      // For other extensions
+    implementation (libs.androidx.fragment.ktx.v155)
+    implementation (libs.material.v161)
+    implementation (libs.material.v190) // Latest stable
 }

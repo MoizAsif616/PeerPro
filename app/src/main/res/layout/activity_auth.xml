@@ -36,16 +36,18 @@
     android:orientation="horizontal"
     android:layout_below="@id/title"
     android:layout_centerHorizontal="true"
-    android:background="@drawable/rounded_colored"
+    android:background="@drawable/rounded_white"
     android:weightSum="1"
     android:layout_marginTop="10dp">
     <LinearLayout
+      android:id="@+id/llb1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
       android:layout_weight="0.5"
-      android:background="@drawable/rounded">
+      android:background="@drawable/rounded_button">
       <TextView
+        android:id="@+id/su_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/signup"
@@ -56,16 +58,18 @@
         android:fontFamily="@font/poppins_semibold"/>
     </LinearLayout>
     <LinearLayout
+      android:id="@+id/llb2"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
       android:layout_weight="0.5">
 <!--      android:background="@drawable/rounded">-->
       <TextView
+        android:id="@+id/li_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/signin"
-        android:paddingHorizontal="30dp"
+        android:paddingHorizontal="33dp"
         android:paddingVertical="3dp"
         android:textSize="22sp"
         android:textColor="?attr/buttonTextSecondary"
@@ -73,6 +77,11 @@
     </LinearLayout>
     
   </LinearLayout>
+  <FrameLayout
+    android:id="@+id/form"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"/>
   
 
 </RelativeLayout>

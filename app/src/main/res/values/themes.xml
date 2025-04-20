@@ -15,5 +15,7 @@
     <item name="bgSecondary">@color/primary_light</item>
     <item name="buttonTextPrimary">@color/primary_light</item>
     <item name="buttonTextSecondary">@color/peerLight</item>
+    <item name="textPrimary">@color/black</item>
+  
   </style>
 </resources>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="?attr/bgPrimary"
+  android:orientation="vertical"
+  android:padding="24dp">
+  
+  <!-- Username Field -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/usernameInputLayout"
+    style="@style/PeerProInputStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
+    
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/usernameEditText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/enter_username"
+      android:textColor="?attr/textPrimary"
+      android:textColorHint="?attr/textSecondary" />
+  </com.google.android.material.textfield.TextInputLayout>
+  
+  <!-- Email Field -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/emailInputLayout"
+    style="@style/PeerProInputStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
+    
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/emailEditText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/enter_email"
+      android:inputType="textEmailAddress"
+      android:textColor="?attr/textPrimary"
+      android:textColorHint="?attr/textSecondary" />
+  </com.google.android.material.textfield.TextInputLayout>
+  
+  <!-- Password Field -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/passwordInputLayout"
+    style="@style/PeerProInputStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:endIconMode="password_toggle"
+    app:endIconTint="?attr/peerMain">
+    
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/passwordEditText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/enter_password"
+      android:inputType="textPassword"
+      android:textColor="?attr/textPrimary"
+      android:textColorHint="?attr/textSecondary" />
+  </com.google.android.material.textfield.TextInputLayout>
+  
+  <!-- Confirm Password Field -->
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/confirmPasswordInputLayout"
+    style="@style/PeerProInputStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:endIconMode="password_toggle"
+    app:endIconTint="?attr/peerMain">
+    
+    <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/confirmPasswordEditText"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="@string/confirm_password"
+      android:inputType="textPassword"
+      android:textColor="?attr/textPrimary"
+      android:textColorHint="?attr/textSecondary" />
+  </com.google.android.material.textfield.TextInputLayout>
+  
+  <!-- Show Password Checkbox -->
+  <com.google.android.material.checkbox.MaterialCheckBox
+    android:id="@+id/showPasswordCheckbox"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    android:text="@string/show_password"
+    android:textColor="?attr/textPrimary"
+    app:buttonTint="?attr/peerMain" />
+  
+  <!-- Submit Button -->
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/submitButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/submit"
+    android:textColor="@color/white"
+    app:backgroundTint="?attr/peerMain"
+    app:cornerRadius="8dp" />
+
+</LinearLayout>

@@ -15,5 +15,7 @@
     <item name="bgSecondary">@color/secondary_dark</item>
     <item name="buttonTextPrimary">@color/primary_light</item>
     <item name="buttonTextSecondary">@color/grey_1</item>
+    <item name="textPrimary">@color/white</item>
+  
   </style>
 </resources>

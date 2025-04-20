@@ -5,5 +5,7 @@
   <attr name="bgSecondary" format="color|reference" />
   <attr name="buttonTextPrimary" format="color|reference" />
   <attr name="buttonTextSecondary" format="color|reference" />
+  <attr name="textPrimary" format="color|reference" />
+  <attr name="textSecondary" format="color|reference" />
   
 </resources>
