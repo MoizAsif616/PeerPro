@@ -1,3 +1,5 @@
 <resources>
   <string name="app_name">PeerPro</string>
+  <string name="signup">SignUp</string>
+  <string name="signin">LogIn</string>
 </resources>

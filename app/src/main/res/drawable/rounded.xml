@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shape="rectangle">
+  
+  <!-- Solid fill color -->
+  <solid android:color="?attr/peerMain"/>
+  
+  <!-- Rounded corners (adjust radius as needed) -->
+  <corners android:radius="20dp" />
+  
+  <!-- No stroke (border) -->
+  <!-- stroke tag is intentionally omitted -->
+</shape>

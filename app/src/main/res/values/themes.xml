@@ -10,7 +10,10 @@
     <item name="colorOnSecondary">@color/black</item>
     <item name="android:statusBarColor">@color/peerLight</item>
     <item name="android:navigationBarColor">@color/peerLight</item>
-    <item name="peerColor">@color/peerLight</item>
-    <item name="bgMain">@color/primary_light</item>
+    <item name="peerMain">@color/peerLight</item>
+    <item name="bgPrimary">@color/primary_light</item>
+    <item name="bgSecondary">@color/primary_light</item>
+    <item name="buttonTextPrimary">@color/primary_light</item>
+    <item name="buttonTextSecondary">@color/peerLight</item>
   </style>
 </resources>

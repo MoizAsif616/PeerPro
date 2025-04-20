@@ -5,7 +5,7 @@
   android:id="@+id/main"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="?attr/bgMain"
+  android:background="?attr/bgPrimary"
   tools:context=".Auth">
   <ImageView
     android:layout_width="match_parent"
@@ -20,5 +20,59 @@
     android:layout_alignParentBottom="true"
     android:src="@drawable/peer_group"
     android:scaleType="centerCrop"/>
+  <TextView
+    android:id="@+id/title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/app_name"
+    android:fontFamily="@font/coiny_regular"
+    android:textSize="45sp"
+    android:textColor="@color/white"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="20dp"/>
+  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_below="@id/title"
+    android:layout_centerHorizontal="true"
+    android:background="@drawable/rounded_colored"
+    android:weightSum="1"
+    android:layout_marginTop="10dp">
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_weight="0.5"
+      android:background="@drawable/rounded">
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signup"
+        android:paddingHorizontal="22dp"
+        android:paddingVertical="3dp"
+        android:textSize="22sp"
+        android:textColor="?attr/buttonTextPrimary"
+        android:fontFamily="@font/poppins_semibold"/>
+    </LinearLayout>
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_weight="0.5">
+<!--      android:background="@drawable/rounded">-->
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signin"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="3dp"
+        android:textSize="22sp"
+        android:textColor="?attr/buttonTextSecondary"
+        android:fontFamily="@font/poppins_semibold"/>
+    </LinearLayout>
+    
+  </LinearLayout>
+  
 
 </RelativeLayout>

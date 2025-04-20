@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <attr name="peerColor" format="color|reference" />
-  <attr name="bgMain" format="color|reference" />
+  <attr name="peerMain" format="color|reference" />
+  <attr name="bgPrimary" format="color|reference" />
+  <attr name="bgSecondary" format="color|reference" />
+  <attr name="buttonTextPrimary" format="color|reference" />
+  <attr name="buttonTextSecondary" format="color|reference" />
+  
 </resources>
