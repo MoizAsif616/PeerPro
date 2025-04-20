@@ -22,6 +22,8 @@ class Signup : Fragment() {
   private lateinit var submitButton: MaterialButton
   private lateinit var passwordInputLayout: TextInputLayout
   private lateinit var confirmPasswordInputLayout: TextInputLayout
+  private lateinit var usernameEditText: TextInputEditText
+  private lateinit var usernameInputLayout: TextInputLayout
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -38,6 +40,8 @@ class Signup : Fragment() {
     submitButton = view.findViewById(R.id.submitButton)
     passwordInputLayout = view.findViewById(R.id.passwordInputLayout)
     confirmPasswordInputLayout = view.findViewById(R.id.confirmPasswordInputLayout)
+    usernameEditText = view.findViewById(R.id.usernameEditText)
+    usernameInputLayout = view.findViewById(R.id.usernameInputLayout)
 
     setupPasswordFields()
     setupSubmitButton()
@@ -83,9 +87,20 @@ class Signup : Fragment() {
   }
 
   private fun validateAndSubmit() {
+    val username = usernameEditText.text.toString()
     val email = emailEditText.text.toString()
     val password = passwordEditText.text.toString()
     val confirmPassword = confirmPasswordEditText.text.toString()
+
+    if (username.isEmpty()) {
+      usernameInputLayout.error = "Username cannot be empty"
+      return
+    } else if (username.length < 4) {
+      usernameInputLayout.error = "Username must be at least 4 characters"
+      return
+    } else {
+      usernameInputLayout.error = null
+    }
 
     if (password != confirmPassword) {
       confirmPasswordInputLayout.error = "Passwords don't match"

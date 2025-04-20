@@ -10,4 +10,9 @@
   <string name="show_password">Show password</string>
   <string name="enter_email">Enter Email</string>
   <string name="enter_username">Enter Username</string>
+  <string name="forgot_password_reset">
+    <font color="?attr/textPrimary">Forgot password?</font> 
+    <font color="#4F709C"> Reset now</font>
+  </string>
+  <string name="username">Username</string>
 </resources>

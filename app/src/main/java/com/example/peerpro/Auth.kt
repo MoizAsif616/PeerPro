@@ -39,12 +39,12 @@ class Auth : AppCompatActivity() {
     // Update button states
     updateButtonStates(false)
 
-    // Clear the frame layout safely
-    val currentFragment = supportFragmentManager.findFragmentById(R.id.form)
-    if (currentFragment != null) {
-      supportFragmentManager.beginTransaction()
-        .remove(currentFragment)
-        .commit()
+    // Load Login fragment
+    binding.form.post { // Ensure UI thread execution
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.form, Login())
+        }
     }
   }
 
