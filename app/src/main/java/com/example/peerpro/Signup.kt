@@ -12,6 +12,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textfield.TextInputEditText
+import androidx.fragment.app.commit
 
 class Signup : Fragment() {
 
@@ -50,7 +51,6 @@ class Signup : Fragment() {
   }
 
   private fun setupPasswordFields() {
-    // Configure password toggle for both fields
     listOf(passwordInputLayout, confirmPasswordInputLayout).forEach { layout ->
       layout.endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
       // Get color from theme attribute with fallback
@@ -107,7 +107,7 @@ class Signup : Fragment() {
       return
     }
 
-    // Handle successful submission
+    (activity as? Auth)?.selectVerify()
   }
 
   override fun onDestroyView() {

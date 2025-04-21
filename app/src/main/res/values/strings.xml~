@@ -18,5 +18,4 @@
   <string name="enter_otp">Enter OTP</string>
   <string name="verify">Verify</string>
   <string name="resend_otp">Resend OTP</string>
-  <string name="get_link">Get Link</string>
 </resources>

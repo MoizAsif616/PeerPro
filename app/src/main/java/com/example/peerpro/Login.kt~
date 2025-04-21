@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -17,7 +16,6 @@ class Login : Fragment() {
   private lateinit var loginButton: MaterialButton
   private lateinit var emailInputLayout: TextInputLayout
   private lateinit var passwordInputLayout: TextInputLayout
-  private lateinit var resetPasswordText: TextView
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -31,7 +29,6 @@ class Login : Fragment() {
     loginButton = view.findViewById(R.id.loginButton)
     emailInputLayout = view.findViewById(R.id.emailInputLayout)
     passwordInputLayout = view.findViewById(R.id.passwordInputLayout)
-    resetPasswordText = view.findViewById(R.id.forgotPasswordText)
 
     setupLoginButton()
 
@@ -42,10 +39,6 @@ class Login : Fragment() {
     loginButton.setOnClickListener {
       validateAndLogin()
     }
-    resetPasswordText.setOnClickListener{
-      (activity as? Auth)?.selectGetLink()
-    }
-
   }
 
   private fun validateAndLogin() {

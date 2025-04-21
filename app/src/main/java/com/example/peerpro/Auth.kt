@@ -19,76 +19,83 @@ class Auth : AppCompatActivity() {
     binding = ActivityAuthBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    // Set initial state
+    setInitialFrameWidth()
+
     selectSignUp()
 
-    // Click listeners
     binding.llb1.setOnClickListener { selectSignUp() }
     binding.llb2.setOnClickListener { selectLogIn() }
   }
 
-  private fun selectSignUp() {
-    // Update button states
-    updateButtonStates(true)
+  private fun setInitialFrameWidth() {
+    val displayMetrics = DisplayMetrics()
+    windowManager.defaultDisplay.getMetrics(displayMetrics)
+    val screenWidth = displayMetrics.widthPixels
+    val frameWidth = (screenWidth * 0.85).toInt()
+      .coerceAtMost(resources.getDimensionPixelSize(R.dimen.max_fragment_width)) // Max width 500dp
 
-    // Load SignUp fragment
-    loadSignUpFragment()
+    binding.form.updateLayoutParams<ViewGroup.LayoutParams> {
+      width = frameWidth
+    }
+  }
+
+  fun selectSignUp() {
+    updateButtonStates("signup")
+    loadFragment(Signup())
   }
 
   fun selectLogIn() {
-    // Update button states
-    updateButtonStates(false)
-
-    // Load Login fragment
-    binding.form.post { // Ensure UI thread execution
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace(R.id.form, Login())
-        }
-    }
+    updateButtonStates("login")
+    loadFragment(Login())
   }
 
-  private fun updateButtonStates(isSignUpActive: Boolean) {
+  fun selectVerify() {
+    updateButtonStates("verify")
+    loadFragment(Verify())
+  }
+
+  fun selectGetLink() {
+    updateButtonStates("reset")
+    loadFragment(SendLink())
+  }
+
+  private fun updateButtonStates(state: String) {
     val activeTextColor = MaterialColors.getColor(this, R.attr.buttonTextPrimary, Color.WHITE)
     val inactiveTextColor = MaterialColors.getColor(this, R.attr.textSecondary, Color.GRAY)
+    val peerLightColor = resources.getColor(R.color.peerLight, theme)
 
-    if (isSignUpActive) {
-      binding.suBtn.setTextColor(activeTextColor)
-      binding.liBtn.setTextColor(inactiveTextColor)
-      binding.llb1.setBackgroundResource(R.drawable.rounded_button)
-      binding.llb2.setBackgroundResource(android.R.color.transparent)
-    } else {
-      binding.liBtn.setTextColor(activeTextColor)
-      binding.suBtn.setTextColor(inactiveTextColor)
-      binding.llb2.setBackgroundResource(R.drawable.rounded_button)
-      binding.llb1.setBackgroundResource(android.R.color.transparent)
+    when (state) {
+      "signup" -> {
+        binding.suBtn.setTextColor(activeTextColor)
+        binding.liBtn.setTextColor(inactiveTextColor)
+        binding.llb1.setBackgroundResource(R.drawable.rounded_button)
+        binding.llb2.setBackgroundResource(android.R.color.transparent)
+      }
+      "login" -> {
+        binding.liBtn.setTextColor(activeTextColor)
+        binding.suBtn.setTextColor(inactiveTextColor)
+        binding.llb2.setBackgroundResource(R.drawable.rounded_button)
+        binding.llb1.setBackgroundResource(android.R.color.transparent)
+      }
+      "verify" -> {
+        binding.liBtn.setTextColor(inactiveTextColor)
+        binding.suBtn.setTextColor(peerLightColor)
+        binding.llb1.setBackgroundResource(R.drawable.rounded_border_only)
+        binding.llb2.setBackgroundResource(android.R.color.transparent)
+      }
+      "reset" -> {
+        binding.liBtn.setTextColor(peerLightColor)
+        binding.suBtn.setTextColor(inactiveTextColor)
+        binding.llb1.setBackgroundResource(android.R.color.transparent)
+        binding.llb2.setBackgroundResource(R.drawable.rounded_border_only)
+      }
     }
   }
 
-  private fun loadSignUpFragment() {
-    try {
-      // 1. Calculate width first
-      val displayMetrics = DisplayMetrics()
-      windowManager.defaultDisplay.getMetrics(displayMetrics)
-      val frameWidth = (displayMetrics.widthPixels * 0.85).toInt()
-        .coerceAtMost(resources.getDimensionPixelSize(R.dimen.max_fragment_width))
-
-      // 2. Update FrameLayout width
-      binding.form.post { // Ensure UI thread execution
-        binding.form.updateLayoutParams<ViewGroup.LayoutParams> {
-          width = frameWidth
-        }
-
-        // 3. Perform fragment transaction after layout update
-        supportFragmentManager.commit {
-          setReorderingAllowed(true)
-          replace(R.id.form, Signup())
-          // Optional: addToBackStack(null) if you want back navigation
-        }
-      }
-    } catch (e: Exception) {
-      e.printStackTrace()
-      // Handle error appropriately
+  private fun loadFragment(fragment: androidx.fragment.app.Fragment) {
+    supportFragmentManager.commit {
+      setReorderingAllowed(true)
+      replace(R.id.form, fragment)
     }
   }
 }
