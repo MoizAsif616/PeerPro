@@ -65,7 +65,7 @@ dependencies {
     // For Material Components
     implementation (libs.material)
     // OR for Material 3
-    implementation (libs.material3)
+    implementation (libs.material3) // or latest version
     // For Kotlin extensions
     implementation (libs.androidx.core.ktx.v180)
     implementation (libs.androidx.fragment.ktx)  // For commit lambda
