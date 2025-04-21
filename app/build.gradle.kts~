@@ -18,16 +18,9 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
-        resources {
-            // To merge specific files
-            merges += "META-INF/LICENSE.md"
-            merges += "META-INF/NOTICE.md"
-
-            // To exclude others
-            excludes += "META-INF/DEPENDENCIES"
-        }
+        merge 'META-INF/LICENSE.md'
+        merge 'META-INF/NOTICE.md'
     }
-
 
     buildTypes {
         release {
