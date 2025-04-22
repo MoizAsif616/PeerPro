@@ -8,14 +8,16 @@
     <item name="colorSecondary">@color/teal_200</item>
     <item name="colorSecondaryVariant">@color/teal_700</item>
     <item name="colorOnSecondary">@color/black</item>
-    <item name="android:statusBarColor">?attr/peerMain</item>
-    <item name="android:navigationBarColor">?attr/peerMain</item>
+    <item name="android:statusBarColor">?attr/bgPrimary</item>
+    <item name="android:navigationBarColor">?attr/bgPrimary</item>
     <item name="peerMain">@color/peerDark</item>
     <item name="bgPrimary">@color/primary_dark</item>
     <item name="bgSecondary">@color/secondary_dark</item>
     <item name="buttonTextPrimary">@color/primary_light</item>
     <item name="buttonTextSecondary">@color/grey_1</item>
     <item name="textPrimary">@color/white</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="android:windowLightNavigationBar">false</item>
   
   </style>
 </resources>

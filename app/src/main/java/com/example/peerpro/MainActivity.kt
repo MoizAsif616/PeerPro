@@ -1,106 +1,217 @@
 package com.example.peerpro
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.example.peerpro.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
+import com.google.android.material.tabs.TabLayoutMediator
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+  private lateinit var binding: ActivityMainBinding
+
+  private val normalTextStyle = android.graphics.Typeface.NORMAL
+  private val selectedTextStyle = android.graphics.Typeface.BOLD
+
   override fun onCreate(savedInstanceState: Bundle?) {
-    // Optional: Force dark/light mode (remove if you want system default)
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    binding = ActivityMainBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-
-    val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
+    val tabLayout = binding.tabLayout
+    val viewPager = binding.viewPager
     val icons = listOf(R.drawable.sessions, R.drawable.tutors, R.drawable.notes, R.drawable.me)
 
-    // Create tabs with centered icons using FrameLayout
-    icons.forEach { iconRes ->
-      val tab = tabLayout.newTab()
-      val frameLayout = FrameLayout(this).apply {
-        layoutParams = FrameLayout.LayoutParams(
-          FrameLayout.LayoutParams.MATCH_PARENT,
-          FrameLayout.LayoutParams.WRAP_CONTENT
-        )
-      }
+    // Set up ViewPager with adapter
+    viewPager.adapter = ViewPagerAdapter(this as FragmentActivity)
 
-      val linearLayout = LinearLayout(this).apply {
-        orientation = LinearLayout.VERTICAL
-        gravity = Gravity.CENTER
-        layoutParams = FrameLayout.LayoutParams(
-          FrameLayout.LayoutParams.WRAP_CONTENT,
-          FrameLayout.LayoutParams.WRAP_CONTENT,
-          Gravity.CENTER
-        )
-      }
+    // Connect TabLayout with ViewPager using TabLayoutMediator
+    TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+      tab.customView = createTabView(position, false)
+    }.attach()
 
-      val imageView = ImageView(this).apply {
-        setImageResource(iconRes)
-        background = null
-        layoutParams = LinearLayout.LayoutParams(
-          LinearLayout.LayoutParams.WRAP_CONTENT,
-          LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-          topMargin = 8.dpToPx() // Convert dp to pixels if needed
-        }
-        scaleType = ImageView.ScaleType.CENTER_INSIDE
-      }
+    // Set default selection to Sessions tab (position 0)
+    viewPager.setCurrentItem(0, false)
+    updateTabAppearance(tabLayout.getTabAt(0), true)
+    sessionsSelected()
 
-      val textView = TextView(this).apply {
-        text = when (iconRes) {
-          R.drawable.sessions -> "Sessions"
-          R.drawable.tutors -> "Tutors"
-          R.drawable.notes -> "Notes"
-          R.drawable.me -> "Me"
-          else -> "Tab"
-        }
-        gravity = Gravity.CENTER
-        textSize = 12f
-        setTextColor(Color.WHITE) // Or your preferred color
-        layoutParams = LinearLayout.LayoutParams(
-          LinearLayout.LayoutParams.WRAP_CONTENT,
-          LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-          topMargin = 4.dpToPx() // Space between icon and text
+    // Tab selection listener
+    tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+      override fun onTabSelected(tab: TabLayout.Tab) {
+        updateTabAppearance(tab, true)
+        viewPager.setCurrentItem(tab.position, true)
+
+        when (tab.position) {
+          0 -> sessionsSelected()
+          1 -> tutorsSelected()
+          2 -> notesSelected()
+          3 -> profileSelected()
         }
       }
 
-      linearLayout.addView(imageView)
-      linearLayout.addView(textView)
-      frameLayout.addView(linearLayout)
-      tab.customView = frameLayout
-      tabLayout.addTab(tab)
+      override fun onTabUnselected(tab: TabLayout.Tab) {
+        updateTabAppearance(tab, false)
+      }
+
+      override fun onTabReselected(tab: TabLayout.Tab) {}
+    })
+
+    // Optional: Disable swipe if needed
+    // viewPager.isUserInputEnabled = false
+  }
+
+  private fun createTabView(position: Int, isSelected: Boolean): View {
+    val iconRes = when (position) {
+      0 -> R.drawable.sessions
+      1 -> R.drawable.tutors
+      2 -> R.drawable.notes
+      3 -> R.drawable.me
+      else -> R.drawable.sessions
+    }
+    val tabText = when (position) {
+      0 -> "Sessions"
+      1 -> "Tutors"
+      2 -> "Notes"
+      3 -> "Me"
+      else -> "Tab"
     }
 
-    // Add tab selection listener with Toast messages
-    tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
-      override fun onTabSelected(tab: TabLayout.Tab?) {
-        tab?.position?.let { position ->
-          val message = when (position) {
-            0 -> "Chats selected"
-            1 -> "Tutors selected"
-            2 -> "Notes selected"
-            3 -> "Profile selected"
-            else -> "Unknown tab selected"
-          }
-          Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-        }
-      }
+    val frameLayout = FrameLayout(this).apply {
+      layoutParams = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT
+      )
+    }
 
-      override fun onTabUnselected(tab: TabLayout.Tab?) {}
-      override fun onTabReselected(tab: TabLayout.Tab?) {}
-    })
+    val linearLayout = LinearLayout(this).apply {
+      orientation = LinearLayout.VERTICAL
+      gravity = Gravity.CENTER
+      layoutParams = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.CENTER
+      )
+    }
+
+    val imageView = ImageView(this).apply {
+      setImageResource(iconRes)
+      background = null
+      layoutParams = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.WRAP_CONTENT, // Keep wrap_content
+        LinearLayout.LayoutParams.WRAP_CONTENT  // Keep wrap_content
+      ).apply {
+        topMargin = 10.dpToPx()
+      }
+      scaleType = ImageView.ScaleType.CENTER_INSIDE
+    }
+
+    val textView = TextView(this).apply {
+      text = tabText
+      gravity = Gravity.CENTER
+      setTextColor(Color.WHITE)
+      typeface = ResourcesCompat.getFont(
+        this@MainActivity,
+        if (isSelected) R.font.poppins_bold else R.font.poppins_regular
+      )
+      layoutParams = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      ).apply {
+        topMargin = 4.dpToPx()
+      }
+    }
+
+    linearLayout.addView(imageView)
+    linearLayout.addView(textView)
+    frameLayout.addView(linearLayout)
+    return frameLayout
   }
+
+  private fun updateTabAppearance(tab: TabLayout.Tab?, isSelected: Boolean) {
+    tab?.customView?.let { customView ->
+      val linearLayout = (customView as FrameLayout).getChildAt(0) as LinearLayout
+      val textView = linearLayout.getChildAt(1) as TextView
+
+      // Set the appropriate font family based on selection state
+      val fontRes = if (isSelected) R.font.poppins_bold else R.font.poppins_regular
+      val typeface = ResourcesCompat.getFont(this, fontRes)
+
+      textView.typeface = typeface
+
+      // Force the view to update
+      textView.post {
+        textView.invalidate()
+        textView.requestLayout()
+      }
+    }
+  }
+
   fun Int.dpToPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+  // Fragment Adapter
+  class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+    override fun getItemCount(): Int = 4
+
+    override fun createFragment(position: Int): Fragment {
+      return when (position) {
+        0 -> SessionsFragment()
+        1 -> TutorsFragment()
+        2 -> NotesFragment()
+        3 -> ProfileFragment()
+        else -> throw IllegalArgumentException("Invalid position")
+      }
+    }
+  }
+
+
+  @SuppressLint("SetTextI18n")
+  private fun sessionsSelected() {
+    binding.pageTitle.text = "My Sessions"
+    binding.addBtn.visibility = View.GONE
+    binding.menuBtn.visibility = View.GONE
+    binding.searchBtn.visibility = View.VISIBLE
+  }
+
+  @SuppressLint("SetTextI18n")
+  private fun tutorsSelected() {
+    binding.pageTitle.text = "Tutors"
+    binding.addBtn.visibility = View.VISIBLE
+    binding.menuBtn.visibility = View.GONE
+    binding.searchBtn.visibility = View.VISIBLE
+  }
+
+  @SuppressLint("SetTextI18n")
+  private fun notesSelected() {
+    binding.pageTitle.text = "Notes"
+    binding.addBtn.visibility = View.VISIBLE
+    binding.menuBtn.visibility = View.GONE
+    binding.searchBtn.visibility = View.VISIBLE
+  }
+
+  @SuppressLint("SetTextI18n")
+  private fun profileSelected() {
+    binding.pageTitle.text = "Profile"
+    binding.addBtn.visibility = View.GONE
+    binding.menuBtn.visibility = View.VISIBLE
+    binding.searchBtn.visibility = View.GONE
+  }
 }

@@ -33,22 +33,22 @@ class Login : Fragment() {
     }
 
     private fun validateAndLogin() {
-        val email = binding.emailEditText.text.toString()
-        val password = binding.passwordEditText.text.toString()
-
-        if (email.isEmpty()) {
-            binding.emailInputLayout.error = "Email cannot be empty"
-            return
-        } else {
-            binding.emailInputLayout.error = null
-        }
-
-        if (password.isEmpty()) {
-            binding.passwordInputLayout.error = "Password cannot be empty"
-            return
-        } else {
-            binding.passwordInputLayout.error = null
-        }
+//        val email = binding.emailEditText.text.toString()
+//        val password = binding.passwordEditText.text.toString()
+//
+//        if (email.isEmpty()) {
+//            binding.emailInputLayout.error = "Email cannot be empty"
+//            return
+//        } else {
+//            binding.emailInputLayout.error = null
+//        }
+//
+//        if (password.isEmpty()) {
+//            binding.passwordInputLayout.error = "Password cannot be empty"
+//            return
+//        } else {
+//            binding.passwordInputLayout.error = null
+//        }
 
         // Handle successful login
     }

@@ -85,4 +85,5 @@ dependencies {
     implementation (libs.androidx.fragment.ktx.v155)
     implementation (libs.material.v161)
     implementation (libs.material.v190) // Latest stable
+    implementation (libs.androidx.viewpager2) // for ViewPager2
 }

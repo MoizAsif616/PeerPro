@@ -19,4 +19,6 @@
   <string name="verify">Verify</string>
   <string name="resend_otp">Resend OTP</string>
   <string name="get_link">Get Link</string>
+  <string name="my_sessions">My Sessions</string>
+  <string name="for_back_stacking">For back stacking</string>
 </resources>
