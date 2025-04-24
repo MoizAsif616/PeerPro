@@ -86,7 +86,4 @@ dependencies {
     implementation (libs.material.v161)
     implementation (libs.material.v190) // Latest stable
     implementation (libs.androidx.viewpager2) // for ViewPager2
-    implementation (libs.androidx.recyclerview) // Latest stable version
-    // If you need Material Design components (optional)
-    implementation (libs.material.v1110)
 }

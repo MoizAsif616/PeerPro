@@ -3,10 +3,10 @@
   <style name="PeerProInputStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
     <item name="boxStrokeColor">?attr/peerMain</item>
     <item name="boxStrokeWidth">1dp</item>
-    <item name="boxCornerRadiusBottomEnd">24dp</item>
-    <item name="boxCornerRadiusBottomStart">24dp</item>
-    <item name="boxCornerRadiusTopEnd">24dp</item>
-    <item name="boxCornerRadiusTopStart">24dp</item>
+    <item name="boxCornerRadiusBottomEnd">16dp</item>
+    <item name="boxCornerRadiusBottomStart">16dp</item>
+    <item name="boxCornerRadiusTopEnd">16dp</item>
+    <item name="boxCornerRadiusTopStart">16dp</item>
     <item name="hintTextColor">?attr/peerMain</item>
     <item name="android:textColorHint">@color/hint_color</item>
     <item name="android:minHeight">48dp</item> <!-- Default is 56dp -->

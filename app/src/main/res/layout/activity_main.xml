@@ -98,7 +98,7 @@
     android:layout_height="0dp"
     android:layout_below="@id/seperator"
     android:layout_above="@id/tabLayout"
-    android:paddingHorizontal="10dp"/>
+   />
   
   <com.google.android.material.tabs.TabLayout
     android:id="@+id/tabLayout"

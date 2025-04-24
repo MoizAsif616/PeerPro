@@ -11,4 +11,8 @@
     <item name="android:textColorHint">@color/hint_color</item>
     <item name="android:minHeight">48dp</item> <!-- Default is 56dp -->
   </style>
+  <style name="CircleImageViewStyle" parent="">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">50%</item>
+  </style>
 </resources>
