@@ -1,16 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="?attr/colorPrimary">
-  <TextView
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:background="?attr/bgPrimary">
+  <!-- Top Header Text -->
+  <LinearLayout
+    android:id="@+id/header"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:text="Hii Moiz"
-    android:textColor="?attr/colorOnPrimary"/>
-  <ImageView
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    >
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="2"
+      android:orientation="horizontal">
+<!--      <ImageButton-->
+<!--        android:id="@+id/back_btn"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center_vertical"-->
+<!--        android:contentDescription="@string/for_back_stacking"-->
+<!--        android:src="@drawable/back"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:layout_marginStart="15dp"-->
+<!--        android:visibility="visible"-->
+<!--        android:layout_marginEnd="-7dp"/>-->
+      <TextView android:id="@+id/page_title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:text="@string/my_sessions"
+        android:textSize="24sp"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/peerLight"
+        android:layout_marginTop="2dp"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:orientation="horizontal"
+      android:layout_weight="0.2"
+      android:gravity="end"
+      android:paddingEnd="20dp"
+      tools:ignore="RtlSymmetry">
+      
+      <ImageButton
+        android:id="@+id/add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/for_back_stacking"
+        android:src="@drawable/add"
+        android:background="@android:color/transparent"
+        android:layout_marginStart="15dp"
+        android:visibility="visible"/>
+      
+      <ImageButton
+        android:id="@+id/search_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/for_back_stacking"
+        android:src="@drawable/search"
+        android:background="@android:color/transparent"
+        android:layout_marginStart="15dp"
+        android:visibility="visible"/>
+      
+      <ImageButton
+        android:id="@+id/menu_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/for_back_stacking"
+        android:src="@drawable/menu_dots"
+        android:background="@android:color/transparent"
+        android:layout_marginStart="15dp"
+        android:visibility="visible"/>
+    </LinearLayout>
+  
+  </LinearLayout>
+
+  <View
+    android:id="@+id/seperator"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"/>
+    android:layout_height="2dp"
+    android:layout_below="@id/header"
+    android:background="@drawable/shadow_line"/>
+  <androidx.viewpager2.widget.ViewPager2
+    android:id="@+id/viewPager"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_below="@id/seperator"
+    android:layout_above="@id/tabLayout"
+   />
+  
+  <com.google.android.material.tabs.TabLayout
+    android:id="@+id/tabLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="76dp"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="10dp"
+    android:paddingHorizontal="0dp"
+    android:background="@drawable/tab_bar"
+    app:tabGravity="fill"
+    app:tabMode="fixed"
+    app:tabPaddingStart="0dp"
+    app:tabPaddingEnd="0dp"
+    app:tabIndicatorHeight="0dp"
+    android:paddingStart="0dp"
+    tools:ignore="RtlSymmetry" />
+
 </RelativeLayout>
+

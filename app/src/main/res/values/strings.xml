@@ -2,4 +2,24 @@
   <string name="app_name">PeerPro</string>
   <string name="signup">SignUp</string>
   <string name="signin">LogIn</string>
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="submit">Submit</string>
+  <string name="enter_password">Enter Password</string>
+  <string name="confirm_password">Confirm Password</string>
+  <string name="show_password">Show password</string>
+  <string name="enter_email">Enter Email</string>
+  <string name="enter_username">Enter Username</string>
+  <string name="forgot_password_reset">
+    <font color="?attr/textPrimary">Forgot password?</font> 
+    <font color="#4F709C"> Reset now</font>
+  </string>
+  <string name="username">Username</string>
+  <string name="enter_otp">Enter OTP</string>
+  <string name="verify">Verify</string>
+  <string name="resend_otp">Resend OTP</string>
+  <string name="get_link">Get Link</string>
+  <string name="my_sessions">My Sessions</string>
+  <string name="for_back_stacking">For back stacking</string>
+  <string name="no_tutors_found">No Tutors Found</string>
 </resources>

@@ -45,8 +45,8 @@ class MainActivity : AppCompatActivity() {
     viewPager.adapter = ViewPagerAdapter(this as FragmentActivity)
     // Add padding (1.5% of screen width)
     val screenWidth = Resources.getSystem().displayMetrics.widthPixels
-    val padding = (screenWidth * 0.02).toInt()
-    viewPager.setPadding(padding, padding, padding, padding)
+    val padding = (screenWidth * 0.015).toInt()
+    viewPager.setPadding(padding, 0, padding, 0)
     viewPager.clipToPadding = false
 
     // Connect TabLayout with ViewPager using TabLayoutMediator
