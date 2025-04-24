@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.LinearLayout
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.databinding.FragmentTutorsBinding
@@ -39,7 +41,8 @@ class TutorsFragment : Fragment() {
     // Cached size calculations
     private var itemHeight: Int = 0
     private var itemWidth: Int = 0
-    private var textSizeLarge: Float = 0f
+    private var itemMarginBottom: Int = 0
+    private var dateSize: Float = 0f
     private var textSizeMedium: Float = 0f
     private var textSizeSmall: Float = 0f
     private var imageSize: Int = 0
@@ -49,13 +52,18 @@ class TutorsFragment : Fragment() {
 
       fun bind(tutor: Card) {
         // Apply cached sizes
-        binding.mainContainer.layoutParams = ViewGroup.LayoutParams(
+        binding.mainContainer.layoutParams = LinearLayout.LayoutParams(
           itemWidth,
           itemHeight
-        )
+        ).apply {
+          bottomMargin = itemMarginBottom
+        }
 
-        binding.tutorImage.layoutParams.width = (1.1 * imageSize).toInt()
+        binding.tutorImage.layoutParams.width = (1.01 * imageSize).toInt()
         binding.tutorImage.layoutParams.height = imageSize
+
+        (binding.tutorName.layoutParams as ViewGroup.MarginLayoutParams).topMargin = (itemHeight * 0.005).toInt()
+        (binding.tutorRoll.layoutParams as ViewGroup.MarginLayoutParams).topMargin = -(itemHeight * 0.005).toInt()
 
         // Set text sizes
         binding.tutorName.textSize = textSizeSmall
@@ -71,7 +79,7 @@ class TutorsFragment : Fragment() {
         binding.tutorTimeWindow.textSize = textSizeSmall
         binding.costLabel.textSize = textSizeSmall
         binding.tutorCost.textSize = textSizeSmall
-        binding.tutorDate.textSize = textSizeSmall
+        binding.tutorDate.textSize = dateSize
 
         // Bind data
         binding.tutorName.text = tutor.name
@@ -105,11 +113,12 @@ class TutorsFragment : Fragment() {
 
         itemHeight = (screenHeight * 0.33).toInt()
         itemWidth = (screenWidth * 0.47).toInt()
+        itemMarginBottom = (screenWidth * 0.02).toInt()
 
-        textSizeLarge = (itemHeight * 0.03f)
-        textSizeMedium = (itemHeight * 0.016f)
-        textSizeSmall = (itemHeight * 0.014f)
-        imageSize = (itemHeight * 0.19).toInt()
+        dateSize = (itemHeight * 0.021f)
+        textSizeMedium = (itemHeight * 0.03f)
+        textSizeSmall = (itemHeight * 0.027f)  //0.0173f
+        imageSize = (itemHeight * 0.2).toInt()
       }
 
       val view = LayoutInflater.from(parent.context)
@@ -166,6 +175,18 @@ class TutorsFragment : Fragment() {
         availableDays = "Mon, Wed, Fri",
         cost = "0",
         costType = "One-time"
+      ),
+      Card(
+        imageRes = R.color.teal_200,
+        name = "Huria Ali",
+        rollNumber = "l22-6629",
+        subject = "ReactNative and Expo",
+        preferredGender = "Any",
+        timeWindow = "Evening",
+        sessionType = "Online",
+        availableDays = "Mon, Wed, Fri",
+        cost = "500",
+        costType = "Per session"
       ),
     )
     binding.tutorsCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)

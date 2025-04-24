@@ -92,8 +92,8 @@
   <View
     android:id="@+id/divider"
     android:layout_width="match_parent"
-    android:layout_height="1.3dp"
-    android:background="@color/grey_1"
+    android:layout_height="1.5dp"
+    android:background="?attr/textPrimary"
     android:layout_marginHorizontal="10dp"/>
   <LinearLayout
     android:id="@+id/detailsSection"
