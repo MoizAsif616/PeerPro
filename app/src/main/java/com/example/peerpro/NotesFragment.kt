@@ -167,9 +167,8 @@ class NotesFragment : Fragment() {
 
   }
 
-  fun searchTutors(query: String) {
+  fun searchNotes(query: String) {
     // Implement search functionality here
-    // For example, filter a list of tutors based on the query
   }
 
   override fun onDestroyView() {

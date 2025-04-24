@@ -23,4 +23,5 @@
   <string name="for_back_stacking">For back stacking</string>
   <string name="no_tutors_found">No Tutors Found</string>
   <string name="no_notes_found">No Notes Found</string>
+  <string name="no_chats_found">No Sessions Found</string>
 </resources>
