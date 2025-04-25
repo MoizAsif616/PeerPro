@@ -1,6 +1,7 @@
 package com.example.peerpro
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
@@ -85,6 +86,10 @@ class MainActivity : AppCompatActivity() {
 
     binding.searchBtn.setOnClickListener {
       binding.searchBarFrame.visibility = View.VISIBLE
+    }
+
+    binding.addBtn.setOnClickListener {
+        routeToPosting()
     }
   }
 
@@ -241,5 +246,12 @@ class MainActivity : AppCompatActivity() {
 
   fun performSearch(query: String) {
     Toast.makeText(this, "Search query: $query", Toast.LENGTH_SHORT).show()
+  }
+
+  private fun routeToPosting() {
+    if (currentPage == "tutors") {
+      val intent = Intent(this, PostTutorActivity::class.java)
+      startActivity(intent)
+    }
   }
 }

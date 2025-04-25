@@ -24,4 +24,6 @@
   <string name="no_tutors_found">No Tutors Found</string>
   <string name="no_notes_found">No Notes Found</string>
   <string name="no_chats_found">No Sessions Found</string>
+  <string name="skill_name">Skill name</string>
+  <string name="preferred_gender">Preferred gender</string>
 </resources>
