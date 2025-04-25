@@ -1,33 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:background="?attr/bgPrimary">
+
   <!-- Top Header Text -->
   <LinearLayout
     android:id="@+id/header"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:orientation="horizontal"
+    android:visibility="visible"
     >
     <LinearLayout
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="2"
       android:orientation="horizontal">
-<!--      <ImageButton-->
-<!--        android:id="@+id/back_btn"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="center_vertical"-->
-<!--        android:contentDescription="@string/for_back_stacking"-->
-<!--        android:src="@drawable/back"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:layout_marginStart="15dp"-->
-<!--        android:visibility="visible"-->
-<!--        android:layout_marginEnd="-7dp"/>-->
       <TextView android:id="@+id/page_title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -116,6 +108,12 @@
     app:tabIndicatorHeight="0dp"
     android:paddingStart="0dp"
     tools:ignore="RtlSymmetry" />
+
+  <FrameLayout
+    android:id="@+id/search_bar_frame"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:visibility="gone" />
 
 </RelativeLayout>
 

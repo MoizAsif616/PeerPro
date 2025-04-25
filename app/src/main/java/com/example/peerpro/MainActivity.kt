@@ -28,14 +28,17 @@ class MainActivity : AppCompatActivity() {
 
   private lateinit var binding: ActivityMainBinding
 
-  private val normalTextStyle = android.graphics.Typeface.NORMAL
-  private val selectedTextStyle = android.graphics.Typeface.BOLD
+  private lateinit var currentPage: String
 
   override fun onCreate(savedInstanceState: Bundle?) {
     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
     super.onCreate(savedInstanceState)
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
+
+    supportFragmentManager.beginTransaction()
+      .replace(R.id.search_bar_frame, SearchBarFragment())
+      .commit()
 
     val tabLayout = binding.tabLayout
     val viewPager = binding.viewPager
@@ -80,8 +83,9 @@ class MainActivity : AppCompatActivity() {
       override fun onTabReselected(tab: TabLayout.Tab) {}
     })
 
-    // Optional: Disable swipe if needed
-    // viewPager.isUserInputEnabled = false
+    binding.searchBtn.setOnClickListener {
+      binding.searchBarFrame.visibility = View.VISIBLE
+    }
   }
 
   private fun createTabView(position: Int, isSelected: Boolean): View {
@@ -194,6 +198,8 @@ class MainActivity : AppCompatActivity() {
     binding.addBtn.visibility = View.GONE
     binding.menuBtn.visibility = View.GONE
     binding.searchBtn.visibility = View.VISIBLE
+    currentPage = "sessions"
+    closeSearchBar()
   }
 
   @SuppressLint("SetTextI18n")
@@ -202,6 +208,8 @@ class MainActivity : AppCompatActivity() {
     binding.addBtn.visibility = View.VISIBLE
     binding.menuBtn.visibility = View.GONE
     binding.searchBtn.visibility = View.VISIBLE
+    currentPage = "tutors"
+    closeSearchBar()
   }
 
   @SuppressLint("SetTextI18n")
@@ -210,6 +218,8 @@ class MainActivity : AppCompatActivity() {
     binding.addBtn.visibility = View.VISIBLE
     binding.menuBtn.visibility = View.GONE
     binding.searchBtn.visibility = View.VISIBLE
+    currentPage = "notes"
+    closeSearchBar()
   }
 
   @SuppressLint("SetTextI18n")
@@ -218,5 +228,18 @@ class MainActivity : AppCompatActivity() {
     binding.addBtn.visibility = View.GONE
     binding.menuBtn.visibility = View.VISIBLE
     binding.searchBtn.visibility = View.GONE
+    currentPage = "profile"
+    closeSearchBar()
+  }
+
+  fun closeSearchBar() {
+    val searchBarFragment = supportFragmentManager.findFragmentById(R.id.search_bar_frame) as? SearchBarFragment
+    searchBarFragment?.clearInputText()
+    binding.searchBarFrame.visibility = View.GONE
+
+  }
+
+  fun performSearch(query: String) {
+    Toast.makeText(this, "Search query: $query", Toast.LENGTH_SHORT).show()
   }
 }
