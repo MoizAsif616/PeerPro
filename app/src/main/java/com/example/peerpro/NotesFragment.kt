@@ -81,7 +81,7 @@ class NotesFragment : Fragment() {
         binding.instructorName.text = note.instructor
 
 
-        if (note.cost == "RS 0") {
+        if (note.cost == "Rs. 0") {
           binding.notesCost.text = "Free"
         } else {
           binding.notesCost.text = note.cost
@@ -148,7 +148,7 @@ class NotesFragment : Fragment() {
         subject = "Digital Logic Design",
         notesType = "Handwritten",
         instructor = "Amjad Hussain",
-        cost = "RS 2000",
+        cost = "Rs. 2000",
       ),
       Card(
         imageRes = R.color.black,
@@ -157,7 +157,7 @@ class NotesFragment : Fragment() {
         subject = "Object Oriented Programming",
         notesType = "Printed",
         instructor = "Samin Iftikhar",
-        cost = "RS 0",
+        cost = "Rs. 0",
       ),
 
       )
