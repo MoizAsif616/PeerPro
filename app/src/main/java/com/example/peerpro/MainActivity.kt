@@ -253,5 +253,9 @@ class MainActivity : AppCompatActivity() {
       val intent = Intent(this, PostTutorActivity::class.java)
       startActivity(intent)
     }
+    else if (currentPage == "notes") {
+      val intent = Intent(this, PostNoteActivity::class.java)
+      startActivity(intent)
+    }
   }
 }
