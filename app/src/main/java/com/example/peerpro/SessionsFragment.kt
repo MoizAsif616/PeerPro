@@ -1,59 +1,144 @@
 package com.example.peerpro
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.LinearLayout
+import androidx.core.view.marginTop
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.peerpro.databinding.FragmentSessionsBinding
+import com.example.peerpro.databinding.SessionCardBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [SessionsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SessionsFragment : Fragment() {
-  // TODO: Rename and change types of parameters
-  private var param1: String? = null
-  private var param2: String? = null
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    arguments?.let {
-      param1 = it.getString(ARG_PARAM1)
-      param2 = it.getString(ARG_PARAM2)
+  private var _binding: FragmentSessionsBinding? = null
+  private val binding get() = _binding!!
+
+  data class Card(
+    val imageRes: Any,
+    val name: String,
+    val rollNumber: String,
+    val subject: String,
+  )
+
+  private inner class SessionsAdapter(private val sessions: List<Card>) :
+    RecyclerView.Adapter<SessionsAdapter.SessionViewHolder>() {
+
+    // Cached size calculations
+    private var itemHeight: Int = 0
+    private var itemWidth: Int = 0
+    private var itemMarginBottom: Int = 0
+    private var textSizeMedium: Float = 0f
+    private var textSizeSmall: Float = 0f
+    private var imageSize: Int = 0
+
+    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+      private val binding = SessionCardBinding.bind(itemView)
+
+      fun bind(session: Card) {
+        // Apply cached sizes
+        binding.mainContainer.layoutParams = LinearLayout.LayoutParams(
+          itemWidth,
+          itemHeight
+        ).apply {
+          bottomMargin = itemMarginBottom
+        }
+
+        binding.peerImage.layoutParams.width = (1.01 * imageSize).toInt()
+        binding.peerImage.layoutParams.height = imageSize
+
+        (binding.peerName.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
+          (itemHeight * 0.005).toInt()
+        (binding.peerRoll.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
+          -(itemHeight * 0.005).toInt()
+
+        binding.peerName.textSize = textSizeMedium
+        binding.peerRoll.textSize = textSizeSmall
+        binding.Subject.textSize = textSizeMedium
+
+        binding.peerName.text = session.name
+        binding.peerRoll.text = session.rollNumber
+        binding.Subject.text = session.subject
+      }
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
+      // Calculate sizes only once when first ViewHolder is created
+      if (itemHeight == 0) {
+        val displayMetrics = DisplayMetrics()
+        val windowManager = parent.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
+        itemHeight = (screenHeight * 0.10).toInt()
+        itemWidth = (screenWidth * 0.96).toInt()
+        itemMarginBottom = (screenWidth * 0.02).toInt()
+
+        textSizeMedium = (itemHeight * 0.09f)
+        textSizeSmall = (itemHeight * 0.08f)
+        imageSize = (itemHeight * 0.77).toInt()
+      }
+
+      val view = LayoutInflater.from(parent.context)
+        .inflate(R.layout.session_card, parent, false)
+      return SessionViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
+      holder.bind(sessions[position])
+    }
+
+    override fun getItemCount(): Int = sessions.size
+
   }
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_sessions, container, false)
+    _binding = FragmentSessionsBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
-  companion object {
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SessionsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    @JvmStatic
-    fun newInstance(param1: String, param2: String) =
-      SessionsFragment().apply {
-        arguments = Bundle().apply {
-          putString(ARG_PARAM1, param1)
-          putString(ARG_PARAM2, param2)
-        }
-      }
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    // Sample data
+    val sessions = listOf(
+      Card(
+        imageRes = R.color.black,
+        name = "Moiz Asif",
+        rollNumber = "l22-6720",
+        subject = "Digital Logic Design",
+      ),
+      Card(
+        imageRes = R.color.black,
+        name = "Huria Ali",
+        rollNumber = "l22-6629",
+        subject = "Object Oriented Programming",
+
+      ),
+
+      )
+    binding.sessionCardsRecyclerView.layoutManager = GridLayoutManager(context, 1)
+    binding.sessionCardsRecyclerView.adapter = SessionsAdapter(sessions)
+  }
+
+  fun searchSessions(query: String) {
+    // Implement search functionality here
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    _binding = null
   }
 }

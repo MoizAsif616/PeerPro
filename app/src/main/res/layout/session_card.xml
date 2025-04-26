@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/mainContainer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="5"
+    android:background="@drawable/session_bg">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/peerImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@color/black"
+            android:scaleType="centerCrop"
+            android:paddingStart="2dp"
+            android:layout_marginLeft="6dp"
+            android:layout_gravity="center_vertical"
+            app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
+        <LinearLayout
+            android:id="@+id/nameRollContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp"
+            android:layout_weight="4">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/peerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="-4dp"
+                    android:text="John Doe"
+                    android:textSize="28sp"
+                    android:textColor="?attr/textPrimary"
+                    android:fontFamily="@font/poppins_regular"/>
+                <TextView
+                    android:id="@+id/peerRoll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="-4dp"
+
+                    android:text="l22-6720"
+                    android:textSize="25sp"
+                    android:textColor="@color/grey_1"
+                    android:fontFamily="@font/poppins_regular"
+                    />
+
+                <TextView
+                    android:id="@+id/Subject"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Object Oriented Programming"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/peerLight"
+                    android:textSize="27sp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+

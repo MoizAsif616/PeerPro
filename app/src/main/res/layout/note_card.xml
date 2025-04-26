@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/mainContainer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:background="@drawable/card_bg">
+    <LinearLayout
+        android:id="@+id/topSection"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.49"
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:layout_marginTop="5dp">
+        <LinearLayout
+            android:id="@+id/profileSection"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"
+            tools:ignore="NestedWeights"
+            android:weightSum="1"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/peerImage"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
+                android:src="@color/black"
+                android:scaleType="centerCrop"
+                android:paddingStart="2dp"
+                android:layout_gravity="center_vertical"
+                app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
+            <LinearLayout
+                android:id="@+id/nameRollContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                android:weightSum="1">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/peerName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="John Doe"
+                        android:textSize="30sp"
+                        android:textColor="?attr/textPrimary"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:id="@+id/peerRoll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="l22-6720"
+                        android:textSize="30sp"
+                        android:textColor="@color/peerLight"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:paddingTop="-3dp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/subjectContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:orientation="vertical"
+            android:paddingHorizontal="8dp">
+            <TextView
+                android:id="@+id/notesSubject"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:text="Object Oriented Programming"
+                android:textColor="?attr/textPrimary"
+                android:textSize="40sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1.3dp"
+        android:background="@color/grey_1"
+        android:layout_marginHorizontal="10dp"/>
+    <LinearLayout
+        android:id="@+id/detailsSection"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.51"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:weightSum="5">
+        <LinearLayout
+            android:id="@+id/sessionTypeRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <!-- Start item -->
+            <TextView
+                android:id="@+id/notesTypeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="27sp"
+                android:textColor="?attr/textPrimary"
+                android:text="Notes type"/>
+
+            <!-- Pushes the next item to end -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <!-- End item -->
+            <TextView
+                android:id="@+id/notesType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="27sp"
+                android:textColor="@color/peerLight"
+                android:text="End"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/instructorRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <!-- Start item -->
+            <TextView
+                android:id="@+id/instructorLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/textPrimary"
+                android:textSize="27sp"
+                android:text="Instructor"/>
+
+            <!-- Pushes the next item to end -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <!-- End item -->
+            <TextView
+                android:id="@+id/instructorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="27sp"
+                android:textColor="@color/peerLight"
+                android:text="End"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/costRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/notesCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="27sp"
+                android:textStyle="bold"
+                android:textColor="?attr/textPrimary"
+                android:text="Rs. 5000"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/dateRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="end">
+
+            <!-- Start item -->
+            <TextView
+                android:id="@+id/notesDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/grey_1"
+                android:text="July 14, 2003"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

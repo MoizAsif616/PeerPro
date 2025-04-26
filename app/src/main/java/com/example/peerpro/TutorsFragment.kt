@@ -90,7 +90,7 @@ class TutorsFragment : Fragment() {
         binding.tutorAvailableDays.text = tutor.availableDays
         binding.tutorTimeWindow.text = tutor.timeWindow
 
-        if (tutor.cost == "0") {
+        if (tutor.cost == "RS 0") {
           binding.tutorCost.text = "Free"
           binding.costLabel.visibility = View.GONE
         } else {
@@ -161,7 +161,7 @@ class TutorsFragment : Fragment() {
         timeWindow = "Evening",
         sessionType = "Online",
         availableDays = "Mon, Wed, Fri",
-        cost = "5000",
+        cost = "RS 5000",
         costType = "One-time"
       ),
       Card(
@@ -173,7 +173,7 @@ class TutorsFragment : Fragment() {
         timeWindow = "Evening",
         sessionType = "Online",
         availableDays = "Mon, Wed, Fri",
-        cost = "0",
+        cost = "RS 0",
         costType = "One-time"
       ),
       Card(
@@ -185,7 +185,7 @@ class TutorsFragment : Fragment() {
         timeWindow = "Evening",
         sessionType = "Online",
         availableDays = "Mon, Wed, Fri",
-        cost = "500",
+        cost = "RS 500",
         costType = "Per session"
       ),
     )
