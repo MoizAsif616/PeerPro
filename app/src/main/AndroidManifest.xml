@@ -24,8 +24,20 @@
 <!--        <category android:name="android.intent.category.LAUNCHER" />-->
 <!--      </intent-filter>-->
     </activity>
-    
-    <activity
+      <activity
+          android:name=".PostNoteActivity"
+          android:exported="true"
+          tools:ignore="MissingClass"
+          android:windowSoftInputMode="adjustPan|stateHidden"
+          >
+          <!--      <intent-filter>-->
+          <!--        <action android:name="android.intent.action.MAIN" />-->
+          <!--        -->
+          <!--        <category android:name="android.intent.category.LAUNCHER" />-->
+          <!--      </intent-filter>-->
+      </activity>
+
+      <activity
       android:name=".Auth"
       android:exported="true"
       android:windowSoftInputMode="adjustPan">
