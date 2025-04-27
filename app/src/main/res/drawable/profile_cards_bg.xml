@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shape="rectangle">
+  
+  <!-- Solid background with 30% opacity peerLight color -->
+  <solid android:color="@color/peerLight_30" />
+  
+  <!-- Rounded corners 5dp -->
+  <corners android:radius="7dp" />
+  
+  <!-- No stroke/border -->
+  <stroke
+    android:width="0dp"
+    android:color="@android:color/transparent" />
+
+</shape>

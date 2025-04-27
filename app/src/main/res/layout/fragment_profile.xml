@@ -1,14 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:fillViewport="true"
   tools:context=".ProfileFragment">
   
-  <!-- TODO: Update blank fragment layout -->
-  <TextView
+  <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:text="Profile here" />
+    android:layout_height="wrap_content">
+    
+    <LinearLayout
+      android:id="@+id/peerInfoContainer"
+      android:layout_width="match_parent"
+      android:layout_height="260dp"
+      android:orientation="vertical">
+      
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="117dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:gravity="center_vertical"
+        >
+        <com.google.android.material.imageview.ShapeableImageView
+          android:id="@+id/tutorImage"
+          android:layout_width="95dp"
+          android:layout_height="95dp"
+          android:src="@color/black"
+          android:scaleType="centerCrop"
+          android:paddingStart="2dp"
+          app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
+        <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="65dp"
+          android:orientation="vertical"
+          android:layout_marginStart="10dp">
+          <TextView
+            android:id="@+id/peerEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="l226720@lhr.nu.edu.pk"
+            android:textColor="?attr/textPrimary"
+            android:textSize="20sp"/>
+          <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Rating"
+              android:textColor="?attr/textPrimary"
+              android:textSize="20sp"/>
+            <TextView
+              android:id="@+id/peerRating"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="5dp"
+              android:text="0.0"
+              android:textColor="@color/peerLight"
+              android:textSize="20sp"/>
+            
+            <ImageView
+              android:layout_width="14dp"
+              android:layout_height="14dp"
+              android:layout_marginStart="5dp"
+              android:src="@drawable/me"
+              app:tint="?attr/textPrimary"
+              android:layout_marginTop="1.7dp"/>
+            <TextView
+              android:id="@+id/peerRatingCount"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="0"
+              android:textColor="?attr/textPrimary"
+              android:layout_marginStart="2dp"
+              android:textSize="15sp"
+              android:layout_marginTop="1.7dp"/>
+          </LinearLayout>
+        </LinearLayout>
+      </LinearLayout>
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="143dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp">
+        <TextView
+          android:layout_width="match_parent"
+          android:layout_height="22dp"
+          android:text="Bio"
+          android:textColor="@color/grey_1"
+          android:textSize="15sp"
+          />
+        <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="119dp"
+          android:layout_marginTop="2dp"
+          android:fillViewport="true">
+          
+          <TextView
+            android:id="@+id/peerBio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CS 6th sem student."
+            android:textColor="?attr/textPrimary"
+            android:textSize="15sp"/>
+        </ScrollView>
+      </LinearLayout>
 
-</FrameLayout>
+    </LinearLayout>
+    <View
+      android:id="@+id/divider"
+      android:layout_width="match_parent"
+      android:layout_height="1.3dp"
+      android:background="@color/grey_1"
+      android:layout_marginHorizontal="10dp"
+      android:layout_below="@id/peerInfoContainer"
+      android:layout_marginVertical="5dp"/>
+    
+    <LinearLayout
+      android:id="@+id/buttonsContainer"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:orientation="horizontal"
+      android:layout_weight="1"
+      android:layout_below="@id/divider"
+      android:layout_marginBottom="8dp">
+      <TextView
+        android:id="@+id/peerTutoringButton"
+        android:layout_width="0dp"
+        android:layout_height="40sp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:text="Tutoring"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_semibold"/>
+      <TextView
+        android:id="@+id/peerNotesButton"
+        android:layout_width="0dp"
+        android:layout_height="40sp"
+        android:layout_weight="0.5"
+        android:gravity="center"
+        android:text="Notes"
+        android:textSize="20sp"
+        android:fontFamily="@font/poppins_semibold"/>
+    </LinearLayout>
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_below="@id/buttonsContainer">
+      <ViewSwitcher
+        android:id="@+id/viewSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/peerTutoringRecyclerView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="visible"/>
+        <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/peerNotesRecyclerView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="visible"/>
+      
+      </ViewSwitcher>
+      <LinearLayout
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+          android:id="@+id/emptyText"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Nothing to show"
+          android:textSize="20sp"
+          android:textColor="@color/grey_1"/>
+      </LinearLayout>
+    </LinearLayout>
+   
+    
+  
+  </RelativeLayout>
+</ScrollView>

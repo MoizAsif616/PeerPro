@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="horizontal"
+  android:weightSum="1"
+  android:paddingHorizontal="7dp"
+  android:paddingVertical="5dp"
+  android:background="@drawable/profile_cards_bg"
+  android:layout_marginBottom="5dp">
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="0.7"
+    android:orientation="vertical">
+    <TextView
+      android:id="@+id/cardTitle"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Title here"
+      android:textColor="?attr/textPrimary"
+      android:textSize="22sp"/>
+
+  </LinearLayout>
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="0.3"
+    android:orientation="vertical"
+    android:gravity="center">
+    <TextView
+      android:id="@+id/cardCost"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="FREE"
+      android:textColor="@color/peerLight"
+      android:fontFamily="@font/poppins_bold"
+      android:textSize="20sp"/>
+    <TextView
+      android:id="@+id/cardDate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end"
+      android:text="March 14, 2025"
+      android:textColor="@color/grey_1"
+      android:textSize="13sp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginTop="5dp"
+      android:gravity="end"/>
+  </LinearLayout>
+</LinearLayout>

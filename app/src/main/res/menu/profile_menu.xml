@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+    android:id="@+id/edit_bio"
+    android:title="Edit Bio"
+    android:textColor="?attr/textPrimary" />
+  <item
+    android:id="@+id/change_profile_pic"
+    android:title="Change Profile Pic"
+    android:textColor="?attr/textPrimary" />
+  <item
+    android:id="@+id/logout"
+    android:title="Logout"
+    android:textColor="?attr/textPrimary" />
+  <item
+    android:id="@+id/delete_account"
+    android:title="Delete Account"
+    android:textColor="@color/red"
+    android:iconTint="@color/red" />
+</menu>
