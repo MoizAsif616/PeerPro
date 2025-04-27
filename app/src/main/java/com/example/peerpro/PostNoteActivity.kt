@@ -41,7 +41,7 @@ class PostNoteActivity : AppCompatActivity() {
         R.attr.textPrimary
       )
     )
-    val textColor = typedArray.getColor(1, Color.BLACK)
+    val textColor = typedArray.getColor(0, Color.BLACK)
     typedArray.recycle()
 
     DialogUtils.showSelectionDialog(

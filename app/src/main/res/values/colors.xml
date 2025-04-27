@@ -16,4 +16,5 @@
   <color name="primary_light">#F6F1F1</color>
   <color name="hint_color">#9897a9</color>
   <color name="grey_1">#73798C</color>
+  <color name="red">#ff0000</color>
 </resources>

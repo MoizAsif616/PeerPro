@@ -9,7 +9,7 @@
   <color name="white">#FFFFFFFF</color>
   <color name="peerLight">#4F709C</color>
   <color name="peerLight_20">#334F709C</color>
-  <color name="peerLight_40">#664F709C</color>
+  <color name="peerLight_30">#4D4F709C</color>
   <color name="peerDark">#172C68</color>
   <color name="primary_dark">#09122C</color>
   <color name="secondary_dark">#0E1A3F</color>

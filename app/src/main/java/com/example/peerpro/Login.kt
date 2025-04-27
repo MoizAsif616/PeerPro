@@ -12,6 +12,12 @@ class Login : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
+    private var onLoginSuccessListener: (() -> Unit)? = null
+
+    fun setOnLoginSuccessListener(listener: () -> Unit) {
+        onLoginSuccessListener = listener
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,7 +56,8 @@ class Login : Fragment() {
 //            binding.passwordInputLayout.error = null
 //        }
 
-        // Handle successful login
+        // Trigger the listener on successful login
+        onLoginSuccessListener?.invoke()
     }
 
     override fun onDestroyView() {
