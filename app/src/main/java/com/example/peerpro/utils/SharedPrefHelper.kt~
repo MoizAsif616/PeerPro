@@ -1,0 +1,25 @@
+package com.example.peerpro.utils
+
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
+
+class SharedPrefHelper(context: Context) {
+  private val sharedPref: SharedPreferences =
+    context.getSharedPreferences("USER_PREFS", Context.MODE_PRIVATE)
+
+  // Save Firebase UID (or token)
+  fun saveToken(uid: String) {
+    sharedPref.edit() { putString("access_token", uid) }
+  }
+
+  // Retrieve UID (returns null if not logged in)
+  fun getToken(): String? {
+    return sharedPref.getString("access_token", null)
+  }
+
+  // Clear on logout
+  fun clearToken() {
+    sharedPref.edit() { remove("access_token") }
+  }
+}
