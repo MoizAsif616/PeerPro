@@ -148,20 +148,28 @@ class Signup : Fragment() {
     // Create user in Firebase Auth + Firestore
     registerUser(rollno, email, password, username)
   }
+
   private fun registerUser(rollno: String, email: String, password: String, username: String) {
     auth.createUserWithEmailAndPassword(email, password)
       .addOnCompleteListener(requireActivity()) { task ->
         if (task.isSuccessful) {
           val user = auth.currentUser
-          firestore.collection("users")
-            .document(user!!.uid)
-            .set(mapOf(
-              "rollNo" to rollno,
-              "email" to email,
-              "username" to username,
-              "bio" to "",
-              "profilePicUrl" to "",
-            ))
+          val userId = user?.uid ?: return@addOnCompleteListener
+
+          // Create user object with additional fields
+          val newUser = User(
+            rollno = rollno,
+            name = username,
+            email = email,
+            bio = "",
+            profilePicUrl = "",
+            chatIds = emptyList(),
+            tutorSessionIds = emptyList(),
+            notesIds = emptyList()
+          )
+
+          // Save user to Firestore
+          firestore.collection("users").document(userId).set(newUser)
             .addOnSuccessListener {
               user.sendEmailVerification()
                 .addOnSuccessListener {
@@ -173,7 +181,7 @@ class Signup : Fragment() {
         } else {
           when (task.exception) {
             is FirebaseAuthInvalidCredentialsException -> {
-              emailEditText.error = "Invalid credentials\n Password length must be at least 6 characters"
+              Toast.makeText(context, "Invalid credentials\n Password length must be at least 6 characters", Toast.LENGTH_SHORT).show()
               ButtonLoadingUtils.setLoadingState(submitButton, false)
             }
             is FirebaseAuthUserCollisionException -> {
@@ -188,13 +196,11 @@ class Signup : Fragment() {
           }
         }
       }
-
   }
 
   fun delayForTenSeconds(callback: () -> Unit) {
     Handler(Looper.getMainLooper()).postDelayed(callback, 10000)
   }
-
 
   override fun onDestroyView() {
     super.onDestroyView()

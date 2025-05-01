@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -131,6 +133,29 @@ class SessionsFragment : Fragment() {
       )
     binding.sessionCardsRecyclerView.layoutManager = GridLayoutManager(context, 1)
     binding.sessionCardsRecyclerView.adapter = SessionsAdapter(sessions)
+
+    // Setup refresh listener
+    binding.sessionsSwipeRefreshLayout.setOnRefreshListener {
+      refreshSessions()
+    }
+    // Auto-refresh when fragment is created
+    binding.sessionsSwipeRefreshLayout.isRefreshing = true
+    refreshSessions()
+  }
+
+  private fun refreshSessions() {
+    // Simulate network delay
+    Handler(Looper.getMainLooper()).postDelayed({
+      // This is where you would normally fetch new data
+      // For now we'll just update the existing data
+
+      // Stop the refreshing animation
+      binding.sessionsSwipeRefreshLayout.isRefreshing = false
+
+      // You would typically update your adapter data here
+      // adapter.updateData(newData)
+
+    }, 10000) // 10 second delay
   }
 
   fun searchSessions(query: String) {

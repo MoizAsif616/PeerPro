@@ -99,7 +99,6 @@ class Login : Fragment() {
                   if (document.exists()) {
                     val userData = document.toObject(User::class.java)
                     UserCache.setUser(userData!!)
-                    UserCache.setId(user.uid)
                     
                     // Navigate to MainActivity
                     val intent = Intent(requireContext(), MainActivity::class.java)

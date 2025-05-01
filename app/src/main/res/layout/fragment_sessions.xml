@@ -6,44 +6,46 @@
   android:background="?attr/bgPrimary"
   android:orientation="vertical"
   tools:context=".SessionsFragment">
-
-
-  <ViewSwitcher
-      android:id="@+id/session_view_switcher"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-    <!-- For displaying chats -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/session_cards_recycler_view"
+  
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/sessionsSwipeRefreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MissingClass">
+    <ViewSwitcher
+        android:id="@+id/session_view_switcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+  
+      <!-- For displaying chats -->
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/session_cards_recycler_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="visible"/>
+  
+      <!-- this will display search results i.e chats -->
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/session_searched_recycler_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="gone"/>
+    </ViewSwitcher>
+    <!-- This will be displayed if no chats are found -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"/>
-
-    <!-- this will display search results i.e chats -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/session_searched_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-  </ViewSwitcher>
-  <!-- This will be displayed if no chats are found -->
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      android:gravity="center"
-      android:visibility="gone">
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/no_chats_found"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
-  </LinearLayout>
-
-
-
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+  
+      <TextView
+          android:id="@+id/textView1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/no_chats_found"
+          android:textColor="@color/white"
+          android:textSize="18sp" />
+    </LinearLayout>
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

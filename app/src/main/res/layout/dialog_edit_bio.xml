@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="16dp"
+  android:background="@drawable/dialog_background"
+  android:layout_gravity="center"
+  android:clipChildren="true">
+
+  <EditText
+    android:id="@+id/bioEditText"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:hint="Edit your bio"
+    android:gravity="top|start"
+    android:padding="8dp"
+    android:textSize="16sp"
+    android:inputType="textMultiLine"
+    android:background="@drawable/special_textview_bg"
+    android:scrollbars="vertical" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/saveBioButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:text="Save"
+    app:cornerRadius="8dp"
+    android:paddingHorizontal="10dp"
+    app:backgroundTint="?attr/peerMain"
+    android:textColor="@color/white"
+    android:layout_gravity="center"/>
+</LinearLayout>

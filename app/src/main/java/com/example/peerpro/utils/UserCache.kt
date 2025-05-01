@@ -5,6 +5,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 object UserCache {
   private var currentUser: User? = null
+  private var id: String? = null
   private val lock = ReentrantLock()  // For thread-safety
 
   // Get user (thread-safe)
@@ -27,11 +28,30 @@ object UserCache {
     }
   }
 
+  fun getId(): String? {
+    lock.lock()
+    try {
+      return id
+    } finally {
+      lock.unlock()
+    }
+  }
+
+  fun setId(id: String) {
+    lock.lock()
+    try {
+      this.id = id
+    } finally {
+      lock.unlock()
+    }
+  }
+
   // Clear cache (thread-safe)
   fun clear() {
     lock.lock()
     try {
       currentUser = null
+      id = null
     } finally {
       lock.unlock()
     }
