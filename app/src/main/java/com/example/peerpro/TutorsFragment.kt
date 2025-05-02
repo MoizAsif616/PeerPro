@@ -227,7 +227,7 @@ class TutorsFragment : Fragment() {
     val screenHeight = metrics.heightPixels
     val windowHeight = (screenHeight * 0.6).toInt()
     val textSizeMedium = (windowHeight * 0.017f)
-    val textSizeSmall = (windowHeight * 0.013f)
+    val textSizeSmall = (windowHeight * 0.014f)
     val textSizeExtraSmall = (windowHeight * 0.01f)
     val textSizeLarge = (windowHeight * 0.02f)
     dialog.setOnShowListener {
@@ -257,7 +257,7 @@ class TutorsFragment : Fragment() {
     val text = dialogView.findViewById<TextView>(R.id.text)
     val requestBtn= dialogView.findViewById<TextView>(R.id.requestButton)
 
-    requestBtn.layoutParams.height = (windowHeight * 0.08f).toInt()
+    //requestBtn.layoutParams.height = (windowHeight * 0.08f).toInt()
     name.text = tutor.name
     name.textSize = textSizeLarge
     roll.text = tutor.rollNumber

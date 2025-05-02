@@ -77,7 +77,6 @@
         android:layout_marginHorizontal="20dp">
 
         <LinearLayout
-            android:id="@+id/genderRow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -86,32 +85,7 @@
             android:gravity="start">
 
             <TextView
-                android:id="@+id/genderLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/textPrimary"
-                android:fontFamily="@font/poppins_regular"
-                android:textSize="17sp"
-                android:text="Preferred gender: " />
-
-            <TextView
-                android:id="@+id/tgender"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/peerLight"
-                android:text="Any" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/sessionTypeLabel"
+                android:id="@+id/type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/textPrimary"
@@ -120,14 +94,15 @@
                 android:text="Type: " />
 
             <TextView
-                android:id="@+id/type"
+                android:id="@+id/tnotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_regular"
                 android:textSize="17sp"
+                android:fontFamily="@font/poppins_regular"
                 android:textColor="@color/peerLight"
-                android:text="Online" />
+                android:text="Printed" />
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -145,50 +120,24 @@
             android:layout_gravity="center_vertical">
 
             <TextView
-                android:id="@+id/availableDaysLabel"
+                android:id="@+id/instructorLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/textPrimary"
                 android:fontFamily="@font/poppins_regular"
                 android:textSize="17sp"
-                android:text="Days: " />
+                android:text="Instructor: " />
 
             <TextView
-                android:id="@+id/days"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="17sp"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/peerLight"
-                android:text="Flexible" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/timeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?attr/textPrimary"
-                android:textSize="17sp"
-                android:fontFamily="@font/poppins_regular"
-                android:text="Time: " />
-
-            <TextView
-                android:id="@+id/timeWindow"
+                android:id="@+id/instructorname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="17sp"
                 android:fontFamily="@font/poppins_regular"
                 android:textColor="@color/peerLight"
-                android:text="Morning" />
+                android:text="name" />
         </LinearLayout>
+
     </LinearLayout>
 
 
@@ -214,24 +163,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="20dp"
-        android:layout_weight="0.6">
-
-        <TextView
-            android:id="@+id/costType"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/textPrimary"
-            android:textSize="17sp"
-            android:layout_weight="0.6"
-            android:layout_gravity="center_vertical"
-            android:fontFamily="@font/poppins_regular"
-            android:text="One Time" />
+        android:layout_weight="0.8">
 
         <TextView
             android:id="@+id/cost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp"
+            android:gravity="end"
+            android:layout_weight="0.8"
             android:layout_gravity="center_vertical"
             android:textColor="?attr/textPrimary"
             android:fontFamily="@font/poppins_medium"

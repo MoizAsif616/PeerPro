@@ -2,18 +2,23 @@ package com.example.peerpro
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.peerpro.TutorsFragment.Card
 import com.example.peerpro.databinding.FragmentNotesBinding
 import com.example.peerpro.databinding.NoteCardBinding
 
@@ -32,7 +37,7 @@ class NotesFragment : Fragment() {
     val cost: String,
   )
 
-  private inner class NotesAdapter(private val notes: List<Card>) :
+  private inner class NotesAdapter(private val notes: List<Card>, private val onNoteClick: (Card) -> Unit) :
     RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
 
     // Cached size calculations
@@ -55,7 +60,9 @@ class NotesFragment : Fragment() {
         ).apply {
           bottomMargin = itemMarginBottom
         }
-
+        itemView.setOnClickListener {
+          onNoteClick(note)
+        }
         binding.peerImage.layoutParams.width = (1.01 * imageSize).toInt()
         binding.peerImage.layoutParams.height = imageSize
 
@@ -162,7 +169,9 @@ class NotesFragment : Fragment() {
 
       )
     binding.notesCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)
-    binding.notesCardsRecyclerView.adapter = NotesAdapter(notes)
+    binding.notesCardsRecyclerView.adapter = NotesAdapter(notes) {note ->
+    displayNoteDialog(note)
+    }
     binding.notesCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
 
   }
@@ -175,4 +184,64 @@ class NotesFragment : Fragment() {
     super.onDestroyView()
     _binding = null
   }
+  @SuppressLint("SetTextI18n")
+  private fun displayNoteDialog(note: com.example.peerpro.NotesFragment.Card) {
+    val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.notes_details, null)
+    val dialog = android.app.AlertDialog.Builder(requireContext())
+      .setView(dialogView)
+      .setCancelable(true)
+      .create()
+
+    val metrics = Resources.getSystem().displayMetrics
+    val screenWidth = metrics.widthPixels
+    val screenHeight = metrics.heightPixels
+    val windowHeight = (screenHeight * 0.6).toInt()
+    val textSizeMedium = (windowHeight * 0.017f)
+    val textSizeSmall = (windowHeight * 0.015f)
+    val textSizeExtraSmall = (windowHeight * 0.01f)
+    val textSizeLarge = (windowHeight * 0.02f)
+    dialog.setOnShowListener {
+      val window = dialog.window
+      window?.setBackgroundDrawableResource(android.R.color.transparent)
+      window?.setLayout((screenWidth * 0.75).toInt(), (screenHeight * 0.6).toInt())
+      window?.setGravity(Gravity.CENTER)
+      dialogView.minimumHeight = windowHeight
+
+    }
+
+    // Assign values to your text views (as you already did)
+    val name = dialogView.findViewById<TextView>(R.id.name)
+    val roll = dialogView.findViewById<TextView>(R.id.rollno)
+    val subject = dialogView.findViewById<TextView>(R.id.subject)
+    val type = dialogView.findViewById<TextView>(R.id.tnotes)
+    val typeLabel = dialogView.findViewById<TextView>(R.id.type)
+    val cost = dialogView.findViewById<TextView>(R.id.cost)
+    val description = dialogView.findViewById<TextView>(R.id.description)
+    val instructorLabel = dialogView.findViewById<TextView>(R.id.instructorLabel)
+    val instructorname = dialogView.findViewById<TextView>(R.id.instructorname)
+    val text = dialogView.findViewById<TextView>(R.id.text)
+    val requestBtn= dialogView.findViewById<TextView>(R.id.requestButton)
+
+    //requestBtn.layoutParams.height = (windowHeight * 0.08f).toInt()
+    name.text = note.name
+    name.textSize = textSizeLarge
+    roll.text = note.rollNumber
+    roll.textSize = textSizeLarge
+    subject.text = note.subject
+    subject.textSize = textSizeMedium
+    type.text = note.notesType
+    type.textSize = textSizeSmall
+    instructorname.textSize = textSizeSmall
+    instructorname.text = note.instructor
+    cost.text = if (note.cost == "Rs. 0") "Free" else note.cost
+    cost.textSize = textSizeSmall
+    description.textSize = textSizeSmall
+    instructorLabel.textSize = textSizeSmall
+    typeLabel.textSize = textSizeSmall
+    text.textSize = textSizeMedium
+    requestBtn.textSize = textSizeExtraSmall
+    dialog.show()
+  }
+
+
 }
