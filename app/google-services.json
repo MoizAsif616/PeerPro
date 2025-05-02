@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "749367466807",
+    "project_id": "peerpro-6b2d8",
+    "storage_bucket": "peerpro-6b2d8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:749367466807:android:527dec1a5686e941c318b2",
+        "android_client_info": {
+          "package_name": "com.example.peerpro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAi4b9iSBfuLas27iisUm1deYnlAw9qQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

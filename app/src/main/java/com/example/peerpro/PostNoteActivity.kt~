@@ -83,7 +83,7 @@ class PostNoteActivity : AppCompatActivity() {
 
     // Create a Note object
     val newNote = Note(
-      name = notesName,
+      skillName = notesName,
       notesType = notesType,
       instructorName = instructorName,
       cost = cost,

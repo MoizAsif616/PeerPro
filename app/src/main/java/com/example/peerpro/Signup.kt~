@@ -165,7 +165,7 @@ class Signup : Fragment() {
             profilePicUrl = "",
             chatIds = emptyList(),
             tutorSessionIds = emptyList(),
-            notesIds = emptyList(),
+            notesIds = emptyList()
           )
 
           // Save user to Firestore

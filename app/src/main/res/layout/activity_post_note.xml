@@ -53,17 +53,17 @@
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/emailInputLayout"
+            android:id="@+id/notesNameLayout"
             style="@style/PeerProInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/emailEditText"
+                android:id="@+id/notesName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/skill_name"
+                android:hint="Name"
                 android:inputType="textEmailAddress"
                 android:textColor="?attr/textPrimary"
                 android:textColorHint="@color/grey_1" />

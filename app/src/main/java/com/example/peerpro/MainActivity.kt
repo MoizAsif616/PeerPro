@@ -29,8 +29,16 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import androidx.core.graphics.drawable.toDrawable
+import com.example.peerpro.utils.UserCache
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
+
+  public val auth = FirebaseAuth.getInstance()
+  public val firestore = FirebaseFirestore.getInstance()
+  var user = UserCache.getUser()
+
 
   private lateinit var binding: ActivityMainBinding
 
@@ -238,7 +246,7 @@ class MainActivity : AppCompatActivity() {
 
   @SuppressLint("SetTextI18n")
   private fun profileSelected() {
-    binding.pageTitle.text = "Profile"
+    binding.pageTitle.text = user?.name?: "Profile"
     binding.addBtn.visibility = View.GONE
     binding.menuBtn.visibility = View.VISIBLE
     binding.searchBtn.visibility = View.GONE
