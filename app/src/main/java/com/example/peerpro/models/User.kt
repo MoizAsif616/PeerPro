@@ -10,7 +10,7 @@ data class User(
   var bio: String = "",
   var profilePicUrl: String = "",
   val name: String = "",
-  val chatIds: List<String> = emptyList(),
+  var chatIds: List<String> = emptyList(),
   var tutorSessionIds: List<String> = emptyList(),
-  val notesIds: List<String> = emptyList()
+  var notesIds: List<String> = emptyList()
 )

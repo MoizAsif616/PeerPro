@@ -1,14 +1,19 @@
 package com.example.peerpro
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.models.TutorSession
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.Date
 
-class ProfileTutorSessionCardAdapter(private var items: List<TutorSession>) :
-  RecyclerView.Adapter<ProfileTutorSessionCardAdapter.ProfileTutorSessionViewHolder>() {
+class SessionNotesAdapter(private var items: List<TutorSession>) :
+  RecyclerView.Adapter<SessionNotesAdapter.ProfileTutorSessionViewHolder>() {
 
   fun updateData(newItems: List<TutorSession>) {
     items = newItems
@@ -21,11 +26,14 @@ class ProfileTutorSessionCardAdapter(private var items: List<TutorSession>) :
     return ProfileTutorSessionViewHolder(view)
   }
 
+  @SuppressLint("SimpleDateFormat")
   override fun onBindViewHolder(holder: ProfileTutorSessionViewHolder, position: Int) {
     val item = items[position]
     holder.title.text = item.skillName
-    holder.date.text = item.createdAt.toDate().toString()
-    holder.cost.text = item.cost.toString()
+//    holder.date.text  = item.createdAt.toDate().toString()
+    holder.date.text = SimpleDateFormat("yyyy-MM-dd")
+      .format(Date(item.createdAt.seconds * 1000));
+    holder.cost.text = if (item.cost.toString() == "0") "Free" else item.cost.toString()
   }
 
   override fun getItemCount(): Int = items.size

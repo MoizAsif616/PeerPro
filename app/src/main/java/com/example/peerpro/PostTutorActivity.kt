@@ -120,7 +120,7 @@ class PostTutorActivity : AppCompatActivity() {
     description: String
   ) {
     val firestore = FirebaseFirestore.getInstance()
-    val tutorId = UserCache.getId() ?: return
+    val peerId = UserCache.getId() ?: return
 
     // Create a TutorSession object
     val newSession = TutorSession(
@@ -132,7 +132,7 @@ class PostTutorActivity : AppCompatActivity() {
       sessionPricing = sessionPricing,
       cost = cost,
       description = description,
-      tutorId = tutorId,
+      peerId = peerId, // Updated field name
       createdAt = Timestamp.now()
     )
 
@@ -140,7 +140,7 @@ class PostTutorActivity : AppCompatActivity() {
       .addOnSuccessListener { documentReference ->
         val sessionId = documentReference.id
 
-        val userRef = firestore.collection("users").document(tutorId)
+        val userRef = firestore.collection("users").document(peerId)
         userRef.update("tutorSessionIds", FieldValue.arrayUnion(sessionId))
           .addOnSuccessListener {
             val user = UserCache.getUser()

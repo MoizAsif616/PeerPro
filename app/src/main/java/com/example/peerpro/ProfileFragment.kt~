@@ -80,6 +80,8 @@ class ProfileFragment : Fragment() {
 
   private fun refreshProfile() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
+    // Simulate loading state
+    binding.root.visibility = View.GONE
 
     val userId = UserCache.getId() ?: return
 
@@ -108,6 +110,8 @@ class ProfileFragment : Fragment() {
             }
           }
 
+          binding.notesViewSwitcher.displayedChild = 1
+
           val notesIds = it.notesIds
           if (notesIds.isEmpty()) {
             binding.notesViewSwitcher.displayedChild = 1 // Show empty state
@@ -125,6 +129,7 @@ class ProfileFragment : Fragment() {
           }
         }
         binding.profileSwipeRefreshLayout.isRefreshing = false
+        binding.root.visibility = View.VISIBLE
       }
       .addOnFailureListener {
         Toast.makeText(requireContext(), "Failed to fetch user data", Toast.LENGTH_LONG).show()

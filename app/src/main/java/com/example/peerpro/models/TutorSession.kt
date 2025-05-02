@@ -11,6 +11,6 @@ data class TutorSession(
   val sessionPricing: String = "",
   val cost: Int = 0,
   val description: String = "",
-  val tutorId: String = "",
+  val peerId: String = "",
   val createdAt: Timestamp = Timestamp.now()
 )
