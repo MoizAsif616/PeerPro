@@ -1,17 +1,21 @@
 package com.example.peerpro
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
-import androidx.core.view.marginTop
+import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.databinding.FragmentTutorsBinding
@@ -35,7 +39,8 @@ class TutorsFragment : Fragment() {
     val costType: String
   )
 
-  private inner class TutorsAdapter(private val tutors: List<Card>) :
+  private inner class TutorsAdapter(private val tutors: List<Card>, private val onTutorClick: (Card) -> Unit
+  ) :
     RecyclerView.Adapter<TutorsAdapter.TutorViewHolder>() {
 
     // Cached size calculations
@@ -50,6 +55,7 @@ class TutorsFragment : Fragment() {
     inner class TutorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
       private val binding = TutorCardBinding.bind(itemView)
 
+
       fun bind(tutor: Card) {
         // Apply cached sizes
         binding.mainContainer.layoutParams = LinearLayout.LayoutParams(
@@ -58,7 +64,9 @@ class TutorsFragment : Fragment() {
         ).apply {
           bottomMargin = itemMarginBottom
         }
-
+        itemView.setOnClickListener {
+          onTutorClick(tutor)
+        }
         binding.tutorImage.layoutParams.width = (1.01 * imageSize).toInt()
         binding.tutorImage.layoutParams.height = imageSize
 
@@ -178,7 +186,7 @@ class TutorsFragment : Fragment() {
       ),
       Card(
         imageRes = R.color.teal_200,
-        name = "Huria Ali",
+        name = "saminiftikhar_099",
         rollNumber = "l22-6629",
         subject = "ReactNative and Expo",
         preferredGender = "Any",
@@ -190,7 +198,9 @@ class TutorsFragment : Fragment() {
       ),
     )
     binding.tutorsCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)
-    binding.tutorsCardsRecyclerView.adapter = TutorsAdapter(tutors)
+    binding.tutorsCardsRecyclerView.adapter = TutorsAdapter(tutors){ tutor ->
+      displayTutorDialog(tutor)
+    }
     binding.tutorsCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
 
   }
@@ -204,4 +214,77 @@ class TutorsFragment : Fragment() {
     super.onDestroyView()
     _binding = null
   }
+  @SuppressLint("SetTextI18n")
+  private fun displayTutorDialog(tutor: Card) {
+    val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.tutor_details, null)
+    val dialog = android.app.AlertDialog.Builder(requireContext())
+      .setView(dialogView)
+      .setCancelable(true)
+      .create()
+
+    val metrics = Resources.getSystem().displayMetrics
+    val screenWidth = metrics.widthPixels
+    val screenHeight = metrics.heightPixels
+    val windowHeight = (screenHeight * 0.6).toInt()
+    val textSizeMedium = (windowHeight * 0.017f)
+    val textSizeSmall = (windowHeight * 0.013f)
+    val textSizeExtraSmall = (windowHeight * 0.01f)
+    val textSizeLarge = (windowHeight * 0.02f)
+    dialog.setOnShowListener {
+      val window = dialog.window
+      window?.setBackgroundDrawableResource(android.R.color.transparent)
+      window?.setLayout((screenWidth * 0.75).toInt(), (screenHeight * 0.6).toInt())
+      window?.setGravity(Gravity.CENTER)
+      dialogView.minimumHeight = windowHeight
+
+    }
+
+    // Assign values to your text views (as you already did)
+    val name = dialogView.findViewById<TextView>(R.id.name)
+    val roll = dialogView.findViewById<TextView>(R.id.rollno)
+    val subject = dialogView.findViewById<TextView>(R.id.subject)
+    val gender = dialogView.findViewById<TextView>(R.id.tgender)
+    val session = dialogView.findViewById<TextView>(R.id.type)
+    val days = dialogView.findViewById<TextView>(R.id.days)
+    val costType = dialogView.findViewById<TextView>(R.id.costType)
+    val timeWindow = dialogView.findViewById<TextView>(R.id.timeWindow)
+    val cost = dialogView.findViewById<TextView>(R.id.cost)
+    val description = dialogView.findViewById<TextView>(R.id.description)
+    val genderLabel = dialogView.findViewById<TextView>(R.id.genderLabel)
+    val sessionTypeLabel = dialogView.findViewById<TextView>(R.id.sessionTypeLabel)
+    val availableDaysLabel = dialogView.findViewById<TextView>(R.id.availableDaysLabel)
+    val timeWindowLabel = dialogView.findViewById<TextView>(R.id.timeLabel)
+    val text = dialogView.findViewById<TextView>(R.id.text)
+    val requestBtn= dialogView.findViewById<TextView>(R.id.requestButton)
+
+    requestBtn.layoutParams.height = (windowHeight * 0.08f).toInt()
+    name.text = tutor.name
+    name.textSize = textSizeLarge
+    roll.text = tutor.rollNumber
+    roll.textSize = textSizeLarge
+    subject.text = tutor.subject
+    subject.textSize = textSizeMedium
+    gender.text = tutor.preferredGender
+    gender.textSize = textSizeSmall
+    session.text = tutor.sessionType
+    session.textSize = textSizeSmall
+    days.text = tutor.availableDays
+    days.textSize = textSizeSmall
+    timeWindow.text = tutor.timeWindow
+    timeWindow.textSize = textSizeSmall
+    costType.text = tutor.costType
+    costType.textSize = textSizeSmall
+    cost.text = if (tutor.cost == "Rs. 0") "Free" else tutor.cost
+    cost.textSize = textSizeSmall
+    description.textSize = textSizeSmall
+    sessionTypeLabel.textSize = textSizeSmall
+    availableDaysLabel.textSize = textSizeSmall
+    timeWindowLabel.textSize = textSizeSmall
+    genderLabel.textSize = textSizeSmall
+    text.textSize = textSizeMedium
+    requestBtn.textSize = textSizeExtraSmall
+    dialog.show()
+  }
+
+
 }

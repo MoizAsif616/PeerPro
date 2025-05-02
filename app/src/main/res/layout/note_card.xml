@@ -55,6 +55,8 @@
                         android:layout_height="wrap_content"
                         android:text="John Doe"
                         android:textSize="30sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textColor="?attr/textPrimary"
                         android:fontFamily="@font/poppins_semibold"/>
                     <TextView
