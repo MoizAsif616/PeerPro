@@ -26,6 +26,7 @@ import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import com.example.peerpro.models.TutorSession
 import com.example.peerpro.models.User
+import com.example.peerpro.models.Note
 
 class ProfileFragment : Fragment() {
 
@@ -35,8 +36,8 @@ class ProfileFragment : Fragment() {
   private var _binding: FragmentProfileBinding? = null
   private val binding get() = _binding!!
 
-  private lateinit var tutorSessionAdapter: SessionNotesAdapter
-  private lateinit var notesAdapter: SessionNotesAdapter
+  private lateinit var tutorSessionAdapter: SessionNotesAdapter<TutorSession>
+  private lateinit var notesAdapter: SessionNotesAdapter<Note>
 
   private val PICK_IMAGE_REQUEST = 1
 
@@ -51,8 +52,12 @@ class ProfileFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    tutorSessionAdapter = SessionNotesAdapter(emptyList())
-    notesAdapter = SessionNotesAdapter(emptyList())
+    tutorSessionAdapter = SessionNotesAdapter(emptyList<TutorSession>()) {
+        tutorSessionClicked(it)
+    }
+    notesAdapter = SessionNotesAdapter(emptyList<Note>()) {
+        notesClicked(it)
+    }
 
     binding.tutorSessionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     binding.tutorSessionsRecyclerView.adapter = tutorSessionAdapter
@@ -112,11 +117,11 @@ class ProfileFragment : Fragment() {
           if (notesIds.isEmpty()) {
             binding.notesViewSwitcher.displayedChild = 1 // Show empty state
           } else {
-            val notes = mutableListOf<TutorSession>()
+            val notes = mutableListOf<Note>()
             notesIds.forEach { noteId ->
               firestore.collection("notes").document(noteId).get()
                 .addOnSuccessListener { noteDoc ->
-                  val note = noteDoc.toObject(TutorSession::class.java)
+                  val note = noteDoc.toObject(Note::class.java)
                   note?.let { notes.add(it) }
                   notesAdapter.updateData(notes)
                   binding.notesViewSwitcher.displayedChild = 0 // Show list
@@ -246,6 +251,14 @@ class ProfileFragment : Fragment() {
 
   fun deleteAccount() {
     Toast.makeText(requireContext(), "Delete Account clicked", Toast.LENGTH_LONG).show()
+  }
+
+  private fun tutorSessionClicked(tutorSession: TutorSession) {
+    Toast.makeText(requireContext(), "Tutor session clicked: ${tutorSession.skillName}", Toast.LENGTH_LONG).show()
+  }
+
+  private fun notesClicked(note: Note) {
+    Toast.makeText(requireContext(), "Notes item clicked: ${note.name}", Toast.LENGTH_LONG).show()
   }
 }
 

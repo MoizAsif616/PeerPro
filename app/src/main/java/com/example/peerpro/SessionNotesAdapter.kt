@@ -6,39 +6,49 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.peerpro.models.Note
 import com.example.peerpro.models.TutorSession
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.ZoneId
 import java.util.Date
 
-class SessionNotesAdapter(private var items: List<TutorSession>) :
-  RecyclerView.Adapter<SessionNotesAdapter.ProfileTutorSessionViewHolder>() {
+class SessionNotesAdapter<T>(
+  private var items: List<T>,
+  private val onItemClick: (T) -> Unit
+) : RecyclerView.Adapter<SessionNotesAdapter.ProfileSessionViewHolder>() {
 
-  fun updateData(newItems: List<TutorSession>) {
+  fun updateData(newItems: List<T>) {
     items = newItems
     notifyDataSetChanged()
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileTutorSessionViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileSessionViewHolder {
     val view = LayoutInflater.from(parent.context)
       .inflate(R.layout.profile_cards, parent, false)
-    return ProfileTutorSessionViewHolder(view)
+    return ProfileSessionViewHolder(view)
   }
 
   @SuppressLint("SimpleDateFormat")
-  override fun onBindViewHolder(holder: ProfileTutorSessionViewHolder, position: Int) {
+  override fun onBindViewHolder(holder: ProfileSessionViewHolder, position: Int) {
     val item = items[position]
-    holder.title.text = item.skillName
-//    holder.date.text  = item.createdAt.toDate().toString()
-    holder.date.text = SimpleDateFormat("yyyy-MM-dd")
-      .format(Date(item.createdAt.seconds * 1000));
-    holder.cost.text = if (item.cost.toString() == "0") "Free" else item.cost.toString()
+    if (item is TutorSession) {
+      holder.title.text = item.skillName
+      holder.date.text = SimpleDateFormat("yyyy-MM-dd").format(Date(item.createdAt.seconds * 1000))
+      holder.cost.text = if (item.cost == 0) "Free" else item.cost.toString()
+    } else if (item is Note) {
+      holder.title.text = item.name
+      holder.date.text = SimpleDateFormat("yyyy-MM-dd").format(Date(item.createdAt.seconds * 1000))
+      holder.cost.text = if (item.cost == 0) "Free" else item.cost.toString()
+    }
+
+    // Set click listener
+    holder.itemView.setOnClickListener {
+      onItemClick(item)
+    }
   }
 
   override fun getItemCount(): Int = items.size
 
-  class ProfileTutorSessionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+  class ProfileSessionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val title: TextView = view.findViewById(R.id.cardTitle)
     val date: TextView = view.findViewById(R.id.cardDate)
     val cost: TextView = view.findViewById(R.id.cardCost)
