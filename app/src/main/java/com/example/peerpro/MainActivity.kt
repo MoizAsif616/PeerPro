@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         LinearLayout.LayoutParams.WRAP_CONTENT, // Keep wrap_content
         LinearLayout.LayoutParams.WRAP_CONTENT  // Keep wrap_content
       ).apply {
-        topMargin = 10.dpToPx()
+        topMargin = 5.dpToPx()
       }
       scaleType = ImageView.ScaleType.CENTER_INSIDE
     }
@@ -151,6 +151,7 @@ class MainActivity : AppCompatActivity() {
       text = tabText
       gravity = Gravity.CENTER
       setTextColor(Color.WHITE)
+      textSize = 12f
       typeface = ResourcesCompat.getFont(
         this@MainActivity,
         if (isSelected) R.font.poppins_bold else R.font.poppins_regular
