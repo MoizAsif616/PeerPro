@@ -34,6 +34,7 @@ class NotesFragment : Fragment() {
     val subject: String,
     val notesType: String,
     val instructor: String,
+    val description: String ,
     val cost: String,
   )
 
@@ -155,6 +156,7 @@ class NotesFragment : Fragment() {
         subject = "Digital Logic Design",
         notesType = "Handwritten",
         instructor = "Amjad Hussain",
+        description = "detailed annotated notes",
         cost = "Rs. 2000",
       ),
       Card(
@@ -164,6 +166,7 @@ class NotesFragment : Fragment() {
         subject = "Object Oriented Programming",
         notesType = "Printed",
         instructor = "Samin Iftikhar",
+        description = "oop in easy words",
         cost = "Rs. 0",
       ),
 
@@ -235,6 +238,7 @@ class NotesFragment : Fragment() {
     instructorname.text = note.instructor
     cost.text = if (note.cost == "Rs. 0") "Free" else note.cost
     cost.textSize = textSizeSmall
+    description.text = note.description
     description.textSize = textSizeSmall
     instructorLabel.textSize = textSizeSmall
     typeLabel.textSize = textSizeSmall

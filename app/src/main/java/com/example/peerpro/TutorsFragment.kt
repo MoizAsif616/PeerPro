@@ -35,6 +35,7 @@ class TutorsFragment : Fragment() {
     val timeWindow: String,
     val sessionType: String,
     val availableDays: String,
+    val description: String ,
     val cost: String,
     val costType: String
   )
@@ -169,6 +170,7 @@ class TutorsFragment : Fragment() {
         timeWindow = "Evening",
         sessionType = "Online",
         availableDays = "Mon, Wed, Fri",
+        description = "Learn Django's Model-View-Template architecture and REST framework.",
         cost = "Rs. 5000",
         costType = "One-time"
       ),
@@ -181,6 +183,7 @@ class TutorsFragment : Fragment() {
         timeWindow = "Evening",
         sessionType = "Online",
         availableDays = "Mon, Wed, Fri",
+        description = "Default tutoring description",
         cost = "Rs. 0",
         costType = "One-time"
       ),
@@ -193,6 +196,7 @@ class TutorsFragment : Fragment() {
         timeWindow = "Evening",
         sessionType = "Online",
         availableDays = "Mon, Wed, Fri",
+        description = "Default tutoring description",
         cost = "Rs. 500",
         costType = "Per session"
       ),
@@ -272,6 +276,7 @@ class TutorsFragment : Fragment() {
     days.textSize = textSizeSmall
     timeWindow.text = tutor.timeWindow
     timeWindow.textSize = textSizeSmall
+    description.text=tutor.description
     costType.text = tutor.costType
     costType.textSize = textSizeSmall
     cost.text = if (tutor.cost == "Rs. 0") "Free" else tutor.cost
@@ -283,6 +288,7 @@ class TutorsFragment : Fragment() {
     genderLabel.textSize = textSizeSmall
     text.textSize = textSizeMedium
     requestBtn.textSize = textSizeExtraSmall
+
     dialog.show()
   }
 
