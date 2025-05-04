@@ -1,288 +1,293 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
   android:id="@+id/mainContainer"
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:orientation="vertical"
-  android:weightSum="1"
-  android:background="@drawable/card_bg">
+  android:layout_width="match_parent">
   <LinearLayout
-    android:id="@+id/topSection"
     android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="0.43"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1"
-    android:layout_marginTop="5dp">
+    android:background="@drawable/card_bg">
     <LinearLayout
-      android:id="@+id/profileSection"
+      android:id="@+id/topSection"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="0.5"
-      android:orientation="horizontal"
-      tools:ignore="NestedWeights"
+      android:layout_weight="0.43"
+      android:orientation="vertical"
       android:weightSum="1"
-      android:gravity="center_vertical"
-      android:paddingHorizontal="8dp">
-      <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/tutorImage"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:src="@color/black"
-        android:scaleType="centerCrop"
-        android:paddingStart="2dp"
-        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
+      android:layout_marginTop="5dp">
       <LinearLayout
-        android:id="@+id/nameRollContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:id="@+id/profileSection"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="horizontal"
+        tools:ignore="NestedWeights"
+        android:weightSum="1"
         android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingHorizontal="10dp"
-        android:weightSum="1">
+        android:paddingHorizontal="8dp">
+        <com.google.android.material.imageview.ShapeableImageView
+          android:id="@+id/tutorImage"
+          android:layout_width="130dp"
+          android:layout_height="130dp"
+          android:src="@color/black"
+          android:scaleType="centerCrop"
+          android:paddingStart="2dp"
+          app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
         <LinearLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
+          android:id="@+id/nameRollContainer"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:gravity="center_vertical"
           android:orientation="vertical"
-          >
-          <TextView
-            android:id="@+id/tutorName"
-            android:layout_width="wrap_content"
+          android:paddingHorizontal="10dp"
+          android:weightSum="1">
+          <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="John Doe"
-            android:textSize="30sp"
-            android:textColor="?attr/textPrimary"
-            android:fontFamily="@font/poppins_semibold"/>
-          <TextView
-            android:id="@+id/tutorRoll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="l22-6720"
-            android:textSize="30sp"
-            android:textColor="@color/peerLight"
-            android:fontFamily="@font/poppins_semibold"
-            android:paddingTop="-3dp"
-           />
+            android:orientation="vertical"
+            >
+            <TextView
+              android:id="@+id/tutorName"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="John Doe"
+              android:textSize="30sp"
+              android:textColor="?attr/textPrimary"
+              android:fontFamily="@font/poppins_semibold"/>
+            <TextView
+              android:id="@+id/tutorRoll"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="l22-6720"
+              android:textSize="30sp"
+              android:textColor="@color/peerLight"
+              android:fontFamily="@font/poppins_semibold"
+              android:paddingTop="-3dp"
+              />
+          </LinearLayout>
         </LinearLayout>
       </LinearLayout>
+      <LinearLayout
+        android:id="@+id/subjectContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp">
+        <TextView
+          android:id="@+id/tutorSubject"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:maxLines="2"
+          android:ellipsize="end"
+          android:gravity="center_vertical"
+          android:text="Django Rest Framework and MVT"
+          android:textColor="?attr/textPrimary"
+          android:textSize="40sp"/>
+      </LinearLayout>
+    
     </LinearLayout>
+    <View
+      android:id="@+id/divider"
+      android:layout_width="match_parent"
+      android:layout_height="1.3dp"
+      android:background="@color/grey_1"
+      android:layout_marginHorizontal="10dp"/>
     <LinearLayout
-      android:id="@+id/subjectContainer"
+      android:id="@+id/detailsSection"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="0.5"
+      android:layout_weight="0.57"
       android:orientation="vertical"
-      android:paddingHorizontal="8dp">
-      <TextView
-        android:id="@+id/tutorSubject"
+      android:paddingHorizontal="8dp"
+      android:paddingVertical="4dp"
+      android:weightSum="7">
+      <LinearLayout
+        android:id="@+id/genderRow"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:text="Django Rest Framework and MVT"
-        android:textColor="?attr/textPrimary"
-        android:textSize="40sp"/>
-    </LinearLayout>
-    
-  </LinearLayout>
-  <View
-    android:id="@+id/divider"
-    android:layout_width="match_parent"
-    android:layout_height="1.3dp"
-    android:background="@color/grey_1"
-    android:layout_marginHorizontal="10dp"/>
-  <LinearLayout
-    android:id="@+id/detailsSection"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="0.57"
-    android:orientation="vertical"
-    android:paddingHorizontal="8dp"
-    android:paddingVertical="4dp"
-    android:weightSum="7">
-    <LinearLayout
-      android:id="@+id/genderRow"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_weight="1">
-      
-      <!-- Start item -->
-      <TextView
-        android:id="@+id/genderLabel"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="?attr/textPrimary"
-        android:textSize="27sp"
+        android:orientation="horizontal"
+        android:layout_weight="1">
         
-        android:text="Preffered gender"/>
-      
-      <!-- Pushes the next item to end -->
-      <Space
-        android:layout_width="0dp"
+        <!-- Start item -->
+        <TextView
+          android:id="@+id/genderLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="?attr/textPrimary"
+          android:textSize="27sp"
+          
+          android:text="Preffered gender"/>
+        
+        <!-- Pushes the next item to end -->
+        <Space
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"/>
+        
+        <!-- End item -->
+        <TextView
+          android:id="@+id/tutorGender"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="@color/peerLight"
+          android:text="End"/>
+      </LinearLayout>
+      <LinearLayout
+        android:id="@+id/sessionTypeRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-      
-      <!-- End item -->
-      <TextView
-        android:id="@+id/tutorGender"
-        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        
+        <!-- Start item -->
+        <TextView
+          android:id="@+id/sessionTypeLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="?attr/textPrimary"
+          android:text="Session type"/>
+        
+        <!-- Pushes the next item to end -->
+        <Space
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"/>
+        
+        <!-- End item -->
+        <TextView
+          android:id="@+id/tutorSessionType"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="@color/peerLight"
+          android:text="End"/>
+      </LinearLayout>
+      <LinearLayout
+        android:id="@+id/availableDaysRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="@color/peerLight"
-        android:text="End"/>
-    </LinearLayout>
-    <LinearLayout
-      android:id="@+id/sessionTypeRow"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_weight="1">
-      
-      <!-- Start item -->
-      <TextView
-        android:id="@+id/sessionTypeLabel"
-        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        
+        <!-- Start item -->
+        <TextView
+          android:id="@+id/availableDaysLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="?attr/textPrimary"
+          android:text="Days"/>
+        
+        <!-- Pushes the next item to end -->
+        <Space
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"/>
+        
+        <!-- End item -->
+        <TextView
+          android:id="@+id/tutorAvailableDays"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="@color/peerLight"
+          android:text="End"/>
+      </LinearLayout>
+      <LinearLayout
+        android:id="@+id/timeWindowRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="?attr/textPrimary"
-        android:text="Session type"/>
-      
-      <!-- Pushes the next item to end -->
-      <Space
-        android:layout_width="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        
+        <!-- Start item -->
+        <TextView
+          android:id="@+id/timeWindowLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="?attr/textPrimary"
+          android:text="Time window"/>
+        
+        <!-- Pushes the next item to end -->
+        <Space
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"/>
+        
+        <!-- End item -->
+        <TextView
+          android:id="@+id/tutorTimeWindow"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="@color/peerLight"
+          android:text="End"/>
+      </LinearLayout>
+      <LinearLayout
+        android:id="@+id/costRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp">
+        
+        <!-- Start item -->
+        <TextView
+          android:id="@+id/costLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textColor="?attr/textPrimary"
+          android:text="One time"
+          android:visibility="visible"/>
+        
+        <!-- Pushes the next item to end -->
+        <Space
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"/>
+        
+        <!-- End item -->
+        <TextView
+          android:id="@+id/tutorCost"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="27sp"
+          android:textStyle="bold"
+          android:textColor="?attr/textPrimary"
+          android:text="Rs. 5000"/>
+      </LinearLayout>
       
-      <!-- End item -->
-      <TextView
-        android:id="@+id/tutorSessionType"
-        android:layout_width="wrap_content"
+      <LinearLayout
+        android:id="@+id/dateRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="@color/peerLight"
-        android:text="End"/>
-    </LinearLayout>
-    <LinearLayout
-      android:id="@+id/availableDaysRow"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_weight="1">
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:gravity="end">
+        
+        <!-- Start item -->
+        <TextView
+          android:id="@+id/tutorDate"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="20sp"
+          android:textColor="@color/grey_1"
+          android:text="March 14, 2025"/>
       
-      <!-- Start item -->
-      <TextView
-        android:id="@+id/availableDaysLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="?attr/textPrimary"
-        android:text="Days"/>
-      
-      <!-- Pushes the next item to end -->
-      <Space
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-      
-      <!-- End item -->
-      <TextView
-        android:id="@+id/tutorAvailableDays"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="@color/peerLight"
-        android:text="End"/>
-    </LinearLayout>
-    <LinearLayout
-      android:id="@+id/timeWindowRow"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_weight="1">
-      
-      <!-- Start item -->
-      <TextView
-        android:id="@+id/timeWindowLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="?attr/textPrimary"
-        android:text="Time window"/>
-      
-      <!-- Pushes the next item to end -->
-      <Space
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-      
-      <!-- End item -->
-      <TextView
-        android:id="@+id/tutorTimeWindow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="@color/peerLight"
-        android:text="End"/>
-    </LinearLayout>
-    <LinearLayout
-      android:id="@+id/costRow"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_weight="1"
-      android:layout_marginTop="10dp">
-      
-      <!-- Start item -->
-      <TextView
-        android:id="@+id/costLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textColor="?attr/textPrimary"
-        android:text="One time"
-        android:visibility="visible"/>
-      
-      <!-- Pushes the next item to end -->
-      <Space
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-      
-      <!-- End item -->
-      <TextView
-        android:id="@+id/tutorCost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="27sp"
-        android:textStyle="bold"
-        android:textColor="?attr/textPrimary"
-        android:text="Rs. 5000"/>
-    </LinearLayout>
+      </LinearLayout>
     
-    <LinearLayout
-      android:id="@+id/dateRow"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_weight="1"
-      android:gravity="end">
-      
-      <!-- Start item -->
-      <TextView
-        android:id="@+id/tutorDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="@color/grey_1"
-        android:text="March 14, 2025"/>
-
     </LinearLayout>
   
   </LinearLayout>
+</FrameLayout>
 
-</LinearLayout>

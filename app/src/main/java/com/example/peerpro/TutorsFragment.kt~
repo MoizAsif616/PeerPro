@@ -47,12 +47,12 @@ class TutorsFragment : Fragment() {
       @SuppressLint("SimpleDateFormat")
       fun bind(tutor: TutorSession, name: String, rollNumber: String, profilePicUrl: String?) {
         // Apply cached sizes
-        val layoutParams = itemView.layoutParams as RecyclerView.LayoutParams
-        layoutParams.width = itemWidth
-        layoutParams.height = itemHeight
-        layoutParams.bottomMargin = itemMarginBottom
-        itemView.layoutParams = layoutParams
-
+        item.mainContainer.layoutParams = FrameLayout.LayoutParams(
+          itemWidth,
+          itemHeight
+        ).apply {
+          bottomMargin = itemMarginBottom
+        }
         item.tutorImage.layoutParams.width = (1.01 * imageSize).toInt()
         item.tutorImage.layoutParams.height = imageSize
 
