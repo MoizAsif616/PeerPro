@@ -26,7 +26,7 @@ class SplashScreenActivity : AppCompatActivity() {
 //      startActivity(intent)
 //      finish()
       checkAuthAndRedirect()
-    }, 2000)
+    }, 0)
   }
 
   private fun checkAuthAndRedirect() {

@@ -14,139 +14,31 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.marginTop
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.databinding.FragmentTutorsBinding
 import com.example.peerpro.databinding.TutorCardBinding
 import com.example.peerpro.models.TutorSession
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class TutorsFragment : Fragment() {
 
   private var _binding: FragmentTutorsBinding? = null
+  private lateinit var adapter: TutorsAdapter
+  private var lastVisible: DocumentSnapshot? = null
+  private val pageSize = 10
+  private var isLoading = false
+  private var isEndReached = false
   private val binding get() = _binding!!
 
-  private inner class TutorsAdapter(private val tutors: List<TutorSession>) :
-    RecyclerView.Adapter<TutorsAdapter.TutorViewHolder>() {
-
-    // Cached size calculations
-    private var itemHeight: Int = 0
-    private var itemWidth: Int = 0
-    private var itemMarginBottom: Int = 0
-    private var dateSize: Float = 0f
-    private var textSizeMedium: Float = 0f
-    private var textSizeSmall: Float = 0f
-    private var imageSize: Int = 0
-
-    inner class TutorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-      private val item = TutorCardBinding.bind(itemView)
-
-      @SuppressLint("SimpleDateFormat")
-      fun bind(tutor: TutorSession, name: String, rollNumber: String, profilePicUrl: String?) {
-        // Apply cached sizes
-        val layoutParams = itemView.layoutParams as RecyclerView.LayoutParams
-        layoutParams.width = itemWidth
-        layoutParams.height = itemHeight
-        layoutParams.bottomMargin = itemMarginBottom
-        itemView.layoutParams = layoutParams
-
-        item.tutorImage.layoutParams.width = (1.01 * imageSize).toInt()
-        item.tutorImage.layoutParams.height = imageSize
-
-        (item.tutorName.layoutParams as ViewGroup.MarginLayoutParams).topMargin = (itemHeight * 0.005).toInt()
-        (item.tutorRoll.layoutParams as ViewGroup.MarginLayoutParams).topMargin = -(itemHeight * 0.005).toInt()
-
-        // Set text sizes
-        item.tutorName.textSize = textSizeSmall
-        item.tutorRoll.textSize = textSizeSmall
-        item.tutorSubject.textSize = textSizeMedium
-        item.genderLabel.textSize = textSizeSmall
-        item.tutorGender.textSize = textSizeSmall
-        item.sessionTypeLabel.textSize = textSizeSmall
-        item.tutorSessionType.textSize = textSizeSmall
-        item.availableDaysLabel.textSize = textSizeSmall
-        item.tutorAvailableDays.textSize = textSizeSmall
-        item.timeWindowLabel.textSize = textSizeSmall
-        item.tutorTimeWindow.textSize = textSizeSmall
-        item.costLabel.textSize = textSizeSmall
-        item.tutorCost.textSize = textSizeSmall
-        item.tutorDate.textSize = dateSize
-
-        // Bind data
-        item.tutorName.text = name
-        item.tutorRoll.text = rollNumber
-        item.tutorSubject.text = tutor.skillName
-        item.tutorGender.text = tutor.preferredGender
-        item.tutorSessionType.text = tutor.sessionType
-        item.tutorAvailableDays.text = tutor.availableDays
-        item.tutorTimeWindow.text = tutor.timeWindow
-
-        if (tutor.cost == 0) {
-          item.tutorCost.text = "Free"
-          item.costLabel.visibility = View.GONE
-        } else {
-          item.tutorCost.text = "Rs. ${tutor.cost}"
-          item.costLabel.text = tutor.sessionPricing
-        }
-
-        item.tutorDate.text = SimpleDateFormat("yyyy-MM-dd").format(Date(tutor.createdAt.seconds * 1000))
-
-        // Set profile picture
-        if (profilePicUrl.isNullOrEmpty()) {
-          item.tutorImage.setImageResource(R.color.black)
-        } else {
-          // Load image using a library like Glide or Picasso
-          // Example using Glide:
-          // Glide.with(itemView.context).load(profilePicUrl).into(item.tutorImage)
-        }
-      }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TutorViewHolder {
-      // Calculate sizes only once when first ViewHolder is created
-      if (itemHeight == 0) {
-        val displayMetrics = DisplayMetrics()
-        val windowManager = parent.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-        val screenWidth = displayMetrics.widthPixels
-        val screenHeight = displayMetrics.heightPixels
-
-        itemHeight = (screenHeight * 0.33).toInt()
-        itemWidth = (screenWidth * 0.47).toInt()
-        itemMarginBottom = (screenWidth * 0.02).toInt()
-
-        dateSize = (itemHeight * 0.021f)
-        textSizeMedium = (itemHeight * 0.03f)
-        textSizeSmall = (itemHeight * 0.027f)
-        imageSize = (itemHeight * 0.2).toInt()
-      }
-
-      val view = LayoutInflater.from(parent.context)
-        .inflate(R.layout.tutor_card, parent, false)
-
-      return TutorViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: TutorViewHolder, position: Int) {
-      val tutor = tutors[position]
-      firestore.collection("users").document(tutor.peerId).get()
-        .addOnSuccessListener { userDoc ->
-          val name = userDoc.getString("name") ?: "Unknown"
-          val rollNumber = userDoc.getString("rollno") ?: "Unknown"
-          val profilePicUrl = userDoc.getString("profilePicUrl")
-          holder.bind(tutor, name, rollNumber, profilePicUrl)
-        }
-        .addOnFailureListener {
-          holder.bind(tutor, "Unknown", "Unknown", null)
-        }
-    }
-
-    override fun getItemCount(): Int = tutors.size
-  }
 
   private inner class HorizontalSpacingDecoration : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
@@ -168,41 +60,97 @@ class TutorsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+    adapter = TutorsAdapter(mutableListOf())
+    binding.tutorsCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)
+    binding.tutorsCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
+    binding.tutorsCardsRecyclerView.adapter = adapter
+
+    binding.tutorsCardsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        val layoutManager = recyclerView.layoutManager as GridLayoutManager
+        val totalItemCount = layoutManager.itemCount
+        val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+        // Load more when reaching the 4th item
+        if (!isLoading && !isEndReached && totalItemCount > 0 && lastVisibleItem >= 4) {
+          loadTutors()
+        }
+      }
+    })
+
     binding.tutorsSwipeRefreshLayout.setOnRefreshListener {
       refreshTutors()
     }
-    binding.tutorsCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)
-    binding.tutorsCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
 
     refreshTutors()
   }
 
   private fun refreshTutors() {
     if (binding.tutorsSearchViewSwitcher.visibility == View.VISIBLE) {
+      binding.tutorsSwipeRefreshLayout.isRefreshing = false
       return
     }
     binding.tutorsSwipeRefreshLayout.isRefreshing = true
-    firestore.collection("tutor_sessions").get()
-      .addOnSuccessListener { records ->
-        if (!records.isEmpty) {
-          val fetchedSessions = records.mapNotNull { it.toObject<TutorSession>() }
+    lastVisible = null
+    isEndReached = false
+    lifecycleScope.launch {
+      loadTutors(isRefresh = true)
+    }
+  }
 
-          if (fetchedSessions.isNotEmpty()) {
-            binding.tutorsViewSwitcher.displayedChild = 0
-            binding.tutorsCardsRecyclerView.adapter = TutorsAdapter(fetchedSessions)
-          } else {
-Toast.makeText(requireContext(), "No session found", Toast.LENGTH_LONG).show()
-            binding.tutorsViewSwitcher.displayedChild = 1
-          }
+  private fun loadTutors(isRefresh: Boolean = false) = lifecycleScope.launch {
+    if (isLoading || isEndReached) return@launch
+    isLoading = true
+
+    try {
+      var query = firestore.collection("tutor_sessions")
+        .orderBy("createdAt", Query.Direction.DESCENDING)
+        .limit(pageSize.toLong())
+
+      if (!isRefresh && lastVisible != null) {
+        query = query.startAfter(lastVisible!!)
+      }
+
+      val snapshot = query.get().await()
+      val fetchedSessions = snapshot.documents.mapNotNull { it.toObject<TutorSession>() }
+      // Toast.makeText(requireContext(), "Fetched ${fetchedSessions.size} sessions", Toast.LENGTH_SHORT).show()
+
+      lastVisible = if (snapshot.documents.isNotEmpty()) {
+        snapshot.documents[snapshot.documents.size - 1]
+      } else {
+        null
+      }
+
+      if (fetchedSessions.size < pageSize) {
+        isEndReached = true
+      }
+
+      if (fetchedSessions.isNotEmpty()) {
+        binding.tutorsViewSwitcher.displayedChild = 0
+        if (isRefresh) {
+          adapter.clearAndSetItems(fetchedSessions)
         } else {
-          binding.tutorsViewSwitcher.displayedChild = 1
+          adapter.addItems(fetchedSessions)
         }
+      } else if (isRefresh && adapter.itemCount == 0) {
+        // Toast.makeText(requireContext(), "No session found", Toast.LENGTH_LONG).show()
+        binding.tutorsViewSwitcher.displayedChild = 1
+        isEndReached = true
+      }
+      if (isRefresh) {
         binding.tutorsSwipeRefreshLayout.isRefreshing = false
       }
-      .addOnFailureListener {
-        Toast.makeText(requireContext(), "Failed to fetch tutor sessions", Toast.LENGTH_LONG).show()
-        binding.tutorsSwipeRefreshLayout.isRefreshing = false
+
+    } catch (e: Exception) {
+      Toast.makeText(requireContext(), "Failed to fetch tutor sessions", Toast.LENGTH_LONG).show()
+      if (isRefresh && adapter.itemCount == 0) {
+        binding.tutorsViewSwitcher.displayedChild = 1
       }
+    } finally {
+      isLoading = false
+      // binding.tutorsSwipeRefreshLayout.isRefreshing = false
+    }
   }
 
   fun searchTutors(query: String) {

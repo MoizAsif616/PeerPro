@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.example.peerpro.models.User
 import com.example.peerpro.utils.SharedPrefHelper
+import com.example.peerpro.utils.UserCache
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -50,22 +52,27 @@ class SplashScreenActivity : AppCompatActivity() {
   }
 
   private fun fetchUserDataAndRedirect(uid: String) {
-    FirebaseFirestore.getInstance()
-      .collection("users")
-      .document(uid)
-      .get()
-      .addOnSuccessListener { document ->
-        if (document.exists()) {
-          document.toObject(User::class.java)?.let { user ->
-            UserCache.setUser(user)
-            UserCache.setId(uid)
+    try {
+      FirebaseFirestore.getInstance()
+        .collection("users")
+        .document(uid)
+        .get()
+        .addOnSuccessListener { document ->
+          if (document.exists()) {
+            val user : User? = document.toObject(User::class.java)
+            if (user != null) {
+              UserCache.setUser(user)
+              UserCache.setId(uid)
+            }
           }
+          redirectToMain()
         }
-        redirectToMain()
-      }
-      .addOnFailureListener {
-        redirectToAuth()
-      }
+        .addOnFailureListener {
+          redirectToAuth()
+        }
+    } catch (e: Exception) {
+      redirectToAuth()
+    }
   }
 
   private fun redirectToMain() {
@@ -74,7 +81,7 @@ class SplashScreenActivity : AppCompatActivity() {
   }
 
   private fun redirectToAuth() {
-    startActivity(Intent(this, AuthActivity::class.java))
+    startActivity(Intent(this, Auth::class.java))
     finish()
   }
 }
