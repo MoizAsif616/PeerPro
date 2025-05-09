@@ -28,7 +28,6 @@ import android.net.Uri
 import android.view.Gravity
 import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import com.example.peerpro.databinding.NotesProfileDetailsBinding
 import com.example.peerpro.databinding.TutorProfileDetailsBinding
 import com.google.firebase.storage.FirebaseStorage
@@ -289,12 +288,7 @@ class ProfileFragment : Fragment() {
     binding.type.text = tutoring.sessionType
     binding.days.text = tutoring.availableDays
     binding.timeWindow.text = tutoring.timeWindow
-    if (tutoring.description.isEmpty()) {
-      binding.description.text = "No description"
-      binding.description.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_1))
-    } else {
-      binding.description.text = tutoring.description
-    }
+    binding.description.text = tutoring.description
     binding.costType.text = if (tutoring.cost == 0) "" else tutoring.sessionPricing
     binding.cost.text = if(tutoring.cost == 0) "FREE" else "Rs." + tutoring.cost.toString()
 
@@ -341,12 +335,7 @@ class ProfileFragment : Fragment() {
     val textSizeSmall = (screenHeight * 0.6f * 0.013f)
 
     dialogBinding.subject.text = note.name
-    if (note.description.isEmpty()) {
-      dialogBinding.description.text = "No description"
-      dialogBinding.description.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_1))
-    } else {
-      dialogBinding.description.text = note.description
-    }
+    dialogBinding.description.text = note.description
     dialogBinding.cost.text = if(note.cost ==0) "FREE" else "Rs." + note.cost.toString()
     dialogBinding.tnotes.text = note.notesType
     dialogBinding.instructorname.text = note.instructorName

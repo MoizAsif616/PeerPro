@@ -162,8 +162,107 @@ class TutorsFragment : Fragment() {
   }
 
   fun searchTutors(query: String) {
-    // Implement search functionality here
-    // For example, filter a list of tutors based on the query
+    binding.tutorsViewSwitcher.visibility = View.GONE
+    binding.tutorsSearchViewSwitcher.visibility = View.VISIBLE
+    binding.tutorsSearchViewSwitcher.displayedChild = 0 // Show loading state initially
+
+    val searchedAdapter = TutorsAdapter(mutableListOf()) { tutor ->
+      displayTutorDialog(tutor)
+    }
+
+    if (binding.tutorsSearchedRecyclerView.adapter == null) {
+      Log.d("L6", "Setting up searched adapter")
+      binding.tutorsSearchedRecyclerView.layoutManager = GridLayoutManager(context, 2)
+      binding.tutorsSearchedRecyclerView.adapter = searchedAdapter
+      binding.tutorsSearchedRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
+    }
+
+    var lastVisible: DocumentSnapshot? = null
+    var isEndReached = false
+    var isLoading = false
+
+    fun loadSearchResults(isRefresh: Boolean = false) = lifecycleScope.launch {
+      if (isLoading || isEndReached) return@launch
+      isLoading = true
+
+      try {
+        Log.d("SearchDebug", "Starting search for query: $query")
+        var queryRef = firestore.collection("tutor_sessions")
+          .orderBy("createdAt", Query.Direction.DESCENDING)
+          .limit(50) // Fetch a larger batch to filter locally
+
+        if (!isRefresh && lastVisible != null) {
+          queryRef = queryRef.startAfter(lastVisible!!)
+        }
+
+        val snapshot = queryRef.get().await()
+        Log.d("L6", "Fetched ${snapshot.documents.size} documents from Firestore")
+
+        val allSessions = snapshot.documents.mapNotNull { it.toObject<TutorSession>() }
+        Log.d("L6", "Mapped ${allSessions.size} documents to TutorSession objects")
+
+        val filteredSessions = allSessions.filter { session ->
+          val skillName = session.skillName?.lowercase() ?: ""
+          query.lowercase() in skillName || skillName == query.lowercase()
+        }.take(pageSize)
+
+        Log.d("L6", "Filtered ${filteredSessions.size} sessions matching the query")
+
+        lastVisible = if (snapshot.documents.isNotEmpty()) {
+          snapshot.documents[snapshot.documents.size - 1]
+        } else {
+          null
+        }
+
+        if (filteredSessions.size < pageSize) {
+          isEndReached = true
+          Log.d("L6", "End reached for search results")
+        }
+
+        if (filteredSessions.isNotEmpty()) {
+          binding.tutorsSearchViewSwitcher.displayedChild = 0 // Show results
+          if (isRefresh) {
+            searchedAdapter.clearAndSetItems(filteredSessions)
+            Log.d("L6", "Adapter refreshed with ${filteredSessions.size} items")
+          } else {
+            searchedAdapter.addItems(filteredSessions)
+            Log.d("L6", "Adapter added ${filteredSessions.size} items")
+          }
+        } else if (isRefresh && searchedAdapter.itemCount == 0) {
+          binding.tutorsSearchViewSwitcher.displayedChild = 1 // Show "No results found"
+          Log.d("L6", "No results found, showing empty state")
+        }
+
+      } catch (e: Exception) {
+        Log.e("L6", "Error during search: ${e.message}")
+        Toast.makeText(requireContext(), "Failed to fetch search results", Toast.LENGTH_LONG).show()
+        if (searchedAdapter.itemCount == 0) {
+          binding.tutorsSearchViewSwitcher.displayedChild = 1 // Show "No results found"
+        }
+      } finally {
+        isLoading = false
+      }
+    }
+
+    binding.tutorsSearchedRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        val layoutManager = recyclerView.layoutManager as GridLayoutManager
+        val totalItemCount = layoutManager.itemCount
+        val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+        if (!isLoading && !isEndReached && totalItemCount > 0 && lastVisibleItem >= totalItemCount - 4) {
+          loadSearchResults()
+        }
+      }
+    })
+
+    loadSearchResults(isRefresh = true)
+  }
+
+  fun closeSearchView() {
+    binding.tutorsViewSwitcher.visibility = View.VISIBLE
+    binding.tutorsSearchViewSwitcher.visibility = View.GONE
   }
 
   override fun onDestroyView() {
@@ -173,7 +272,6 @@ class TutorsFragment : Fragment() {
 
   @SuppressLint("SetTextI18n", "MissingInflatedId")
   private fun displayTutorDialog(tutor: TutorSession) {
-    binding.tutorsSwipeRefreshLayout.isRefreshing = true
     val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.tutor_details, null)
     val dialog = android.app.AlertDialog.Builder(requireContext())
       .setView(dialogView)

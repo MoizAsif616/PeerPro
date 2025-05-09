@@ -43,21 +43,21 @@ xmlns:tools="http://schemas.android.com/tools"
       android:id="@+id/tutors_search_view_switcher"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:visibility="gone">
+      >
       
       <!-- this will display search results i.e tutros cards -->
       <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tutors_searched_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        />
       <!-- This will be displayed if no tutors are found -->
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone">
+        >
         
         <TextView
           android:layout_width="wrap_content"
