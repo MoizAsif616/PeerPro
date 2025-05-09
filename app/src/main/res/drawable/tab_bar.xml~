@@ -7,7 +7,8 @@
   <path
     android:pathData="M15,0L337,0A15,15 0,0 1,352 15L352,46A15,15 0,0 1,337 61L15,61A15,15 0,0 1,0 46L0,15A15,15 0,0 1,15 0z"      android:fillColor="?attr/peerMain"/>
   <path
-    android:pathData="M15,0L337,0A15,15 0,0 1,352 15L352,46A15,15 0,0 1,337 61L15,61A15,15 0,0 1,0 46L0,15A15,15 0,0 1,15 0z"      android:fillAlpha="0.2">
+      android:pathData="M30.5,0L321.32,0A30.5,30.5 0,0 1,351.82 30.5L351.82,30.5A30.5,30.5 0,0 1,321.32 61L30.5,61A30.5,30.5 0,0 1,0 30.5L0,30.5A30.5,30.5 0,0 1,30.5 0z"
+      android:fillAlpha="0.2">
     <aapt:attr name="android:fillColor">
       <gradient
           android:startX="176.36"

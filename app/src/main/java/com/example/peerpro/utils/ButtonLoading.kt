@@ -18,7 +18,7 @@ object ButtonLoadingUtils {
     // Get your custom textPrimary color from theme
     val normalColor = MaterialColors.getColor(
       button,
-      R.attr.textPrimary // Your custom theme attribute
+      R.attr.buttonTextPrimary // Your custom theme attribute
     )
 
     // Get disabled color (grey_1 from colors.xml)

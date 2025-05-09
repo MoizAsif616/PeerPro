@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/main"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:weightSum="8.4"
+  android:orientation="vertical"
+  android:paddingVertical="10dp"
+  android:background="@drawable/display_cardbg">
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.4"
+    android:gravity="end"
+    android:orientation="horizontal">
+    
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/deleteButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:fontFamily="@font/poppins_regular"
+      android:layout_marginHorizontal="20dp"
+      android:padding="2dp"
+      android:text=" Delete"
+      android:textColor="@color/white"
+      android:textSize="17sp"
+      app:backgroundTint="?attr/peerMain"
+      app:cornerRadius="12dp" />
+  </LinearLayout>
+  <TextView
+    android:id="@+id/subject"
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="20dp"
+    android:fontFamily="@font/poppins_regular"
+    android:text="Django MVT andRest Framework"
+    android:textColor="?attr/textPrimary"
+    android:textSize="20sp"
+    android:maxLines="2"
+    android:ellipsize="end"
+    android:layout_weight="1.3"
+    android:gravity="start"/>
+  
+  <View
+    android:id="@+id/divider"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/grey_1"
+    android:layout_marginHorizontal="15dp"/>
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:orientation="horizontal"
+    android:layout_weight="0.6"
+    android:layout_marginHorizontal="20dp">
+    
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:orientation="horizontal"
+      android:layout_weight="0.6"
+      android:gravity="start">
+      
+      <TextView
+        android:id="@+id/type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="17sp"
+        android:text="Type: " />
+      
+      <TextView
+        android:id="@+id/tnotes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/peerLight"
+        android:text="Printed" />
+    </LinearLayout>
+  
+  </LinearLayout>
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:orientation="horizontal"
+    android:layout_marginHorizontal="20dp"
+    android:layout_weight="0.6">
+    
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_weight="0.6"
+      android:layout_gravity="center_vertical">
+      
+      <TextView
+        android:id="@+id/instructorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="17sp"
+        android:text="Instructor: " />
+      
+      <TextView
+        android:id="@+id/instructorname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/peerLight"
+        android:text="name" />
+    </LinearLayout>
+  
+  </LinearLayout>
+  
+  
+  <TextView
+    android:id="@+id/description"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="4.9"
+    android:layout_marginHorizontal="20dp"
+    android:padding="10dp"
+    android:background="@drawable/special_textview_bg"
+    android:gravity="top|start"
+    android:text="Description here!"
+    android:inputType="textMultiLine"
+    android:fontFamily="@font/poppins_regular"
+    android:maxLength="350"
+    android:maxLines="10"
+    android:overScrollMode="always"
+    android:scrollbars="vertical"
+    android:textSize="17sp" />
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="20dp"
+    android:layout_weight="0.8">
+    
+    <TextView
+      android:id="@+id/cost"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="17sp"
+      android:gravity="end"
+      android:layout_weight="0.8"
+      android:layout_gravity="center_vertical"
+      android:textColor="?attr/textPrimary"
+      android:fontFamily="@font/poppins_medium"
+      android:text="Rs. 3000" />
+  </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,21 @@
+package com.example.peerpro.utils
+
+import com.google.firebase.auth.FirebaseAuth
+import io.supabase.storage.Storage
+import java.net.URL
+
+object SupabaseStorage {
+  private const val SUPABASE_URL = "https://your-project-id.supabase.co"
+  private const val SUPABASE_KEY = "your-anon-key"
+
+  val client: Storage by lazy {
+    Storage(
+      supabaseUrl = URL(SUPABASE_URL),
+      supabaseKey = SUPABASE_KEY,
+//      customHeaders = {
+//        // Add Firebase JWT if using private buckets
+//        mapOf("Authorization" to "Bearer ${FirebaseAuth.getInstance().currentUser?.getIdToken(false)?.result?.token}")
+//      }
+    )
+  }
+}
