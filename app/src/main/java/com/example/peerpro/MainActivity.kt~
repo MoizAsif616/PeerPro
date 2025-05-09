@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     // Add padding (1.5% of screen width)
     val screenWidth = Resources.getSystem().displayMetrics.widthPixels
     val padding = (screenWidth * 0.02).toInt()
-    viewPager.setPadding(padding, padding / 2, padding, padding / 2)
+    viewPager.setPadding(padding, padding / 3, padding, padding / 3)
     viewPager.clipToPadding = false
 
     // Connect TabLayout with ViewPager using TabLayoutMediator
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         LinearLayout.LayoutParams.WRAP_CONTENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
       ).apply {
-        topMargin = 4.dpToPx()
+        topMargin = 3.dpToPx()
       }
     }
 

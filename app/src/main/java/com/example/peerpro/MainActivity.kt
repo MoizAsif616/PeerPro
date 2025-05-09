@@ -150,13 +150,14 @@ class MainActivity : AppCompatActivity() {
         LinearLayout.LayoutParams.WRAP_CONTENT, // Keep wrap_content
         LinearLayout.LayoutParams.WRAP_CONTENT  // Keep wrap_content
       ).apply {
-        topMargin = 10.dpToPx()
+        topMargin = 8.dpToPx()
       }
       scaleType = ImageView.ScaleType.CENTER_INSIDE
     }
 
     val textView = TextView(this).apply {
       text = tabText
+      textSize = 10f
       gravity = Gravity.CENTER
       setTextColor(Color.WHITE)
       typeface = ResourcesCompat.getFont(
@@ -167,7 +168,7 @@ class MainActivity : AppCompatActivity() {
         LinearLayout.LayoutParams.WRAP_CONTENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
       ).apply {
-        topMargin = 4.dpToPx()
+        topMargin = 3.dpToPx()
       }
     }
 

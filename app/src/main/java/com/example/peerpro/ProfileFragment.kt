@@ -87,12 +87,12 @@ class ProfileFragment : Fragment() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
 
     val userId = UserCache.getId() ?: return
+    Log.d("L6", "Fetching user data for UID: $userId")
 
     firestore.collection("users").document(userId).get()
       .addOnSuccessListener { document ->
         val user = document.toObject(User::class.java)
         user?.let {
-          UserCache.setUser(it)
           binding.peerBio.text = it.bio
           binding.peerEmail.text = it.email
 
@@ -246,6 +246,7 @@ class ProfileFragment : Fragment() {
 
     val intent = Intent(requireContext(), Auth::class.java)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    auth.signOut()
     startActivity(intent)
   }
 

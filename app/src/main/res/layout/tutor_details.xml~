@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/main"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:weightSum="10"
+  android:orientation="vertical"
+  android:paddingVertical="10dp"
+  android:background="@drawable/display_cardbg">
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:gravity="center"
+    android:layout_marginHorizontal="20dp"
+    android:orientation="horizontal"
+    android:layout_weight="0.8">
+    
+    <TextView
+      android:id="@+id/tutor_peer_rollno"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:fontFamily="@font/poppins_medium"
+      android:text="Loading..."
+      android:textColor="@color/peerLight"
+      android:textSize="23sp" />
+    
+    <View
+      android:layout_width="2dp"
+      android:layout_height="20dp"
+      android:layout_gravity="center_vertical"
+      android:layout_marginHorizontal="8dp"
+      android:layout_marginTop="-2dp"
+      android:background="@color/black" />
+    
+    <TextView
+      android:id="@+id/tutor_peer_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:fontFamily="@font/poppins_medium"
+      android:text="Loading..."
+      android:maxLines="1"
+      android:layout_gravity="center"
+      android:ellipsize="end"
+      android:textColor="@color/peerLight"
+      android:textSize="23sp" />
+  </LinearLayout>
+  
+  <TextView
+    android:id="@+id/subject"
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="20dp"
+    android:fontFamily="@font/poppins_regular"
+    android:text="Loading..."
+    android:textColor="?attr/textPrimary"
+    android:textSize="20sp"
+    android:maxLines="2"
+    android:ellipsize="end"
+    android:layout_weight="1.3"
+    android:gravity="start"/>
+  
+  <View
+    android:id="@+id/divider"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/grey_1"
+    android:layout_marginHorizontal="15dp"/>
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:orientation="horizontal"
+    android:layout_weight="0.6"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginTop="1dp">
+    
+    <LinearLayout
+      android:id="@+id/genderRow"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:orientation="horizontal"
+      android:layout_weight="0.6"
+      android:gravity="start">
+      
+      <TextView
+        android:id="@+id/genderLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="15sp"
+        android:text="Preferred gender: " />
+      
+      <TextView
+        android:id="@+id/tgender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/peerLight"
+        android:text="Any" />
+    </LinearLayout>
+    
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_gravity="center_vertical">
+      
+      <TextView
+        android:id="@+id/sessionTypeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="15sp"
+        android:text="Type: " />
+      
+      <TextView
+        android:id="@+id/type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="15sp"
+        android:textColor="@color/peerLight"
+        android:text="Online" />
+    </LinearLayout>
+  </LinearLayout>
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:orientation="horizontal"
+    android:layout_marginHorizontal="20dp"
+    android:layout_weight="0.6">
+    
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_weight="0.6"
+      android:layout_gravity="center_vertical">
+      
+      <TextView
+        android:id="@+id/availableDaysLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="15sp"
+        android:text="Days: " />
+      
+      <TextView
+        android:id="@+id/days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/peerLight"
+        android:text="Flexible" />
+    </LinearLayout>
+    
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_gravity="center_vertical">
+      
+      <TextView
+        android:id="@+id/timeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
+        android:textSize="15sp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Time: " />
+      
+      <TextView
+        android:id="@+id/timeWindow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:fontFamily="@font/poppins_regular"
+        android:textColor="@color/peerLight"
+        android:text="Morning" />
+    </LinearLayout>
+  </LinearLayout>
+  
+  <TextView
+    android:id="@+id/description"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="4.9"
+    android:layout_marginHorizontal="20dp"
+    android:paddingHorizontal="10dp"
+   
+    android:background="@drawable/special_textview_bg"
+    android:gravity="top|start"
+    android:text="Description here!"
+    android:inputType="textMultiLine"
+    android:fontFamily="@font/poppins_regular"
+    android:maxLength="350"
+    android:maxLines="10"
+    android:overScrollMode="always"
+    android:scrollbars="vertical"
+    android:textSize="17sp"
+    android:layout_marginTop="3dp"/>
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="20dp"
+    android:layout_weight="0.6"
+    android:layout_marginTop="2dp">
+    
+    <TextView
+      android:id="@+id/costType"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:textColor="?attr/textPrimary"
+      android:textSize="17sp"
+      android:layout_weight="0.6"
+      android:layout_gravity="center_vertical"
+      android:fontFamily="@font/poppins_regular"
+      android:text="One Time" />
+    
+    <TextView
+      android:id="@+id/cost"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="17sp"
+      android:layout_gravity="center_vertical"
+      android:textColor="?attr/textPrimary"
+      android:fontFamily="@font/poppins_bold"
+      android:text="Rs. 3000" />
+  </LinearLayout>
+  
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginHorizontal="20dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_weight="1">
+    
+    <TextView
+      android:id="@+id/text"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:textColor="?attr/textPrimary"
+      android:textSize="15sp"
+      android:layout_weight="1"
+      android:fontFamily="@font/poppins_medium"
+      android:text="Excited to dive in? " />
+    
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/requestButton"
+      android:layout_width="120dp"
+      android:layout_height="40dp"
+      android:text="Request Now"
+      android:textSize="17sp"
+      android:textColor="@color/white"
+      app:backgroundTint="?attr/peerMain"
+      app:cornerRadius="7dp"
+      android:fontFamily="@font/poppins_regular"
+   
+      />
+  </LinearLayout>
+</LinearLayout>

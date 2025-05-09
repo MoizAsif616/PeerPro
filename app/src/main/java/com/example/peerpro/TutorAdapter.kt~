@@ -57,10 +57,6 @@ internal class TutorsAdapter(private val tutors: MutableList<TutorSession> , pri
       layoutParams.bottomMargin = itemMarginBottom
       itemView.layoutParams = layoutParams
 
-      itemView.setOnClickListener {
-        onTutorClick(tutor)
-      }
-
       item.tutorImage.layoutParams.width = (1.01 * imageSize).toInt()
       item.tutorImage.layoutParams.height = imageSize
 

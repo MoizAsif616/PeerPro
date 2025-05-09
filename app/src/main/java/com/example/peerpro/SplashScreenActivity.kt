@@ -1,16 +1,20 @@
 package com.example.peerpro
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.peerpro.models.User
 import com.example.peerpro.utils.SharedPrefHelper
 import com.example.peerpro.utils.UserCache
+import com.google.android.gms.common.util.SharedPreferencesUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
 
   val auth = FirebaseAuth.getInstance()
@@ -19,40 +23,23 @@ class SplashScreenActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.splashscreen)
-
-    // Navigate to Auth activity after 5 seconds
-    Handler(Looper.getMainLooper()).postDelayed({
-//      val intent = Intent(this, Auth::class.java)
-//      startActivity(intent)
-//      finish()
-      checkAuthAndRedirect()
-    }, 0)
+    checkAuthAndRedirect()
   }
 
   private fun checkAuthAndRedirect() {
-    val currentUser = auth.currentUser
-
-    if (currentUser != null) {
-      // User is already authenticated
-      currentUser.getIdToken(true) // Force token refresh
-        .addOnCompleteListener { task ->
-          if (task.isSuccessful) {
-            // Token is valid (either existing or refreshed)
-            val uid = currentUser.uid
-            fetchUserDataAndRedirect(uid)
-          } else {
-            // Token refresh failed
-            redirectToAuth()
-          }
-        }
-    } else {
-      // No user is signed in
+    auth.currentUser?.let { user ->
+      val uid = user.uid
+      Log.d("L6", "User is logged in with UID: $uid")
+      fetchUserDataAndRedirect(uid)
+    } ?: run {
+      Log.d("L6", "No user is logged in")
       redirectToAuth()
     }
   }
 
   private fun fetchUserDataAndRedirect(uid: String) {
     try {
+      Log.d("L6", "Fetching user data for UID: $uid")
       FirebaseFirestore.getInstance()
         .collection("users")
         .document(uid)
@@ -65,6 +52,7 @@ class SplashScreenActivity : AppCompatActivity() {
               UserCache.setId(uid)
             }
           }
+          Log.d("L6", "Fetched user.")
           redirectToMain()
         }
         .addOnFailureListener {
