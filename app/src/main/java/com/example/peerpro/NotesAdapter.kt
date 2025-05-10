@@ -16,10 +16,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class NotesAdapter(
-  private val notes: MutableList<Note>,
-  private val onNoteClick: (Note) -> Unit
-) : RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
+class NotesAdapter(private val notes: MutableList<Note>, private val onNoteClick: (Note) -> Unit) :
+  RecyclerView.Adapter<NotesAdapter.NoteViewHolder>() {
 
   // Cached size calculations
   private var itemHeight: Int = 0
@@ -33,7 +31,7 @@ class NotesAdapter(
 
   fun addItems(newItems: List<Note>) {
     val startPosition = notes.size
-    notes.addAll(newItems)
+    notes.addAll(newItems.shuffled())
     notifyItemRangeInserted(startPosition, newItems.size)
   }
 

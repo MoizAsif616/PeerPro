@@ -263,6 +263,10 @@ class MainActivity : AppCompatActivity() {
       val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
       tutorsFragment?.closeSearchView()
     }
+    if (currentPage == "notes") {
+      val notesFragment = supportFragmentManager.findFragmentByTag("f2") as? NotesFragment
+      notesFragment?.closeSearchView()
+    }
 
   }
 

@@ -24,10 +24,11 @@ import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import android.view.Gravity
+import androidx.core.content.ContentProviderCompat.requireContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import androidx.core.view.isVisible
-
+import com.example.peerpro.models.TutorSession
 
 
 class NotesFragment : Fragment() {
@@ -42,6 +43,8 @@ class NotesFragment : Fragment() {
 
   private val firestore = FirebaseFirestore.getInstance()
   private val notes = mutableListOf<Note>()
+  lateinit var searchedAdapter: NotesAdapter;
+
 
   private inner class HorizontalSpacingDecoration : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
@@ -60,112 +63,210 @@ class NotesFragment : Fragment() {
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    setupRecyclerView()
-    setupListeners()
-    loadInitialNotes()
-  }
-
-  private fun setupRecyclerView() {
+    binding.notesSearchViewSwitcher.visibility = View.GONE
+    binding.notesViewSwitcher.visibility = View.VISIBLE
     adapter = NotesAdapter(notes) { note ->
       displayNoteDialog(note)
     }
-    binding.notesCardsRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+    binding.notesCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)
     binding.notesCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
     binding.notesCardsRecyclerView.adapter = adapter
 
-    binding.notesCardsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+    searchedAdapter = NotesAdapter(mutableListOf()) { note->
+      displayNoteDialog(note)
+    }
+
+    binding.notesSearchedRecyclerView.layoutManager = GridLayoutManager(context, 2)
+    binding.notesSearchedRecyclerView.adapter = searchedAdapter
+    binding.notesSearchedRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
+    binding.notesSearchedRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
       override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
         val layoutManager = recyclerView.layoutManager as GridLayoutManager
         val totalItemCount = layoutManager.itemCount
         val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-        if (!isLoading && !isEndReached && totalItemCount <= lastVisibleItem + 4) {
-          loadMoreNotes()
+        // Load more when reaching the 4th item
+        if (!isLoading && !isEndReached && totalItemCount > 0 && lastVisibleItem >= 4) {
+          loadNotes()
         }
       }
     })
-  }
-
-  private fun setupListeners() {
     binding.notesSwipeRefreshLayout.setOnRefreshListener {
       refreshNotes()
     }
-  }
 
-  private fun loadInitialNotes() {
-    binding.notesSwipeRefreshLayout.isRefreshing = true
     refreshNotes()
   }
 
+
+
+
   private fun refreshNotes() {
-    lifecycleScope.launch {
-      try {
-        lastVisible = null
-        isEndReached = false
-        notes.clear()
-
-        val query = firestore.collection("notes")
-          .orderBy("createdAt", Query.Direction.DESCENDING)
-          .limit(pageSize.toLong())
-
-        val snapshot = query.get().await()
-        val fetchedNotes = snapshot.documents.mapNotNull { it.toObject<Note>() }
-
-        if (fetchedNotes.isNotEmpty()) {
-          lastVisible = snapshot.documents.last()
-          adapter.clearAndSetItems(fetchedNotes)
-          binding.notesViewSwitcher.displayedChild = 0
-        } else {
-          binding.notesViewSwitcher.displayedChild = 1
-        }
-
-        if (fetchedNotes.size < pageSize) {
-          isEndReached = true
-        }
-      } catch (e: Exception) {
-        Toast.makeText(requireContext(), "Failed to load notes", Toast.LENGTH_SHORT).show()
-        if (notes.isEmpty()) {
-          binding.notesViewSwitcher.displayedChild = 1
-        }
-      } finally {
-        binding.notesSwipeRefreshLayout.isRefreshing = false
-      }
+    if (binding.notesSearchViewSwitcher.isVisible) {
+      binding.notesSwipeRefreshLayout.isRefreshing = false
+      return
     }
+    binding.notesSwipeRefreshLayout.isRefreshing = true
+    lastVisible = null
+    isEndReached = false
+    lifecycleScope.launch {
+      loadNotes(isRefresh = true)
+    }
+
   }
 
-  private fun loadMoreNotes() {
-    if (isLoading || isEndReached) return
+  private fun loadNotes(isRefresh: Boolean = false)  = lifecycleScope.launch {
+    if (isLoading || isEndReached) return@launch
+    isLoading = true
 
-    lifecycleScope.launch {
-      isLoading = true
       try {
-        val query = firestore.collection("notes")
+        var query = firestore.collection("notes")
           .orderBy("createdAt", Query.Direction.DESCENDING)
-          .startAfter(lastVisible!!)
           .limit(pageSize.toLong())
+
+        if (!isRefresh && lastVisible != null) {
+          query = query.startAfter(lastVisible!!)
+        }
 
         val snapshot = query.get().await()
         val fetchedNotes = snapshot.documents.mapNotNull { it.toObject<Note>() }
 
-        if (fetchedNotes.isNotEmpty()) {
-          lastVisible = snapshot.documents.last()
-          adapter.addItems(fetchedNotes)
+
+        lastVisible = if (snapshot.documents.isNotEmpty()) {
+          snapshot.documents[snapshot.documents.size - 1]
+        } else {
+          null
         }
+
 
         if (fetchedNotes.size < pageSize) {
           isEndReached = true
+        }
+        if (fetchedNotes.isNotEmpty()) {
+          binding.notesViewSwitcher.displayedChild = 0
+          if (isRefresh) {
+            adapter.clearAndSetItems(fetchedNotes)
+          } else {
+            adapter.addItems(fetchedNotes)
+          }
+        } else if (isRefresh && adapter.itemCount == 0) {
+          // Toast.makeText(requireContext(), "No session found", Toast.LENGTH_LONG).show()
+          binding.notesViewSwitcher.displayedChild = 1
+          isEndReached = true
+        }
+        if (isRefresh) {
+          binding.notesSwipeRefreshLayout.isRefreshing = false
         }
       } catch (e: Exception) {
         Toast.makeText(requireContext(), "Failed to load more notes", Toast.LENGTH_SHORT).show()
+        if (isRefresh && adapter.itemCount == 0) {
+          binding.notesViewSwitcher.displayedChild = 1
+        }
       } finally {
         isLoading = false
       }
     }
+
+
+  fun searchNotes(query: String) {
+    binding.notesViewSwitcher.visibility = View.GONE
+    binding.notesSearchViewSwitcher.visibility = View.VISIBLE
+    binding.notesSearchViewSwitcher.displayedChild = 0
+    searchedAdapter.clearAndSetItems(mutableListOf())
+    searchedAdapter.notifyDataSetChanged()
+    var lastVisible: DocumentSnapshot? = null
+    var isEndReached = false
+    var isLoading = false
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun loadSearchResults(isRefresh: Boolean = false) = lifecycleScope.launch {
+      if (isLoading || isEndReached) return@launch
+      isLoading = true
+
+      try {
+        Log.d("SearchDebug", "Starting search for query: $query")
+        var queryRef = firestore.collection("notes")
+          .orderBy("createdAt", Query.Direction.DESCENDING)
+          .limit(50) // Fetch a larger batch to filter locally
+
+        if (!isRefresh && lastVisible != null) {
+          queryRef = queryRef.startAfter(lastVisible!!)
+        }
+
+        val snapshot = queryRef.get().await()
+        Log.d("L6", "Fetched ${snapshot.documents.size} documents from Firestore")
+
+        val allSessions = snapshot.documents.mapNotNull { it.toObject<Note>() }
+        Log.d("L6", "Mapped ${allSessions.size} documents to Note objects")
+
+        val filteredNotes = allSessions.filter { note ->
+          val name = note.name?.lowercase() ?: ""
+          query.lowercase() in name || name == query.lowercase()
+        }.take(pageSize)
+
+        Log.d("L6", "Filtered ${filteredNotes.size} notes matching the query")
+
+        lastVisible = if (snapshot.documents.isNotEmpty()) {
+          snapshot.documents[snapshot.documents.size - 1]
+        } else {
+          null
+        }
+
+        if (filteredNotes.size < pageSize) {
+          isEndReached = true
+          Log.d("L6", "End reached for search results")
+        }
+
+        if (filteredNotes.isNotEmpty()) {
+          binding.notesSearchViewSwitcher.displayedChild = 0 // Show results
+          if (isRefresh) {
+            searchedAdapter.clearAndSetItems(filteredNotes)
+            Log.d("L6", "Adapter refreshed with ${filteredNotes.size} items")
+          } else {
+            searchedAdapter.addItems(filteredNotes)
+            Log.d("L6", "Adapter added ${filteredNotes.size} items")
+          }
+          Log.d("L6", "Adapter has ${searchedAdapter.itemCount} items")
+          searchedAdapter.notifyDataSetChanged()
+        } else if (isRefresh && searchedAdapter.itemCount == 0) {
+          binding.notesSearchViewSwitcher.displayedChild = 1 // Show "No results found"
+          Log.d("L6", "No results found, showing empty state")
+        }
+
+      } catch (e: Exception) {
+        Log.e("L6", "Error during search: ${e.message}")
+        Toast.makeText(requireContext(), "Failed to fetch search results", Toast.LENGTH_LONG).show()
+        if (searchedAdapter.itemCount == 0) {
+          binding.notesSearchViewSwitcher.displayedChild = 1 // Show "No results found"
+        }
+      } finally {
+        isLoading = false
+      }
+    }
+
+    binding.notesSearchedRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        val layoutManager = recyclerView.layoutManager as GridLayoutManager
+        val totalItemCount = layoutManager.itemCount
+        val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+        if (!isLoading && !isEndReached && totalItemCount > 0 && lastVisibleItem >= totalItemCount - 4) {
+          loadSearchResults()
+        }
+      }
+    })
+
+    loadSearchResults(isRefresh = true)
   }
 
+  fun closeSearchView() {
+    binding.notesViewSwitcher.visibility = View.VISIBLE
+    binding.notesSearchViewSwitcher.visibility = View.GONE
+    searchedAdapter.clearAndSetItems(mutableListOf())
+    searchedAdapter.notifyDataSetChanged()
+  }
   @SuppressLint("SetTextI18n")
   private fun displayNoteDialog(note: Note) {
     val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.notes_details, null)
@@ -245,35 +346,6 @@ class NotesFragment : Fragment() {
     dialog.show()
   }
 
-  fun searchNotes(query: String) {
-//    if (query.isBlank()) {
-//      refreshNotes()
-//      return
-//    }
-//
-//    lifecycleScope.launch {
-//      try {
-//        val snapshot = firestore.collection("notes")
-//          .orderBy("name")
-//          .startAt(query)
-//          .endAt("$query\uf8ff")
-//          .get()
-//          .await()
-//
-//        val results = snapshot.documents.mapNotNull { it.toObject<Note>() }
-//        adapter.clearAndSetItems(results)
-//
-//        if (results.isEmpty()) {
-//          binding.notesViewSwitcher.displayedChild = 1
-//        } else {
-//          binding.notesViewSwitcher.displayedChild = 0
-//        }
-//      } catch (e: Exception) {
-//        Toast.makeText(requireContext(), "Search failed", Toast.LENGTH_SHORT).show()
-//      }
-//    }
-
-  }
 
   override fun onDestroyView() {
     super.onDestroyView()
