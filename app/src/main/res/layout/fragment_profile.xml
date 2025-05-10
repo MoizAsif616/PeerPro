@@ -183,7 +183,7 @@
               android:layout_height="wrap_content"
               android:text="You haven't posted any session yet."
               android:textSize="18sp"
-              android:textColor="@color/grey_1" />
+              android:textColor="@color/peerLight" />
           </LinearLayout>
         </ViewSwitcher>
         
@@ -212,7 +212,7 @@
               android:layout_height="wrap_content"
               android:text="You are not offereing any notes yet."
               android:textSize="18sp"
-              android:textColor="@color/grey_1" />
+              android:textColor="@color/peerLight" />
           </LinearLayout>
         </ViewSwitcher>
       </LinearLayout>
