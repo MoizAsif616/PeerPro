@@ -2,6 +2,7 @@ package com.example.peerpro
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -69,6 +70,16 @@ class SessionsFragment : Fragment() {
         binding.peerName.text = session.name
         binding.peerRoll.text = session.rollNumber
         binding.Subject.text = session.subject
+        itemView.setOnClickListener {
+          val intent = Intent(context, MessagesActivity::class.java).apply {
+            putExtra("peer_name", session.name)
+            //putExtra("peer_roll", session.rollNumber)
+            //putExtra("subject", session.subject)
+            putExtra("peer_image_res", session.imageRes as Int)
+
+          }
+          startActivity(intent)
+        }
       }
     }
 
