@@ -45,7 +45,6 @@ class TutorsFragment : Fragment() {
   private var isEndReached = false
   private val binding get() = _binding!!
 
-
   private inner class HorizontalSpacingDecoration : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
       val spacing = (resources.displayMetrics.widthPixels * 0.01).toInt() // 1% spacing
@@ -55,6 +54,7 @@ class TutorsFragment : Fragment() {
 
   private val firestore = FirebaseFirestore.getInstance()
   private val tutorSessions = mutableListOf<TutorSession>()
+  lateinit var searchedAdapter: TutorsAdapter;
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -66,12 +66,23 @@ class TutorsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+    binding.tutorsSearchViewSwitcher.visibility = View.GONE
+    binding.tutorsViewSwitcher.visibility = View.VISIBLE
+
     adapter = TutorsAdapter(mutableListOf()){ tutor ->
       displayTutorDialog(tutor)
     }
     binding.tutorsCardsRecyclerView.layoutManager = GridLayoutManager(context, 2)
     binding.tutorsCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
     binding.tutorsCardsRecyclerView.adapter = adapter
+
+    searchedAdapter = TutorsAdapter(mutableListOf()) { tutor ->
+      displayTutorDialog(tutor)
+    }
+
+    binding.tutorsSearchedRecyclerView.layoutManager = GridLayoutManager(context, 2)
+    binding.tutorsSearchedRecyclerView.adapter = searchedAdapter
+    binding.tutorsSearchedRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
 
     binding.tutorsCardsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
       override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -164,22 +175,14 @@ class TutorsFragment : Fragment() {
   fun searchTutors(query: String) {
     binding.tutorsViewSwitcher.visibility = View.GONE
     binding.tutorsSearchViewSwitcher.visibility = View.VISIBLE
-    binding.tutorsSearchViewSwitcher.displayedChild = 0 // Show loading state initially
-
-    val searchedAdapter = TutorsAdapter(mutableListOf()) { tutor ->
-      displayTutorDialog(tutor)
-    }
-
-    if (binding.tutorsSearchedRecyclerView.adapter == null) {
-      binding.tutorsSearchedRecyclerView.layoutManager = GridLayoutManager(context, 2)
-      binding.tutorsSearchedRecyclerView.adapter = searchedAdapter
-      binding.tutorsSearchedRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
-    }
-
+    binding.tutorsSearchViewSwitcher.displayedChild = 0
+    searchedAdapter.clearAndSetItems(mutableListOf())
+    searchedAdapter.notifyDataSetChanged()
     var lastVisible: DocumentSnapshot? = null
     var isEndReached = false
     var isLoading = false
 
+    @SuppressLint("NotifyDataSetChanged")
     fun loadSearchResults(isRefresh: Boolean = false) = lifecycleScope.launch {
       if (isLoading || isEndReached) return@launch
       isLoading = true
@@ -227,6 +230,8 @@ class TutorsFragment : Fragment() {
             searchedAdapter.addItems(filteredSessions)
             Log.d("L6", "Adapter added ${filteredSessions.size} items")
           }
+          Log.d("L6", "Adapter has ${searchedAdapter.itemCount} items")
+          searchedAdapter.notifyDataSetChanged()
         } else if (isRefresh && searchedAdapter.itemCount == 0) {
           binding.tutorsSearchViewSwitcher.displayedChild = 1 // Show "No results found"
           Log.d("L6", "No results found, showing empty state")
@@ -262,6 +267,8 @@ class TutorsFragment : Fragment() {
   fun closeSearchView() {
     binding.tutorsViewSwitcher.visibility = View.VISIBLE
     binding.tutorsSearchViewSwitcher.visibility = View.GONE
+    searchedAdapter.clearAndSetItems(mutableListOf())
+    searchedAdapter.notifyDataSetChanged()
   }
 
   override fun onDestroyView() {
