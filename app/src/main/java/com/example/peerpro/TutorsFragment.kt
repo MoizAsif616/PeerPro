@@ -2,6 +2,7 @@ package com.example.peerpro
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.Bundle
@@ -275,7 +276,7 @@ class TutorsFragment : Fragment() {
   }
 
   @SuppressLint("SetTextI18n", "MissingInflatedId")
-  private fun displayTutorDialog(tutor: TutorSession) {
+  public fun displayTutorDialog(tutor: TutorSession) {
     val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.tutor_details, null)
     val dialog = android.app.AlertDialog.Builder(requireContext())
       .setView(dialogView)
@@ -319,7 +320,7 @@ class TutorsFragment : Fragment() {
 
     var tutorName: String? = null
     var tutorRollNumber: String? = null
-    var userRef = firestore.collection("users").document(tutor.peerId)
+    val userRef = firestore.collection("users").document(tutor.peerId)
     userRef.get().addOnSuccessListener { userDoc ->
       Log.d("L6", "Fetched user data for UID: ${tutor.peerId}")
       tutorName = userDoc.getString("name") ?: "Unknown"
@@ -329,6 +330,9 @@ class TutorsFragment : Fragment() {
       name.text = tutorName
       roll.text = tutorRollNumber
 
+      // Set click listeners to show peer profile
+      name.setOnClickListener { showPeerProfile(tutor.peerId) }
+      roll.setOnClickListener { showPeerProfile(tutor.peerId) }
     }.addOnFailureListener {
       Toast.makeText(requireContext(), "Failed to fetch user data", Toast.LENGTH_SHORT).show()
     }
@@ -366,5 +370,11 @@ class TutorsFragment : Fragment() {
 
     binding.tutorsSwipeRefreshLayout.isRefreshing = false
     dialog.show()
+  }
+
+  private fun showPeerProfile(peerId: String) {
+    val intent = Intent(requireContext(), ProfilePreviewActivity::class.java)
+    intent.putExtra("peerId", peerId)
+    startActivity(intent)
   }
 }
