@@ -22,6 +22,6 @@
         android:layout_marginTop="10dp"
         android:textStyle="bold"
         android:textSize="20sp"
-        android:fontFamily="@font/poppins_bold"
+        android:fontFamily="@font/coiny_regular"
         android:text="Where Peers Power Progress"/>
 </RelativeLayout>

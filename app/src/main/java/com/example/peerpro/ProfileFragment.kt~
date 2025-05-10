@@ -87,13 +87,11 @@ class ProfileFragment : Fragment() {
     }
 
     refreshProfile()
-    Log.d("user data: ", UserCache.getUser().toString())
+    // Log.d("user data: ", UserCache.getUser().toString())
   }
 
   private fun refreshProfile() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
-    binding.peerBio.text = UserCache.getUser()?.bio
-    binding.peerEmail.text = UserCache.getUser()?.email
     while(UserCache.getId() == null){
       Log.d("L6", "Waiting for user ID to be set")
     }
@@ -105,6 +103,9 @@ class ProfileFragment : Fragment() {
         Log.d("L6", "User data fetched successfully")
         val user = document.toObject(User::class.java)
         user?.let {
+          binding.peerBio.text = it.bio
+          binding.peerEmail.text = it.email
+
           // Update tutor sessions
           val tutorSessionIds = it.tutorSessionIds
           if (tutorSessionIds.isEmpty()) {

@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Date
 
-internal class TutorsAdapter(private val tutors: MutableList<TutorSession> , private val onTutorClick: (TutorSession) -> Unit) :
+class TutorsAdapter(private val tutors: MutableList<TutorSession> , private val onTutorClick: (TutorSession) -> Unit) :
   RecyclerView.Adapter<TutorsAdapter.TutorViewHolder>() {
 
   // Cached size calculations

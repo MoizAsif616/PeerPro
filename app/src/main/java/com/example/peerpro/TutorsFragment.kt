@@ -2,6 +2,7 @@ package com.example.peerpro
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.Bundle
@@ -45,7 +46,6 @@ class TutorsFragment : Fragment() {
   private var isEndReached = false
   private val binding get() = _binding!!
 
-
   private inner class HorizontalSpacingDecoration : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
       val spacing = (resources.displayMetrics.widthPixels * 0.01).toInt() // 1% spacing
@@ -55,6 +55,7 @@ class TutorsFragment : Fragment() {
 
   private val firestore = FirebaseFirestore.getInstance()
   private val tutorSessions = mutableListOf<TutorSession>()
+  lateinit var searchedAdapter: TutorsAdapter;
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +67,9 @@ class TutorsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+    binding.tutorsSearchViewSwitcher.visibility = View.GONE
+    binding.tutorsViewSwitcher.visibility = View.VISIBLE
+
     adapter = TutorsAdapter(mutableListOf()){ tutor ->
       displayTutorDialog(tutor)
     }
@@ -73,6 +77,13 @@ class TutorsFragment : Fragment() {
     binding.tutorsCardsRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
     binding.tutorsCardsRecyclerView.adapter = adapter
 
+    searchedAdapter = TutorsAdapter(mutableListOf()) { tutor ->
+      displayTutorDialog(tutor)
+    }
+
+    binding.tutorsSearchedRecyclerView.layoutManager = GridLayoutManager(context, 2)
+    binding.tutorsSearchedRecyclerView.adapter = searchedAdapter
+    binding.tutorsSearchedRecyclerView.addItemDecoration(HorizontalSpacingDecoration())
     binding.tutorsCardsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
       override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
@@ -86,7 +97,6 @@ class TutorsFragment : Fragment() {
         }
       }
     })
-
     binding.tutorsSwipeRefreshLayout.setOnRefreshListener {
       refreshTutors()
     }
@@ -162,8 +172,102 @@ class TutorsFragment : Fragment() {
   }
 
   fun searchTutors(query: String) {
-    // Implement search functionality here
-    // For example, filter a list of tutors based on the query
+    binding.tutorsViewSwitcher.visibility = View.GONE
+    binding.tutorsSearchViewSwitcher.visibility = View.VISIBLE
+    binding.tutorsSearchViewSwitcher.displayedChild = 0
+    searchedAdapter.clearAndSetItems(mutableListOf())
+    searchedAdapter.notifyDataSetChanged()
+    var lastVisible: DocumentSnapshot? = null
+    var isEndReached = false
+    var isLoading = false
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun loadSearchResults(isRefresh: Boolean = false) = lifecycleScope.launch {
+      if (isLoading || isEndReached) return@launch
+      isLoading = true
+
+      try {
+        Log.d("SearchDebug", "Starting search for query: $query")
+        var queryRef = firestore.collection("tutor_sessions")
+          .orderBy("createdAt", Query.Direction.DESCENDING)
+          .limit(50) // Fetch a larger batch to filter locally
+
+        if (!isRefresh && lastVisible != null) {
+          queryRef = queryRef.startAfter(lastVisible!!)
+        }
+
+        val snapshot = queryRef.get().await()
+        Log.d("L6", "Fetched ${snapshot.documents.size} documents from Firestore")
+
+        val allSessions = snapshot.documents.mapNotNull { it.toObject<TutorSession>() }
+        Log.d("L6", "Mapped ${allSessions.size} documents to TutorSession objects")
+
+        val filteredSessions = allSessions.filter { session ->
+          val skillName = session.skillName?.lowercase() ?: ""
+          query.lowercase() in skillName || skillName == query.lowercase()
+        }.take(pageSize)
+
+        Log.d("L6", "Filtered ${filteredSessions.size} sessions matching the query")
+
+        lastVisible = if (snapshot.documents.isNotEmpty()) {
+          snapshot.documents[snapshot.documents.size - 1]
+        } else {
+          null
+        }
+
+        if (filteredSessions.size < pageSize) {
+          isEndReached = true
+          Log.d("L6", "End reached for search results")
+        }
+
+        if (filteredSessions.isNotEmpty()) {
+          binding.tutorsSearchViewSwitcher.displayedChild = 0 // Show results
+          if (isRefresh) {
+            searchedAdapter.clearAndSetItems(filteredSessions)
+            Log.d("L6", "Adapter refreshed with ${filteredSessions.size} items")
+          } else {
+            searchedAdapter.addItems(filteredSessions)
+            Log.d("L6", "Adapter added ${filteredSessions.size} items")
+          }
+          Log.d("L6", "Adapter has ${searchedAdapter.itemCount} items")
+          searchedAdapter.notifyDataSetChanged()
+        } else if (isRefresh && searchedAdapter.itemCount == 0) {
+          binding.tutorsSearchViewSwitcher.displayedChild = 1 // Show "No results found"
+          Log.d("L6", "No results found, showing empty state")
+        }
+
+      } catch (e: Exception) {
+        Log.e("L6", "Error during search: ${e.message}")
+        Toast.makeText(requireContext(), "Failed to fetch search results", Toast.LENGTH_LONG).show()
+        if (searchedAdapter.itemCount == 0) {
+          binding.tutorsSearchViewSwitcher.displayedChild = 1 // Show "No results found"
+        }
+      } finally {
+        isLoading = false
+      }
+    }
+
+    binding.tutorsSearchedRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        val layoutManager = recyclerView.layoutManager as GridLayoutManager
+        val totalItemCount = layoutManager.itemCount
+        val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+        if (!isLoading && !isEndReached && totalItemCount > 0 && lastVisibleItem >= totalItemCount - 4) {
+          loadSearchResults()
+        }
+      }
+    })
+
+    loadSearchResults(isRefresh = true)
+  }
+
+  fun closeSearchView() {
+    binding.tutorsViewSwitcher.visibility = View.VISIBLE
+    binding.tutorsSearchViewSwitcher.visibility = View.GONE
+    searchedAdapter.clearAndSetItems(mutableListOf())
+    searchedAdapter.notifyDataSetChanged()
   }
 
   override fun onDestroyView() {
@@ -172,8 +276,7 @@ class TutorsFragment : Fragment() {
   }
 
   @SuppressLint("SetTextI18n", "MissingInflatedId")
-  private fun displayTutorDialog(tutor: TutorSession) {
-    binding.tutorsSwipeRefreshLayout.isRefreshing = true
+  public fun displayTutorDialog(tutor: TutorSession) {
     val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.tutor_details, null)
     val dialog = android.app.AlertDialog.Builder(requireContext())
       .setView(dialogView)
@@ -217,7 +320,7 @@ class TutorsFragment : Fragment() {
 
     var tutorName: String? = null
     var tutorRollNumber: String? = null
-    var userRef = firestore.collection("users").document(tutor.peerId)
+    val userRef = firestore.collection("users").document(tutor.peerId)
     userRef.get().addOnSuccessListener { userDoc ->
       Log.d("L6", "Fetched user data for UID: ${tutor.peerId}")
       tutorName = userDoc.getString("name") ?: "Unknown"
@@ -227,6 +330,9 @@ class TutorsFragment : Fragment() {
       name.text = tutorName
       roll.text = tutorRollNumber
 
+      // Set click listeners to show peer profile
+      name.setOnClickListener { showPeerProfile(tutor.peerId) }
+      roll.setOnClickListener { showPeerProfile(tutor.peerId) }
     }.addOnFailureListener {
       Toast.makeText(requireContext(), "Failed to fetch user data", Toast.LENGTH_SHORT).show()
     }
@@ -264,5 +370,11 @@ class TutorsFragment : Fragment() {
 
     binding.tutorsSwipeRefreshLayout.isRefreshing = false
     dialog.show()
+  }
+
+  private fun showPeerProfile(peerId: String) {
+    val intent = Intent(requireContext(), ProfilePreviewActivity::class.java)
+    intent.putExtra("peerId", peerId)
+    startActivity(intent)
   }
 }

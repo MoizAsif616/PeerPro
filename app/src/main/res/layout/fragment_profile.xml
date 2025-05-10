@@ -59,9 +59,10 @@
               <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rating"
+                android:text="⭐"
                 android:textColor="?attr/textPrimary"
-                android:textSize="20sp"/>
+                android:textSize="11.5sp"
+                android:layout_marginTop="-1dp"/>
               <TextView
                 android:id="@+id/peerRating"
                 android:layout_width="wrap_content"
@@ -69,7 +70,7 @@
                 android:layout_marginStart="5dp"
                 android:text="0.0"
                 android:textColor="@color/peerLight"
-                android:textSize="20sp"/>
+                android:textSize="17sp"/>
 
               <ImageView
                 android:layout_width="14dp"
@@ -183,7 +184,7 @@
               android:layout_height="wrap_content"
               android:text="You haven't posted any session yet."
               android:textSize="18sp"
-              android:textColor="@color/grey_1" />
+              android:textColor="@color/peerLight" />
           </LinearLayout>
         </ViewSwitcher>
         
@@ -212,7 +213,7 @@
               android:layout_height="wrap_content"
               android:text="You are not offereing any notes yet."
               android:textSize="18sp"
-              android:textColor="@color/grey_1" />
+              android:textColor="@color/peerLight" />
           </LinearLayout>
         </ViewSwitcher>
       </LinearLayout>

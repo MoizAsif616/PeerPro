@@ -72,9 +72,9 @@ class MainActivity : AppCompatActivity() {
     }.attach()
 
     // Set default selection to Sessions tab (position 0)
-    viewPager.setCurrentItem(0, false)
-    updateTabAppearance(tabLayout.getTabAt(0), true)
-    sessionsSelected()
+    viewPager.setCurrentItem(3, false)
+    updateTabAppearance(tabLayout.getTabAt(3), true)
+    profileSelected()
 
     // Tab selection listener
     tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -259,11 +259,27 @@ class MainActivity : AppCompatActivity() {
     val searchBarFragment = supportFragmentManager.findFragmentById(R.id.search_bar_frame) as? SearchBarFragment
     searchBarFragment?.clearInputText()
     binding.searchBarFrame.visibility = View.GONE
+    if (currentPage == "tutors") {
+      val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
+      tutorsFragment?.closeSearchView()
+    }
 
   }
 
   fun performSearch(query: String) {
-    Toast.makeText(this, "Search query: $query", Toast.LENGTH_SHORT).show()
+    when (currentPage) {
+      "tutors" -> {
+        val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
+        tutorsFragment?.searchTutors(query)
+      }
+      "notes" -> {
+        val notesFragment = supportFragmentManager.findFragmentByTag("f2") as? NotesFragment
+        notesFragment?.searchNotes(query)
+      }
+      else -> {
+        Toast.makeText(this, "Search is not available on this page", Toast.LENGTH_SHORT).show()
+      }
+    }
   }
 
   private fun routeToPosting() {

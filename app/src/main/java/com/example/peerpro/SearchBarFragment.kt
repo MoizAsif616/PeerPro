@@ -41,7 +41,7 @@ class SearchBarFragment : Fragment() {
         if (!query.isNullOrEmpty()) {
             (activity as? MainActivity)?.performSearch(query)
         } else {
-            Toast.makeText(requireContext(), "Please enter a search query", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Please type in something", Toast.LENGTH_SHORT).show()
         }
     }
     binding?.backBtn?.setOnClickListener {

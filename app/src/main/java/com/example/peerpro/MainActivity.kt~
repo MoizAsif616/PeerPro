@@ -150,13 +150,14 @@ class MainActivity : AppCompatActivity() {
         LinearLayout.LayoutParams.WRAP_CONTENT, // Keep wrap_content
         LinearLayout.LayoutParams.WRAP_CONTENT  // Keep wrap_content
       ).apply {
-        topMargin = 10.dpToPx()
+        topMargin = 8.dpToPx()
       }
       scaleType = ImageView.ScaleType.CENTER_INSIDE
     }
 
     val textView = TextView(this).apply {
       text = tabText
+      textSize = 10f
       gravity = Gravity.CENTER
       setTextColor(Color.WHITE)
       typeface = ResourcesCompat.getFont(
@@ -258,11 +259,27 @@ class MainActivity : AppCompatActivity() {
     val searchBarFragment = supportFragmentManager.findFragmentById(R.id.search_bar_frame) as? SearchBarFragment
     searchBarFragment?.clearInputText()
     binding.searchBarFrame.visibility = View.GONE
+    if (currentPage == "tutors") {
+      val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
+      tutorsFragment?.closeSearchView()
+    }
 
   }
 
   fun performSearch(query: String) {
-    Toast.makeText(this, "Search query: $query", Toast.LENGTH_SHORT).show()
+    when (currentPage) {
+      "tutors" -> {
+        val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
+        tutorsFragment?.searchTutors(query)
+      }
+      "notes" -> {
+        val notesFragment = supportFragmentManager.findFragmentByTag("f2") as? NotesFragment
+        notesFragment?.searchNotes(query)
+      }
+      else -> {
+        Toast.makeText(this, "Search is not available on this page", Toast.LENGTH_SHORT).show()
+      }
+    }
   }
 
   private fun routeToPosting() {

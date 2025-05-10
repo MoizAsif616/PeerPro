@@ -139,7 +139,7 @@ class SessionsFragment : Fragment() {
       refreshSessions()
     }
     // Auto-refresh when fragment is created
-    // binding.sessionsSwipeRefreshLayout.isRefreshing = true
+    binding.sessionsSwipeRefreshLayout.isRefreshing = true
     refreshSessions()
   }
 
@@ -150,7 +150,7 @@ class SessionsFragment : Fragment() {
       // For now we'll just update the existing data
 
       // Stop the refreshing animation
-      // binding.sessionsSwipeRefreshLayout.isRefreshing = false
+      binding.sessionsSwipeRefreshLayout.isRefreshing = false
 
       // You would typically update your adapter data here
       // adapter.updateData(newData)

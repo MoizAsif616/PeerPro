@@ -19,11 +19,11 @@
     android:layout_weight="0.8">
     
     <TextView
-      android:id="@+id/tutor_peer_rollno"
+      android:id="@+id/rollno"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:fontFamily="@font/poppins_medium"
-      android:text="Loading..."
+      android:text="L22-1010"
       android:textColor="@color/peerLight"
       android:textSize="23sp" />
     
@@ -36,11 +36,11 @@
       android:background="@color/black" />
     
     <TextView
-      android:id="@+id/tutor_peer_name"
+      android:id="@+id/name"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:fontFamily="@font/poppins_medium"
-      android:text="Loading..."
+      android:text="Moiz Asif"
       android:maxLines="1"
       android:layout_gravity="center"
       android:ellipsize="end"
@@ -54,7 +54,7 @@
     android:layout_height="0dp"
     android:layout_marginHorizontal="20dp"
     android:fontFamily="@font/poppins_regular"
-    android:text="Loading..."
+    android:text="Django MVT andRest Framework"
     android:textColor="?attr/textPrimary"
     android:textSize="20sp"
     android:maxLines="2"
@@ -68,16 +68,15 @@
     android:layout_height="1dp"
     android:background="@color/grey_1"
     android:layout_marginHorizontal="15dp"/>
+  
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:orientation="horizontal"
     android:layout_weight="0.6"
-    android:layout_marginHorizontal="20dp"
-    android:layout_marginTop="2dp">
+    android:layout_marginHorizontal="20dp">
     
     <LinearLayout
-      android:id="@+id/genderRow"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
@@ -86,48 +85,24 @@
       android:gravity="start">
       
       <TextView
-        android:id="@+id/genderLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/textPrimary"
-        android:fontFamily="@font/poppins_regular"
-        android:textSize="15sp"
-        android:text="Preferred gender: " />
-      
-      <TextView
-        android:id="@+id/tgender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/peerLight"
-        android:text="Any" />
-    </LinearLayout>
-    
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_gravity="center_vertical">
-      
-      <TextView
-        android:id="@+id/sessionTypeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/textPrimary"
-        android:fontFamily="@font/poppins_regular"
-        android:textSize="15sp"
-        android:text="Type: " />
-      
-      <TextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="?attr/textPrimary"
         android:fontFamily="@font/poppins_regular"
-        android:textSize="15sp"
+        android:textSize="17sp"
+        android:text="Type: " />
+      
+      <TextView
+        android:id="@+id/tnotes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:fontFamily="@font/poppins_regular"
         android:textColor="@color/peerLight"
-        android:text="Online" />
+        android:text="Printed" />
     </LinearLayout>
+  
   </LinearLayout>
   
   <LinearLayout
@@ -145,51 +120,26 @@
       android:layout_gravity="center_vertical">
       
       <TextView
-        android:id="@+id/availableDaysLabel"
+        android:id="@+id/instructorLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?attr/textPrimary"
         android:fontFamily="@font/poppins_regular"
-        android:textSize="15sp"
-        android:text="Days: " />
+        android:textSize="17sp"
+        android:text="Instructor: " />
       
       <TextView
-        android:id="@+id/days"
+        android:id="@+id/instructorname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:maxLines="1"
-        android:ellipsize="end"
+        android:textSize="17sp"
         android:fontFamily="@font/poppins_regular"
         android:textColor="@color/peerLight"
-        android:text="Flexible" />
+        android:text="name" />
     </LinearLayout>
-    
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_gravity="center_vertical">
-      
-      <TextView
-        android:id="@+id/timeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="?attr/textPrimary"
-        android:textSize="15sp"
-        android:fontFamily="@font/poppins_regular"
-        android:text="Time: " />
-      
-      <TextView
-        android:id="@+id/timeWindow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:fontFamily="@font/poppins_regular"
-        android:textColor="@color/peerLight"
-        android:text="Morning" />
-    </LinearLayout>
+  
   </LinearLayout>
+  
   
   <TextView
     android:id="@+id/description"
@@ -197,8 +147,7 @@
     android:layout_height="0dp"
     android:layout_weight="4.9"
     android:layout_marginHorizontal="20dp"
-    android:paddingHorizontal="10dp"
-   
+    android:padding="10dp"
     android:background="@drawable/special_textview_bg"
     android:gravity="top|start"
     android:text="Description here!"
@@ -208,35 +157,24 @@
     android:maxLines="10"
     android:overScrollMode="always"
     android:scrollbars="vertical"
-    android:textSize="17sp"
-    android:layout_marginTop="2dp"/>
+    android:textSize="17sp" />
   
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_marginHorizontal="20dp"
-    android:layout_weight="0.6"
-    android:layout_marginTop="2dp">
-    
-    <TextView
-      android:id="@+id/costType"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:textColor="?attr/textPrimary"
-      android:textSize="17sp"
-      android:layout_weight="0.6"
-      android:layout_gravity="center_vertical"
-      android:fontFamily="@font/poppins_regular"
-      android:text="One Time" />
+    android:layout_weight="0.8">
     
     <TextView
       android:id="@+id/cost"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textSize="17sp"
+      android:gravity="end"
+      android:layout_weight="0.8"
       android:layout_gravity="center_vertical"
       android:textColor="?attr/textPrimary"
-      android:fontFamily="@font/poppins_bold"
+      android:fontFamily="@font/poppins_medium"
       android:text="Rs. 3000" />
   </LinearLayout>
   
@@ -253,22 +191,23 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:textColor="?attr/textPrimary"
-      android:textSize="15sp"
+      android:textSize="17sp"
       android:layout_weight="1"
       android:fontFamily="@font/poppins_medium"
       android:text="Excited to dive in? " />
     
     <com.google.android.material.button.MaterialButton
       android:id="@+id/requestButton"
-      android:layout_width="120dp"
-      android:layout_height="40dp"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
       android:text="Request Now"
       android:textSize="17sp"
       android:textColor="@color/white"
       app:backgroundTint="?attr/peerMain"
-      app:cornerRadius="7dp"
+      app:cornerRadius="12dp"
+      android:paddingVertical="0dp"
+      android:paddingHorizontal="5dp"
       android:fontFamily="@font/poppins_regular"
-   
       />
   </LinearLayout>
 </LinearLayout>

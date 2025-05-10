@@ -168,7 +168,7 @@ class NotesFragment : Fragment() {
   }
 
   fun searchNotes(query: String) {
-    // Implement search functionality here
+    // TODO: Implement search functionality for notes
   }
 
   override fun onDestroyView() {
