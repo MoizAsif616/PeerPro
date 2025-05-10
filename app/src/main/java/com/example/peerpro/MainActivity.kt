@@ -72,9 +72,9 @@ class MainActivity : AppCompatActivity() {
     }.attach()
 
     // Set default selection to Sessions tab (position 0)
-    viewPager.setCurrentItem(0, false)
-    updateTabAppearance(tabLayout.getTabAt(0), true)
-    sessionsSelected()
+    viewPager.setCurrentItem(3, false)
+    updateTabAppearance(tabLayout.getTabAt(3), true)
+    profileSelected()
 
     // Tab selection listener
     tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

@@ -28,6 +28,7 @@ import android.net.Uri
 import android.view.Gravity
 import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import com.example.peerpro.databinding.NotesProfileDetailsBinding
 import com.example.peerpro.databinding.TutorProfileDetailsBinding
 import com.google.firebase.storage.FirebaseStorage
@@ -85,19 +86,21 @@ class ProfileFragment : Fragment() {
       refreshProfile()
     }
 
-    selectTutoring()
     refreshProfile()
-    Log.d("user data: ", UserCache.getUser().toString())
+    // Log.d("user data: ", UserCache.getUser().toString())
   }
 
   private fun refreshProfile() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
-
+    while(UserCache.getId() == null){
+      Log.d("L6", "Waiting for user ID to be set")
+    }
     val userId = UserCache.getId() ?: return
     Log.d("L6", "Fetching user data for UID: $userId")
 
     firestore.collection("users").document(userId).get()
       .addOnSuccessListener { document ->
+        Log.d("L6", "User data fetched successfully")
         val user = document.toObject(User::class.java)
         user?.let {
           binding.peerBio.text = it.bio
@@ -108,6 +111,7 @@ class ProfileFragment : Fragment() {
           if (tutorSessionIds.isEmpty()) {
             binding.tutorSessionsViewSwitcher.displayedChild = 1 // Show empty state
           } else {
+            Log.d("l6", "Fetched ${tutorSessionIds.size} tutor session IDs")
             val tutorSessions = mutableListOf<TutorSession>()
             tutorSessionIds.forEach { sessionId ->
               firestore.collection("tutor_sessions").document(sessionId).get()
@@ -137,13 +141,16 @@ class ProfileFragment : Fragment() {
           }
         }
         binding.profileSwipeRefreshLayout.isRefreshing = false
+        selectTutoring()
       }
       .addOnFailureListener {
+        Log.e("L6", "Error fetching user data: ${it.message}")
         Toast.makeText(requireContext(), "Failed to fetch user data", Toast.LENGTH_LONG).show()
       }
   }
 
   private fun selectTutoring() {
+    Log.d("L6", "Selecting tutoring")
     binding.peerTutoringButton.setBackgroundResource(R.color.peerLight_30)
     binding.peerNotesButton.setBackgroundResource(android.R.color.transparent)
     binding.tutorSessionsViewSwitcher.visibility = View.VISIBLE
@@ -288,7 +295,12 @@ class ProfileFragment : Fragment() {
     binding.type.text = tutoring.sessionType
     binding.days.text = tutoring.availableDays
     binding.timeWindow.text = tutoring.timeWindow
-    binding.description.text = tutoring.description
+    if (tutoring.description.isEmpty()) {
+      binding.description.text = "No description"
+      binding.description.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_1))
+    } else {
+      binding.description.text = tutoring.description
+    }
     binding.costType.text = if (tutoring.cost == 0) "" else tutoring.sessionPricing
     binding.cost.text = if(tutoring.cost == 0) "FREE" else "Rs." + tutoring.cost.toString()
 
@@ -335,7 +347,12 @@ class ProfileFragment : Fragment() {
     val textSizeSmall = (screenHeight * 0.6f * 0.013f)
 
     dialogBinding.subject.text = note.name
-    dialogBinding.description.text = note.description
+    if (note.description.isEmpty()) {
+      dialogBinding.description.text = "No description"
+      dialogBinding.description.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey_1))
+    } else {
+      dialogBinding.description.text = note.description
+    }
     dialogBinding.cost.text = if(note.cost ==0) "FREE" else "Rs." + note.cost.toString()
     dialogBinding.tnotes.text = note.notesType
     dialogBinding.instructorname.text = note.instructorName

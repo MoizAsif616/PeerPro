@@ -86,29 +86,31 @@ class ProfileFragment : Fragment() {
       refreshProfile()
     }
 
-    selectTutoring()
     refreshProfile()
     Log.d("user data: ", UserCache.getUser().toString())
   }
 
   private fun refreshProfile() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
-
+    binding.peerBio.text = UserCache.getUser()?.bio
+    binding.peerEmail.text = UserCache.getUser()?.email
+    while(UserCache.getId() == null){
+      Log.d("L6", "Waiting for user ID to be set")
+    }
     val userId = UserCache.getId() ?: return
     Log.d("L6", "Fetching user data for UID: $userId")
 
     firestore.collection("users").document(userId).get()
       .addOnSuccessListener { document ->
+        Log.d("L6", "User data fetched successfully")
         val user = document.toObject(User::class.java)
         user?.let {
-          binding.peerBio.text = it.bio
-          binding.peerEmail.text = it.email
-
           // Update tutor sessions
           val tutorSessionIds = it.tutorSessionIds
           if (tutorSessionIds.isEmpty()) {
             binding.tutorSessionsViewSwitcher.displayedChild = 1 // Show empty state
           } else {
+            Log.d("l6", "Fetched ${tutorSessionIds.size} tutor session IDs")
             val tutorSessions = mutableListOf<TutorSession>()
             tutorSessionIds.forEach { sessionId ->
               firestore.collection("tutor_sessions").document(sessionId).get()
@@ -138,13 +140,16 @@ class ProfileFragment : Fragment() {
           }
         }
         binding.profileSwipeRefreshLayout.isRefreshing = false
+        selectTutoring()
       }
       .addOnFailureListener {
+        Log.e("L6", "Error fetching user data: ${it.message}")
         Toast.makeText(requireContext(), "Failed to fetch user data", Toast.LENGTH_LONG).show()
       }
   }
 
   private fun selectTutoring() {
+    Log.d("L6", "Selecting tutoring")
     binding.peerTutoringButton.setBackgroundResource(R.color.peerLight_30)
     binding.peerNotesButton.setBackgroundResource(android.R.color.transparent)
     binding.tutorSessionsViewSwitcher.visibility = View.VISIBLE

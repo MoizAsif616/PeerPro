@@ -260,7 +260,8 @@ class MainActivity : AppCompatActivity() {
     searchBarFragment?.clearInputText()
     binding.searchBarFrame.visibility = View.GONE
     if (currentPage == "tutors") {
-      (this as? TutorsFragment)?.closeSearchView()
+      val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
+      tutorsFragment?.closeSearchView()
     }
 
   }
