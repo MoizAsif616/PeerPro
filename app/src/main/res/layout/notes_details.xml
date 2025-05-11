@@ -148,7 +148,7 @@
     android:layout_height="0dp"
     android:layout_weight="4.9"
     android:layout_marginHorizontal="20dp"
-    android:padding="10dp"
+    android:paddingHorizontal="10dp"
     android:background="@drawable/special_textview_bg"
     android:gravity="top|start"
     android:text="Description here!"
@@ -198,7 +198,7 @@
       android:text="Excited to dive in? " />
     <com.google.android.material.button.MaterialButton
         android:id="@+id/requestButton"
-        android:layout_width="100dp"
+        android:layout_width="120dp"
         android:layout_height="40dp"
         android:text="Request Now"
         android:textSize="17sp"

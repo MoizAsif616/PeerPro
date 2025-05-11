@@ -226,7 +226,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
     val requestBtn= dialogView.findViewById<TextView>(R.id.requestButton)
 
     top.visibility = View.GONE
-    main.weightSum = 8.2f
+    main.weightSum = 9f
 
     var tutorName: String? = null
     var tutorRollNumber: String? = null
@@ -324,7 +324,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
 
     //requestBtn.layoutParams.height = (windowHeight * 0.08f).toInt()
     top.visibility = View.GONE
-    main.weightSum = 8.2f
+    main.weightSum = 9.1f
     name.textSize = textSizeLarge
     roll.textSize = textSizeLarge
     subject.text = note.name

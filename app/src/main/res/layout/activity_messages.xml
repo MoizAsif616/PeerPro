@@ -26,7 +26,7 @@
             android:layout_height="50dp"
             android:src="@color/black"
             android:scaleType="centerCrop"
-            android:paddingStart="2dp"
+            android:layout_marginLeft="5dp"
             android:layout_gravity="center_vertical"
             app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
         <TextView
@@ -89,8 +89,7 @@
             android:layout_marginStart="4dp"
             android:src="@drawable/send"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="centerInside"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             android:contentDescription="Send message"/>
     </LinearLayout>
 

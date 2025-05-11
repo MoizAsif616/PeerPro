@@ -1,6 +1,7 @@
 package com.example.peerpro
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.Bundle
@@ -287,7 +288,7 @@ class NotesFragment : Fragment() {
     dialog.setOnShowListener {
       val window = dialog.window
       window?.setBackgroundDrawableResource(android.R.color.transparent)
-      window?.setLayout((screenWidth * 0.80).toInt(), windowHeight)
+      window?.setLayout((screenWidth * 0.90).toInt(), (screenHeight * 0.5).toInt())
       window?.setGravity(Gravity.CENTER)
       dialogView.minimumHeight = windowHeight
     }
@@ -306,17 +307,16 @@ class NotesFragment : Fragment() {
     val requestBtn = dialogView.findViewById<TextView>(R.id.requestButton)
 
     // Fetch user data
-    firestore.collection("users").document(note.peerId).get()
-      .addOnSuccessListener { userDoc ->
+    val userRef = firestore.collection("users").document(note.peerId)
+    userRef.get().addOnSuccessListener { userDoc ->
         name.text = userDoc.getString("name") ?: "Unknown"
         roll.text = userDoc.getString("rollno") ?: "Unknown"
-      }
-      .addOnFailureListener {
-        name.text = "Unknown"
-        roll.text = "Unknown"
-      }
 
-    // Set note data
+      name.setOnClickListener { showPeerProfile(note.peerId) }
+      roll.setOnClickListener { showPeerProfile(note.peerId) }
+    }.addOnFailureListener {
+      Toast.makeText(requireContext(), "Failed to fetch user data", Toast.LENGTH_SHORT).show()
+    }
 
     description.text = if (note.description.isNullOrEmpty()) {
       "No description".also {
@@ -346,6 +346,11 @@ class NotesFragment : Fragment() {
     dialog.show()
   }
 
+  private fun showPeerProfile(peerId: String) {
+    val intent = Intent(requireContext(), ProfilePreviewActivity::class.java)
+    intent.putExtra("peerId", peerId)
+    startActivity(intent)
+  }
 
   override fun onDestroyView() {
     super.onDestroyView()

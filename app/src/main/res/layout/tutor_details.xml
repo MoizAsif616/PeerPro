@@ -199,7 +199,6 @@
     android:layout_weight="4.9"
     android:layout_marginHorizontal="20dp"
     android:paddingHorizontal="10dp"
-   
     android:background="@drawable/special_textview_bg"
     android:gravity="top|start"
     android:text="Description here!"
