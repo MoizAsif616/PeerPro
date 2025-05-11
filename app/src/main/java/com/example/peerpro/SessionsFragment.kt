@@ -1,6 +1,7 @@
 package com.example.peerpro
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
@@ -8,12 +9,15 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.core.view.marginTop
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +38,7 @@ class SessionsFragment : Fragment() {
 
   private inner class SessionsAdapter(private val sessions: List<Card>) :
     RecyclerView.Adapter<SessionsAdapter.SessionViewHolder>() {
+    var onItemLongClick: ((View, Card, Int) -> Unit)? = null
 
     // Cached size calculations
     private var itemHeight: Int = 0
@@ -55,6 +60,11 @@ class SessionsFragment : Fragment() {
           bottomMargin = itemMarginBottom
         }
 
+        itemView.setOnLongClickListener {
+          Log.d("SessionsFragment", "Long click detected on position $adapterPosition")
+          onItemLongClick?.invoke(itemView,session, adapterPosition)
+          true
+        }
         binding.peerImage.layoutParams.width = (1.01 * imageSize).toInt()
         binding.peerImage.layoutParams.height = imageSize
 
@@ -125,6 +135,7 @@ class SessionsFragment : Fragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    
     // Sample data
     val sessions = listOf(
       Card(
@@ -142,17 +153,57 @@ class SessionsFragment : Fragment() {
         ),
 
       )
-    binding.sessionCardsRecyclerView.layoutManager = GridLayoutManager(context, 1)
-    binding.sessionCardsRecyclerView.adapter = SessionsAdapter(sessions)
+    val adapter = SessionsAdapter(sessions).apply {
+      // Set up long click listener
+      onItemLongClick = { view, chat, position ->
+        Log.d("LongClickTest", "Long click detected for ${chat.name} at position $position")
+        showDeleteDialog(view, chat, position)
+      }
+
+    }
+    binding.sessionCardsRecyclerView.apply {
+      layoutManager = GridLayoutManager(context, 1)
+      this.adapter = adapter  // Use the configured adapter
+    }
 
     // Setup refresh listener
     binding.sessionsSwipeRefreshLayout.setOnRefreshListener {
       refreshSessions()
     }
+
     // Auto-refresh when fragment is created
     // binding.sessionsSwipeRefreshLayout.isRefreshing = true
     refreshSessions()
   }
+  private fun showDeleteDialog(view: View, chat: Card, position: Int) {
+    Log.d("DialogDebug", "Attempting to show dialog at specific position")
+
+    // Inflate the dialog layout
+    val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.delete_session_popup, null)
+
+    // Create the popup window
+    val popupWindow = PopupWindow(dialogView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+
+    // Get the location of the clicked item
+    val location = IntArray(2)
+    view.getLocationOnScreen(location)
+    val x = location[0]
+    val y = location[1]
+    val width = view.width
+    val height = view.height
+
+    // Offset the popup to align to the bottom-right
+    val offsetX = width - popupWindow.contentView.measuredWidth
+    val offsetY = height
+
+    popupWindow.showAtLocation(view, 0, x + offsetX, y + offsetY)
+
+
+    dialogView.setOnClickListener {
+      //popupWindow.dismiss()
+    }
+  }
+
 
   private fun refreshSessions() {
     // Simulate network delay
