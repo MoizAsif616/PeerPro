@@ -38,7 +38,7 @@ xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_tutors_found"
-            android:textColor="@color/white"
+            android:textColor="?attr/buttonTextSecondary"
             android:textSize="18sp" />
         </LinearLayout>
       
@@ -67,7 +67,7 @@ xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_tutors_found"
-            android:textColor="@color/white"
+            android:textColor="?attr/buttonTextSecondary"
             android:textSize="18sp" />
         </LinearLayout>
       </ViewSwitcher>

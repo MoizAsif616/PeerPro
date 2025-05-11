@@ -333,7 +333,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
     type.textSize = textSizeSmall
     instructorname.textSize = textSizeSmall
     instructorname.text = note.instructorName
-    cost.text = if (note.cost == 0) "Free" else note.cost.toString()
+    cost.text = if (note.cost == 0) "Free" else "Rs." + note.cost.toString()
     cost.textSize = textSizeSmall
     description.text = note.description
     description.textSize = textSizeSmall
