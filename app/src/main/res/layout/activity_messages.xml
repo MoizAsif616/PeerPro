@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MessagesActivity"
+    android:background="?attr/bgPrimary">
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:gravity="center_vertical">
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/back"
+            android:background="@android:color/transparent"/>
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/peerImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@color/black"
+            android:scaleType="centerCrop"
+            android:paddingStart="2dp"
+            android:layout_gravity="center_vertical"
+            app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
+        <TextView
+            android:id="@+id/peerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="peer name"
+            android:textSize="20sp"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/peerLight"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="10dp"/>
+
+    </LinearLayout>
+    <View
+        android:id="@+id/seperator"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/header"
+        android:background="@drawable/shadow_line"/>
+
+    <!-- Messages RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messagesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/messageInputContainer"
+        android:layout_below="@id/seperator"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/messageInputContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="?attr/bgPrimary">
+
+        <EditText
+            android:id="@+id/messageInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type a message.."
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:textColor="?attr/textPrimary"
+            android:background="@drawable/msg_edittext"/>
+
+        <ImageButton
+            android:id="@+id/sendBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/send"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:layout_gravity="bottom"
+            android:contentDescription="Send message"/>
+    </LinearLayout>
+
+
+</RelativeLayout>
