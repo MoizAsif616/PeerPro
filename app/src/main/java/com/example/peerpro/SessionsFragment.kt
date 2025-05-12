@@ -171,8 +171,6 @@ class SessionsFragment : Fragment() {
       refreshSessions()
     }
 
-    // Auto-refresh when fragment is created
-    // binding.sessionsSwipeRefreshLayout.isRefreshing = true
     refreshSessions()
   }
   private fun showDeleteDialog(view: View, chat: Card, position: Int) {
@@ -206,18 +204,9 @@ class SessionsFragment : Fragment() {
 
 
   private fun refreshSessions() {
-    // Simulate network delay
-    Handler(Looper.getMainLooper()).postDelayed({
-      // This is where you would normally fetch new data
-      // For now we'll just update the existing data
+    binding.sessionsSwipeRefreshLayout.isRefreshing = true
+    binding.sessionViewSwitcher.visibility = View.GONE
 
-      // Stop the refreshing animation
-      // binding.sessionsSwipeRefreshLayout.isRefreshing = false
-
-      // You would typically update your adapter data here
-      // adapter.updateData(newData)
-
-    }, 10000) // 10 second delay
   }
 
   fun searchSessions(query: String) {
