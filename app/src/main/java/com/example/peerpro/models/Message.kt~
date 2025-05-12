@@ -1,0 +1,4 @@
+package com.example.peerpro.models
+
+class Message {
+}

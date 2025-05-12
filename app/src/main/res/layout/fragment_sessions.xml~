@@ -23,22 +23,29 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:visibility="visible"/>
-      
-      <LinearLayout
+  
+      <!-- this will display search results i.e chats -->
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/session_searched_recycler_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:visibility="gone"/>
+    </ViewSwitcher>
+    <!-- This will be displayed if no chats are found -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone">
-        
-        <TextView
+  
+      <TextView
           android:id="@+id/textView1"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="@string/no_chats_found"
           android:textColor="@color/white"
           android:textSize="18sp" />
-      </LinearLayout>
-    </ViewSwitcher>
+    </LinearLayout>
   </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>
