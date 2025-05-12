@@ -359,7 +359,7 @@ class ProfileFragment : Fragment() {
     dialogBinding.instructorname.textSize = textSizeSmall
     dialogBinding.subject.textSize = textSizeMedium
     dialogBinding.description.textSize = textSizeSmall
-    dialogBinding.cost.textSize = textSizeSmall
+    dialogBinding.cost.textSize = textSizeMedium
     dialogBinding.tnotes.textSize = textSizeSmall
     dialogBinding.instructorLabel.textSize = textSizeSmall
     dialogBinding.type.textSize = textSizeSmall

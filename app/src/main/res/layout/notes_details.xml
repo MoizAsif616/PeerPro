@@ -24,7 +24,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:fontFamily="@font/poppins_medium"
-      android:text="L22-1010"
+      android:text="Loading..."
       android:textColor="@color/peerLight"
       android:textSize="23sp" />
     
@@ -41,7 +41,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:fontFamily="@font/poppins_medium"
-      android:text="Moiz Asif"
+      android:text="Loading..."
       android:maxLines="1"
       android:layout_gravity="center"
       android:ellipsize="end"
@@ -55,7 +55,7 @@
     android:layout_height="0dp"
     android:layout_marginHorizontal="20dp"
     android:fontFamily="@font/poppins_regular"
-    android:text="Django MVT andRest Framework"
+    android:text="Loading..."
     android:textColor="?attr/textPrimary"
     android:textSize="20sp"
     android:maxLines="2"
@@ -175,7 +175,7 @@
       android:layout_weight="0.8"
       android:layout_gravity="center_vertical"
       android:textColor="?attr/textPrimary"
-      android:fontFamily="@font/poppins_medium"
+      android:fontFamily="@font/poppins_bold"
       android:text="Rs. 3000" />
   </LinearLayout>
   
