@@ -24,17 +24,27 @@ import com.google.firebase.firestore.FirebaseFirestore
 import android.app.Activity
 import android.app.Dialog
 import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.provider.ContactsContract.CommonDataKinds.Website.URL
 import android.view.Gravity
+import android.widget.ImageView
 import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.example.peerpro.databinding.NotesProfileDetailsBinding
 import com.example.peerpro.databinding.TutorProfileDetailsBinding
 import com.google.firebase.storage.FirebaseStorage
 import com.example.peerpro.models.TutorSession
 import com.example.peerpro.models.User
 import com.example.peerpro.models.Note
+import java.net.HttpURLConnection
+import java.net.URL
+import com.squareup.picasso.Picasso
+
 
 class ProfileFragment : Fragment() {
 
@@ -47,7 +57,14 @@ class ProfileFragment : Fragment() {
   private lateinit var tutorSessionAdapter: SessionNotesAdapter<TutorSession>
   private lateinit var notesAdapter: SessionNotesAdapter<Note>
 
-  private val PICK_IMAGE_REQUEST = 1
+  // Add these constants at the top of your ProfileFragment
+  private companion object {
+    const val PICK_IMAGE_REQUEST = 1001
+    const val CLOUDINARY_UPLOAD_PRESET = "PeerPro" // Set this in Cloudinary Dashboard
+    const val MAX_IMAGE_SIZE_KB = 1024 // 1MB max image size
+  }
+
+
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -61,10 +78,10 @@ class ProfileFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     tutorSessionAdapter = SessionNotesAdapter(emptyList<TutorSession>()) {
-        tutorSessionClicked(it)
+      tutorSessionClicked(it)
     }
     notesAdapter = SessionNotesAdapter(emptyList<Note>()) {
-        notesClicked(it)
+      notesClicked(it)
     }
 
     binding.tutorSessionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -94,7 +111,19 @@ class ProfileFragment : Fragment() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
     binding.peerBio.text = UserCache.getUser()?.bio
     binding.peerEmail.text = UserCache.getUser()?.email
-    while(UserCache.getId() == null){
+    val imageUrl = UserCache.getUser()?.profilePicUrl
+
+    // Only load the profile image if the URL is not null or empty
+    if (!imageUrl.isNullOrEmpty()) {
+      binding.tutorImage?.let { imageView ->
+          loadProfileImage(imageUrl, imageView)
+      }
+    } else {
+          binding.tutorImage.setImageResource(R.color.black)
+    }
+
+
+      while (UserCache.getId() == null) {
       Log.d("L6", "Waiting for user ID to be set")
     }
     val userId = UserCache.getId() ?: return
@@ -193,7 +222,7 @@ class ProfileFragment : Fragment() {
 
   private fun saveBio(bio: String) {
     var id = UserCache.getId()
-    id.let{
+    id.let {
       val userRef = firestore.collection("users").document(it.toString())
       userRef.update("bio", bio)
         .addOnSuccessListener {
@@ -204,19 +233,138 @@ class ProfileFragment : Fragment() {
           binding.peerBio.text = bio
         }
         .addOnFailureListener { e ->
-          Toast.makeText(requireContext(), "Failed to save bio: ${e.message}", Toast.LENGTH_LONG).show()
+          Toast.makeText(requireContext(), "Failed to save bio: ${e.message}", Toast.LENGTH_LONG)
+            .show()
         }
     }
   }
 
+
   fun changeProfilePic() {
-    // Open file picker to select an image
-    val intent = Intent(Intent.ACTION_GET_CONTENT)
-    intent.type = "image/*"
-    startActivityForResult(intent, PICK_IMAGE_REQUEST)
+
+    val intent = Intent().apply {
+      type = "image/*"
+      action = Intent.ACTION_GET_CONTENT
+      putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png"))
+    }
+    startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+
   }
 
+
+  // Updated onActivityResult
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+      data?.data?.let { uri ->
+        // Check image size before uploading
+        val inputStream = requireContext().contentResolver.openInputStream(uri)
+        val sizeBytes = inputStream?.available() ?: 0
+        inputStream?.close()
+
+        if (sizeBytes > MAX_IMAGE_SIZE_KB * 1024) {
+          showImageSizeError()
+          return
+        }
+
+        uploadProfilePicture(uri)
+      } ?: showImageSelectionError()
+    }
+  }
+  private fun uploadProfilePicture(imageUri: Uri) {
+    Toast.makeText(requireContext(), "Uploading profile picture...", Toast.LENGTH_SHORT).show()
+
+    try {
+      MediaManager.get().upload(imageUri)
+        .unsigned(CLOUDINARY_UPLOAD_PRESET)
+        .callback(object : UploadCallback {
+          // Required method 1
+          override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+            val imageUrl = resultData["secure_url"] as? String ?: run {
+              showUploadError("Invalid server response")
+              return
+            }
+            updateProfilePictureUrl(imageUrl)
+            Toast.makeText(requireContext(), "Profile picture updated!", Toast.LENGTH_SHORT).show()
+          }
+
+          override fun onError(requestId: String?, error: ErrorInfo?) {
+            showUploadError("Error: $error")
+          }
+
+          override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+            TODO("Not yet implemented")
+          }
+          // Optional method (can be empty if not needed)
+          override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+            // You could update progress here if needed
+          }
+
+          // Optional method (can be empty if not needed)
+          override fun onStart(requestId: String) {
+            // Upload started
+          }
+        })
+        .dispatch()
+    } catch (e: Exception) {
+      showUploadError(e.message ?: "Unknown error")
+    }
+  }
+
+private fun updateProfilePictureUrl(imageUrl: String) {
+  val userId = UserCache.getId() ?: run {
+    Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+    return
+  }
+
+  firestore.collection("users").document(userId)
+    .update("profilePicUrl", imageUrl)
+    .addOnSuccessListener {
+      // Update local cache
+      UserCache.getUser()?.let { user ->
+        user.profilePicUrl = imageUrl
+        UserCache.setUser(user)
+        // Update UI immediately
+        binding.tutorImage?.let { imageView ->
+          // Load image without Glide
+          loadProfileImage(imageUrl, imageView)
+        }
+      }
+      Toast.makeText(requireContext(), "Profile picture updated!", Toast.LENGTH_SHORT).show()
+    }
+    .addOnFailureListener { e ->
+      Toast.makeText(requireContext(), "Failed to save: ${e.message}", Toast.LENGTH_SHORT).show()
+    }
+}
+
+  private fun loadProfileImage(imageUrl: String, imageView: ImageView) {
+    Picasso.get()
+      .load(imageUrl)
+      .resize(250, 250) // Resize if needed
+      .centerCrop()
+      .into(imageView)
+  }
+
+
+  // Error handling functions
+private fun showImageSizeError() {
+    AlertDialog.Builder(requireContext())
+        .setTitle("Image Too Large")
+        .setMessage("Please select an image smaller than 1MB")
+        .setPositiveButton("OK", null)
+        .show()
+}
+
+private fun showImageSelectionError() {
+    Toast.makeText(requireContext(), "Failed to select image", Toast.LENGTH_SHORT).show()
+}
+
+private fun showUploadError(message: String) {
+    Toast.makeText(requireContext(), "Upload failed: $message", Toast.LENGTH_LONG).show()
+    Log.e("ProfilePic", "Upload error: $message")
+}
+ /* override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
       val imageUri: Uri = data.data!!
@@ -252,6 +400,7 @@ class ProfileFragment : Fragment() {
         }
     }
   }
+*/
 
   fun logout() {
     val localStorage = SharedPrefHelper(requireContext())

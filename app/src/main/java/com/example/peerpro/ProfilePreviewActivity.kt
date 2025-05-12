@@ -29,6 +29,7 @@ import com.example.peerpro.models.TutorSession
 import com.example.peerpro.models.User
 import com.example.peerpro.utils.UserCache
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
 
 class ProfilePreviewActivity : AppCompatActivity() {
 
@@ -93,6 +94,13 @@ class ProfilePreviewActivity : AppCompatActivity() {
     selectTutoring()
   }
 
+  private fun loadProfileImage(imageUrl: String, imageView: ImageView) {
+    Picasso.get()
+      .load(imageUrl)
+      .resize(250, 250) // Resize if needed
+      .centerCrop()
+      .into(imageView)
+  }
   private fun fetchProfileData(peerId: String) {
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = true
 
@@ -103,6 +111,14 @@ class ProfilePreviewActivity : AppCompatActivity() {
           binding.peerEmail.text = user.email
           binding.peerBio.text = user.bio
           binding.headerText.text = user.name
+          val imageUrl = UserCache.getUser()?.profilePicUrl
+          if (!imageUrl.isNullOrEmpty()) {
+            binding.tutorImage?.let { imageView ->
+              loadProfileImage(imageUrl, imageView)
+            }
+          } else {
+            binding.tutorImage.setImageResource(R.color.black)
+          }
 
           fetchTutorSessions(user.tutorSessionIds)
           fetchNotes(user.notesIds)

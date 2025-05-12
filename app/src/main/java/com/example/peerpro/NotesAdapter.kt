@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.databinding.NoteCardBinding
 import com.example.peerpro.databinding.TutorCardBinding
 import com.example.peerpro.models.Note
 import com.example.peerpro.models.TutorSession
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -98,14 +100,21 @@ class NotesAdapter(private val notes: MutableList<Note>, private val onNoteClick
             if (profilePicUrl.isNullOrEmpty()) {
                 item.peerImage.setImageResource(R.color.black)
             } else {
-                // Load image using a library like Glide or Picasso
-                // Example using Glide:
-                // Glide.with(itemView.context).load(profilePicUrl).into(item.tutorImage)
+                item.peerImage?.let { imageView ->
+                    loadProfileImage(profilePicUrl, imageView)
+                }
             }
             item.mainContainer.visibility = View.VISIBLE
         }
     }
 
+    private fun loadProfileImage(imageUrl: String, imageView: ImageView) {
+        Picasso.get()
+            .load(imageUrl)
+            .resize(250, 250) // Resize if needed
+            .centerCrop()
+            .into(imageView)
+    }
     @SuppressLint("ServiceCast")
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // Calculate sizes only once when first ViewHolder is created
