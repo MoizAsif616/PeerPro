@@ -28,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.ListenerRegistration
 
 class SessionsFragment : Fragment() {
 
@@ -73,6 +75,7 @@ class SessionsFragment : Fragment() {
   }
 
   internal fun refreshSessions() {
+    Log.d("L6", "Refreshing sessions")
     binding.sessionsSwipeRefreshLayout.isRefreshing = true
     val myId = UserCache.getId() ?: return
     val sessions = mutableListOf<Session>()
@@ -114,6 +117,41 @@ class SessionsFragment : Fragment() {
       .addOnFailureListener {
         Toast.makeText(requireContext(), "Failed to fetch sessions", Toast.LENGTH_SHORT).show()
         binding.sessionsSwipeRefreshLayout.isRefreshing = false
+      }
+  }
+
+  private var sessionListener: ListenerRegistration? = null
+
+  private fun setupSessionListener() {
+    val myId = UserCache.getId() ?: return
+
+    sessionListener = firestore.collection("sessions")
+      .addSnapshotListener { snapshot, error ->
+        error?.let {
+          Log.e("L6", "Session sync error: ${it.message}")
+          Toast.makeText(requireContext(), "Session sync error", Toast.LENGTH_SHORT).show()
+          return@addSnapshotListener
+        }
+
+        snapshot?.documentChanges?.forEach { change ->
+          Log.d("L6", "Session change: ${change.type} for document: ${change.document.id}")
+          val chatId = change.document.getString("chatId") ?: ""
+          if (chatId.startsWith(myId) || chatId.endsWith(myId)) {
+            when (change.type) {
+              DocumentChange.Type.ADDED -> {
+                val session = change.document.toObject(Session::class.java)
+                sessionsAdapter.addSession(session)
+              }
+              DocumentChange.Type.MODIFIED -> {
+                val session = change.document.toObject(Session::class.java)
+                sessionsAdapter.updateSession(session)
+              }
+              DocumentChange.Type.REMOVED -> {
+                sessionsAdapter.removeSession(chatId)
+              }
+            }
+          }
+        }
       }
   }
 
