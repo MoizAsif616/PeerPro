@@ -8,6 +8,4 @@ data class Session(
   val isSeen: Boolean = false, // Is last message seen?
   val timestamp: Timestamp = Timestamp.now(), // For sorting
   var chatId: String,
-){
-  constructor() : this("", "", false, Timestamp.now(), "")
-}
+)

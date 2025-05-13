@@ -92,21 +92,26 @@ class SessionsAdapter(private val sessions: MutableList<Session>) :
     notifyDataSetChanged()
   }
 
-  // In SessionsAdapter
   fun addSession(session: Session) {
-    sessions.removeAll { it.chatId == session.chatId } // Remove if exists
-    sessions.add(0, session) // Add at top
+    sessions.add(session)
     sessions.sortByDescending { it.timestamp }
     notifyDataSetChanged()
   }
 
-  fun updateSession(updatedSession: Session) {
-    val index = sessions.indexOfFirst { it.chatId == updatedSession.chatId }
-    if (index != -1) {
-      sessions[index] = updatedSession
-      sessions.sortByDescending { it.timestamp }
-      notifyDataSetChanged()
+  fun addOrUpdateSession(newSession: Session) {
+    val existingIndex = sessions.indexOfFirst { it.chatId == newSession.chatId }
+
+    if (existingIndex != -1) {
+      // Update existing session
+      sessions[existingIndex] = newSession
+    } else {
+      // Add new session
+      sessions.add(0, newSession) // Add at top
     }
+
+    // Sort by timestamp (newest first)
+    sessions.sortByDescending { it.timestamp }
+    notifyDataSetChanged()
   }
 
   fun removeSession(chatId: String) {

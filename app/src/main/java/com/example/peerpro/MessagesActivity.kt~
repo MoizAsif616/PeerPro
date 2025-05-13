@@ -35,6 +35,7 @@ class MessagesActivity : AppCompatActivity() {
     lateinit var chatId: String
     lateinit var receiverId: String
     lateinit var messages: MutableList<Message>
+    lateinit var latestMessageTimestamp: Timestamp
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,6 +127,7 @@ class MessagesActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { snapshot ->
                 lastVisibleDocument = snapshot.documents.lastOrNull()
+                latestMessageTimestamp = lastVisibleDocument?.getTimestamp("timestamp") ?: Timestamp.now()
                 messages = snapshot.toObjects(Message::class.java)
 
                 adapter.updateMessages(messages)
@@ -156,6 +158,8 @@ class MessagesActivity : AppCompatActivity() {
                     }
 
                     lastVisibleDocument = snapshot.documents.lastOrNull()
+                    latestMessageTimestamp = lastVisibleDocument?.getTimestamp("timestamp") ?: Timestamp.now()
+
                     val newMessages = snapshot.toObjects(Message::class.java)
 
                     // Check if we've reached the end
@@ -197,7 +201,7 @@ class MessagesActivity : AppCompatActivity() {
                 }
 
                 snapshot?.documentChanges?.forEach { change ->
-                    if (change.type == DocumentChange.Type.ADDED) {
+                    if (change.type == DocumentChange.Type.ADDED && change.document.getTimestamp("timestamp")!! > latestMessageTimestamp) {
                         val message = change.document.toObject(Message::class.java)
                         adapter.addMessage(message)
                     }

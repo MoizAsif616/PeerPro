@@ -204,6 +204,16 @@ class MessagesActivity : AppCompatActivity() {
                     if (change.type == DocumentChange.Type.ADDED && change.document.getTimestamp("timestamp")!! > latestMessageTimestamp) {
                         val message = change.document.toObject(Message::class.java)
                         adapter.addMessage(message)
+                        // Auto-scroll only if user is near bottom
+                        val layoutManager = binding.messagesRecyclerView.layoutManager as LinearLayoutManager
+                        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+                        val threshold = adapter.itemCount - 3 // 3 messages from bottom
+
+                        if (lastVisiblePosition >= threshold) {
+                            binding.messagesRecyclerView.post {
+                                binding.messagesRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+                            }
+                        }
                     }
                 }
             }
