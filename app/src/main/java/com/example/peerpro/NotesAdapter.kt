@@ -98,7 +98,7 @@ class NotesAdapter(private val notes: MutableList<Note>, private val onNoteClick
 
             // Set profile picture
             if (profilePicUrl.isNullOrEmpty()) {
-                item.peerImage.setImageResource(R.color.black)
+                item.peerImage.setImageResource(R.drawable.default_peer)
             } else {
                 item.peerImage?.let { imageView ->
                     loadProfileImage(profilePicUrl, imageView)

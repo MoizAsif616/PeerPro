@@ -105,7 +105,7 @@ class TutorsAdapter(private val tutors: MutableList<TutorSession> , private val 
 
       // Set profile picture
       if (profilePicUrl.isNullOrEmpty()) {
-        item.tutorImage.setImageResource(R.drawable.default_peer)
+        item.tutorImage.setImageResource(R.drawable.deafult_peer)
       } else {
         item.tutorImage?.let { imageView ->
           loadProfileImage(profilePicUrl, imageView)

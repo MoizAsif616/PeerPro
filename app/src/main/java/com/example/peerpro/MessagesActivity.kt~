@@ -115,7 +115,7 @@ class MessagesActivity : AppCompatActivity() {
                       deletedBy = ""
                   )
                 )
-                binding.messagesRecyclerView.smoothScrollToPosition(binding.messagesRecyclerView.adapter?.itemCount?.minus(1) ?: 0)
+                binding.messagesRecyclerView.smoothScrollToPosition(messages.size - 1)
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to send message, check your connection", Toast.LENGTH_SHORT).show()

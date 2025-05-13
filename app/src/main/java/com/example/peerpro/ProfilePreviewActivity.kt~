@@ -119,7 +119,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
               loadProfileImage(imageUrl, imageView)
             }
           } else {
-            binding.tutorImage.setImageResource(R.drawable.default_peer)
+            binding.tutorImage.setImageResource(R.color.black)
           }
 
           fetchTutorSessions(user.tutorSessionIds)

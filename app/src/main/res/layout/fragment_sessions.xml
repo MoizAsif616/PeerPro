@@ -13,13 +13,13 @@
     android:layout_height="match_parent"
     tools:ignore="MissingClass">
     <ViewSwitcher
-        android:id="@+id/session_view_switcher"
+        android:id="@+id/sessionViewSwitcher"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
   
       <!-- For displaying chats -->
       <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/session_cards_recycler_view"
+          android:id="@+id/sessionCardsRecyclerView"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:visibility="visible"/>

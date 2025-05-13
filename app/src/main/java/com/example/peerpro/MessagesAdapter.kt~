@@ -125,7 +125,7 @@ class MessagesAdapter(
   private fun setupRealTimeListener() {
     messageListener = firestore.collection("messages")
       .whereEqualTo("chatId", chatId)
-      .orderBy("timestamp", Query.Direction.ASCENDING)
+      .orderBy("timestamp", Query.Direction.DESCENDING)
       .addSnapshotListener { snapshot, error ->
         if (error != null) return@addSnapshotListener
 

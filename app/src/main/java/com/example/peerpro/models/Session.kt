@@ -1,8 +1,11 @@
 package com.example.peerpro.models
 
+import com.google.firebase.Timestamp
+
 data class Session(
   val lastMessage: String,     // Last message text
-  val sender: String, // Sender of last message
-  val isSeen: Boolean = false,  // Is last message seen?
-  val timestamp: Long = System.currentTimeMillis() // For sorting
+  val sender: String,          // Sender of last message
+  val isSeen: Boolean = false, // Is last message seen?
+  val timestamp: Timestamp = Timestamp.now(), // For sorting
+  val chatId: String,
 )

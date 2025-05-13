@@ -30,6 +30,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import androidx.core.view.isVisible
 import com.example.peerpro.models.TutorSession
+import com.example.peerpro.utils.ButtonLoadingUtils
+import com.example.peerpro.utils.ChatUtils
+import com.example.peerpro.utils.UserCache
 
 
 class NotesFragment : Fragment() {
@@ -305,6 +308,34 @@ class NotesFragment : Fragment() {
     val instructor = dialogView.findViewById<TextView>(R.id.instructorname)
     val text = dialogView.findViewById<TextView>(R.id.text)
     val requestBtn = dialogView.findViewById<TextView>(R.id.requestButton)
+    requestBtn.setOnClickListener {
+      ButtonLoadingUtils.setLoadingState(requestBtn, true)
+      val myId = UserCache.getId()
+      val peerId = note.peerId
+      if (myId == peerId) {
+        Toast.makeText(requireContext(), "You cannot send a request to yourself", Toast.LENGTH_SHORT).show()
+        ButtonLoadingUtils.setLoadingState(requestBtn, false)
+        return@setOnClickListener
+      }
+      val name = UserCache.getUser()?.name
+
+      ChatUtils.startNewChat(
+        context = requireContext(),
+        myId = myId.toString(),
+        peerId = peerId,
+        message = "Hi, $name from this side. I want to get ${note.name} notes from you.",
+        onSuccess = {
+          Toast.makeText(requireContext(), "Your request has been sent", Toast.LENGTH_SHORT).show()
+          ButtonLoadingUtils.setLoadingState(requestBtn, false)
+          // Optional: Navigate to chat screen
+        },
+        onError = { e ->
+          Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+          ButtonLoadingUtils.setLoadingState(requestBtn, false)
+
+        }
+      )
+    }
 
     // Fetch user data
     val userRef = firestore.collection("users").document(note.peerId)
