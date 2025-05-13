@@ -73,7 +73,6 @@ class SessionsFragment : Fragment() {
   }
 
   internal fun refreshSessions() {
-    Log.d("L6", "Refreshing sessions")
     binding.sessionsSwipeRefreshLayout.isRefreshing = true
     val myId = UserCache.getId() ?: return
     val sessions = mutableListOf<Session>()

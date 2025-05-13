@@ -1,39 +1,49 @@
 package com.example.peerpro
 
-import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.models.Message
-import com.google.firebase.firestore.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Date
 
 class MessagesAdapter(
-  private val chatId: String,
   private val myId: String
 ) : RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>() {
 
   companion object {
     private const val VIEW_TYPE_SENT = 1
     private const val VIEW_TYPE_RECEIVED = 2
-    private const val PAGE_SIZE = 15
+    private const val TAG = "L6"
   }
 
   private val messages = mutableListOf<Message>()
-  private val firestore = FirebaseFirestore.getInstance()
-  private var lastVisibleDocument: DocumentSnapshot? = null
-  private var isLoading = false
-  private var isLastPage = false
 
-  private var messageListener: ListenerRegistration? = null
+  // Main update function
+  fun updateMessages(newMessages: MutableList<Message>) {
+    Log.d(TAG, "Updating adapter with ${newMessages.size} messages")
+    newMessages.reversed()
+    messages.addAll(0, newMessages)
+    notifyDataSetChanged()
+  }
 
-  init {
-    loadInitialMessages()
-    setupRealTimeListener()
+  // For real-time messages
+  fun addMessage(message: Message) {
+    messages.add(message)
+    notifyItemInserted(messages.size - 1)
+    Log.d(TAG, "Added new message: ${message.text}")
+  }
+
+  // For pagination
+  fun prependMessages(newMessages: List<Message>) {
+    if (newMessages.isNotEmpty()) {
+      messages.addAll(0, newMessages)
+      notifyItemRangeInserted(0, newMessages.size)
+      Log.d(TAG, "Prepended ${newMessages.size} messages")
+    }
   }
 
   override fun getItemViewType(position: Int): Int {
@@ -57,96 +67,9 @@ class MessagesAdapter(
 
   override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
     holder.bind(messages[position])
-
-    // Load more when reaching top
-    if (position == 0 && !isLoading && !isLastPage) {
-      loadMoreMessages()
-    }
   }
 
   override fun getItemCount(): Int = messages.size
-
-  @SuppressLint("NotifyDataSetChanged")
-  private fun loadInitialMessages() {
-    if (isLoading) return
-    isLoading = true
-
-    firestore.collection("messages")
-      .whereEqualTo("chatId", chatId)
-      .orderBy("timestamp", Query.Direction.DESCENDING)
-      .limit(PAGE_SIZE.toLong())
-      .get()
-      .addOnSuccessListener { querySnapshot ->
-        lastVisibleDocument = querySnapshot.documents.lastOrNull()
-        val newMessages = querySnapshot.toObjects(Message::class.java)
-
-        if (newMessages.size < PAGE_SIZE) {
-          isLastPage = true
-        }
-
-        messages.addAll(newMessages.reversed())
-        notifyDataSetChanged()
-        isLoading = false
-      }
-      .addOnFailureListener {
-        isLoading = false
-      }
-  }
-
-  fun loadMoreMessages() {
-    if (isLoading || isLastPage || lastVisibleDocument == null) return
-    isLoading = true
-
-    firestore.collection("messages")
-      .whereEqualTo("chatId", chatId)
-      .orderBy("timestamp", Query.Direction.DESCENDING)
-      .startAfter(lastVisibleDocument)
-      .limit(PAGE_SIZE.toLong())
-      .get()
-      .addOnSuccessListener { querySnapshot ->
-        lastVisibleDocument = querySnapshot.documents.lastOrNull()
-        val newMessages = querySnapshot.toObjects(Message::class.java)
-
-        if (newMessages.isEmpty()) {
-          isLastPage = true
-          isLoading = false
-          return@addOnSuccessListener
-        }
-
-        messages.addAll(0, newMessages.reversed())
-        notifyItemRangeInserted(0, newMessages.size)
-        isLoading = false
-      }
-      .addOnFailureListener {
-        isLoading = false
-      }
-  }
-
-  private fun setupRealTimeListener() {
-    messageListener = firestore.collection("messages")
-      .whereEqualTo("chatId", chatId)
-      .orderBy("timestamp", Query.Direction.DESCENDING)
-      .addSnapshotListener { snapshot, error ->
-        if (error != null) return@addSnapshotListener
-
-        snapshot?.documentChanges?.forEach { change ->
-          if (change.type == DocumentChange.Type.ADDED) {
-            val newMessage = change.document.toObject(Message::class.java)
-            messages.add(newMessage)
-            notifyItemInserted(messages.size - 1)
-          }
-        }
-      }
-  }
-
-  fun addMessage(message: Message) {
-    messages.add(message)
-    notifyItemInserted(messages.size - 1)
-  }
-
-  fun cleanup() {
-    messageListener?.remove()
-  }
 
   abstract class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     abstract fun bind(message: Message)
