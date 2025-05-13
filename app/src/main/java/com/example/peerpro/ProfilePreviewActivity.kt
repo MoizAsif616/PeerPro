@@ -111,7 +111,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
           binding.peerEmail.text = user.email
           binding.peerBio.text = user.bio
           binding.headerText.text = user.name
-          val imageUrl = UserCache.getUser()?.profilePicUrl
+          val imageUrl = user.profilePicUrl
           if (!imageUrl.isNullOrEmpty()) {
             binding.tutorImage?.let { imageView ->
               loadProfileImage(imageUrl, imageView)
