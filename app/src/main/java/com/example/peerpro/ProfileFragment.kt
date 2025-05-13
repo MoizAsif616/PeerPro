@@ -274,8 +274,6 @@ class ProfileFragment : Fragment() {
 
   }
 
-
-  // Updated onActivityResult
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
 
@@ -454,8 +452,23 @@ private fun showUploadError(message: String) {
 
     binding.tutorDeleteButton.setOnClickListener {
       Toast.makeText(requireContext(), "Delete tutoring: ${tutoring.skillName}", Toast.LENGTH_SHORT).show()
-      dialog.dismiss()
+      binding.tutorDeleteButton.isEnabled = false
+      firestore.collection("tutor_sessions")
+        .whereEqualTo("skillName", tutoring.skillName)
+        .whereEqualTo("peerId", tutoring.peerId)
+        .whereEqualTo("createdAt", tutoring.createdAt)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          querySnapshot.documents.firstOrNull()?.reference?.delete()
+          Toast.makeText(requireContext(), "Tutoring deleted", Toast.LENGTH_SHORT).show()
+          dialog.dismiss()
+        }
+        .addOnFailureListener { e ->
+          binding.tutorDeleteButton.isEnabled = true
+          Toast.makeText(requireContext(), "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     dialog.window?.apply {
       dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -498,10 +511,27 @@ private fun showUploadError(message: String) {
     dialogBinding.tnotes.textSize = textSizeSmall
     dialogBinding.instructorLabel.textSize = textSizeSmall
     dialogBinding.type.textSize = textSizeSmall
+
     dialogBinding.notesDeleteButton.setOnClickListener {
-      Toast.makeText(requireContext(), "Delete note: ${note.name}", Toast.LENGTH_SHORT).show()
-      dialog.dismiss()
+      Toast.makeText(requireContext(), "Delete notes: ${note.name}", Toast.LENGTH_SHORT).show()
+
+      dialogBinding.notesDeleteButton.isEnabled = false
+      firestore.collection("notes")
+        .whereEqualTo("name", note.name)
+        .whereEqualTo("peerId", note.peerId)
+        .whereEqualTo("createdAt", note.createdAt)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          querySnapshot.documents.firstOrNull()?.reference?.delete()
+          Toast.makeText(requireContext(), "Notes deleted", Toast.LENGTH_SHORT).show()
+          dialog.dismiss()
+        }
+        .addOnFailureListener { e ->
+          dialogBinding.notesDeleteButton.isEnabled = true
+          Toast.makeText(requireContext(), "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     dialog.window?.apply {
       dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)

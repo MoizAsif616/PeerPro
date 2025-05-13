@@ -58,15 +58,23 @@ class ProfilePreviewActivity : AppCompatActivity() {
       finish()
       return
     }
+    binding.profilePreviewSwipeRefreshLayout.isEnabled = false
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = true
     binding.profilePreviewContainer.visibility = View.GONE
+
     setupUI()
     fetchProfileData(peerId)
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = false
     binding.profilePreviewContainer.visibility = View.VISIBLE
-    binding.rateButton.setOnClickListener {
-      showRatingDialog()
+    if (UserCache.getId() != peerId) {
+      binding.rateButton.visibility = View.VISIBLE
+      binding.rateButton.setOnClickListener {
+        showRatingDialog()
+      }
+    } else {
+      binding.rateButton.visibility = View.GONE
     }
+
   }
 
   private fun setupUI() {
