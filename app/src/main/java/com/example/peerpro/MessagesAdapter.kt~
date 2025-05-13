@@ -25,15 +25,17 @@ class MessagesAdapter(
   // Main update function
   fun updateMessages(newMessages: MutableList<Message>) {
     Log.d(TAG, "Updating adapter with ${newMessages.size} messages")
-    newMessages.reversed()
-    messages.addAll(0, newMessages)
+
+    messages.addAll(0, newMessages.reversed())
     notifyDataSetChanged()
   }
 
   // For real-time messages
   fun addMessage(message: Message) {
-    messages.add(message)
-    notifyItemInserted(messages.size - 1)
+    if(!messages.contains(message))
+      messages.add(message)
+//    notifyItemInserted(messages.size - 1)
+    notifyDataSetChanged()
     Log.d(TAG, "Added new message: ${message.text}")
   }
 

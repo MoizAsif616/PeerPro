@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import java.util.*
 import android.util.Log
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
@@ -34,6 +35,7 @@ class MessagesActivity : AppCompatActivity() {
     lateinit var chatId: String
     lateinit var receiverId: String
     lateinit var messages: MutableList<Message>
+    lateinit var latestMessageTimestamp: Timestamp
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +69,7 @@ class MessagesActivity : AppCompatActivity() {
         }
         setupScrollListener()
         loadInitialMessages()
-        setupMessageListener()
+        delayedMessageListener()
     }
 
     private fun setupToolbar() {
@@ -103,15 +105,15 @@ class MessagesActivity : AppCompatActivity() {
     }
 
     private fun setupScrollListener() {
-//        binding.messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-//                if (!isLoading && !isLastPage && layoutManager.findFirstVisibleItemPosition() == 0) {
-//                    loadMoreMessages()
-//                }
-//            }
-//        })
+        binding.messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if (!isLoading && !isLastPage && layoutManager.findFirstVisibleItemPosition() == 0) {
+                    loadMoreMessages()
+                }
+            }
+        })
     }
 
     private fun loadInitialMessages() {
@@ -124,8 +126,8 @@ class MessagesActivity : AppCompatActivity() {
             .limit(15)
             .get()
             .addOnSuccessListener { snapshot ->
-                Log.d("L6", "Initial load completed with ${snapshot.size()} messages")
                 lastVisibleDocument = snapshot.documents.lastOrNull()
+                latestMessageTimestamp = lastVisibleDocument?.getTimestamp("timestamp") ?: Timestamp.now()
                 messages = snapshot.toObjects(Message::class.java)
 
                 adapter.updateMessages(messages)
@@ -140,9 +142,8 @@ class MessagesActivity : AppCompatActivity() {
 
     private fun loadMoreMessages() {
         if (isLoading || isLastPage) return
-        isLoading = true
-        Log.d("L6", "Loading more messages")
 
+        isLoading = true
         lastVisibleDocument?.let { lastDoc ->
             firestore.collection("messages")
                 .whereEqualTo("chatId", chatId)
@@ -153,35 +154,67 @@ class MessagesActivity : AppCompatActivity() {
                 .addOnSuccessListener { snapshot ->
                     if (snapshot.isEmpty) {
                         isLastPage = true
-                        Log.d("L6", "No more messages to load")
-                    } else {
-                        lastVisibleDocument = snapshot.documents.lastOrNull()
-                        val newMessages = snapshot.toObjects(Message::class.java)
-                        val combined: MutableList<Message> = (newMessages + messages) as MutableList<Message>
-                        messages = combined
-                        adapter.updateMessages(messages)
-                        Log.d("L6", "Loaded ${newMessages.size} additional messages")
+                        return@addOnSuccessListener
                     }
+
+                    lastVisibleDocument = snapshot.documents.lastOrNull()
+                    latestMessageTimestamp = lastVisibleDocument?.getTimestamp("timestamp") ?: Timestamp.now()
+
+                    val newMessages = snapshot.toObjects(Message::class.java)
+
+                    // Check if we've reached the end
+                    if (newMessages.size < 15) {
+                        isLastPage = true
+                    }
+                    (binding.messagesRecyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+                    adapter.updateMessages(newMessages)
+                    val layoutManager = binding.messagesRecyclerView.layoutManager as LinearLayoutManager
+                    val currentFirstVisiblePos = layoutManager.findFirstVisibleItemPosition()
+                    val currentScrollOffset = layoutManager.findFirstCompletelyVisibleItemPosition()
+                    binding.messagesRecyclerView.post {
+                        layoutManager.scrollToPositionWithOffset(
+                            currentFirstVisiblePos + newMessages.size - 1,
+                            currentScrollOffset
+                        )
+                    }
+                    (binding.messagesRecyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = true
                     isLoading = false
                 }
+                .addOnFailureListener {
+                    isLoading = false
+                    Toast.makeText(this, "Failed to load older messages", Toast.LENGTH_SHORT).show()
+                }
+        } ?: run {
+            isLoading = false
         }
     }
 
     private fun setupMessageListener() {
-//        firestore.collection("messages")
-//            .whereEqualTo("chatId", chatId)
-//            .orderBy("timestamp", Query.Direction.DESCENDING)
-//            .limit(1)
-//            .addSnapshotListener { snapshot, _ ->
-//                snapshot?.documentChanges?.forEach { change ->
-//                    if (change.type == DocumentChange.Type.ADDED) {
-//                        val message = change.document.toObject(Message::class.java)
-//                        adapter.addNewMessage(message)
-//                        Log.d("L6", "Real-time message received: ${message.text}")
-//                    }
-//                }
-//            }
+        firestore.collection("messages")
+            .whereEqualTo("chatId", chatId)
+            .orderBy("timestamp", Query.Direction.ASCENDING) // Changed to ASCENDING for correct order
+            .addSnapshotListener { snapshot, error ->
+                Log.d("L6", "Listening to messages...")
+                error?.let {
+                    Log.d("L6", "Error listening to messages: ${it.message}")
+                    return@addSnapshotListener
+                }
+
+                snapshot?.documentChanges?.forEach { change ->
+                    if (change.type == DocumentChange.Type.ADDED && change.document.getTimestamp("timestamp")!! > latestMessageTimestamp) {
+                        val message = change.document.toObject(Message::class.java)
+                        adapter.addMessage(message)
+                    }
+                }
+            }
     }
+
+    private fun delayedMessageListener() {
+        binding.messagesRecyclerView.postDelayed({
+            setupMessageListener()
+        }, 2000) // 2000ms = 2 seconds
+    }
+
     private fun sendMessage() {
         val messageText = binding.messageInput.text.toString().trim()
         if (messageText.isEmpty()) return

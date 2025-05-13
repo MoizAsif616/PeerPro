@@ -32,9 +32,11 @@ class MessagesAdapter(
 
   // For real-time messages
   fun addMessage(message: Message) {
-    messages.add(message)
-    notifyItemInserted(messages.size - 1)
-    Log.d(TAG, "Added new message: ${message.text}")
+    if(!messages.contains(message))
+      messages.add(message)
+//    notifyItemInserted(messages.size - 1)
+    notifyDataSetChanged()
+//    Log.d(TAG, "Added new message: ${message.text}")
   }
 
   // For pagination
