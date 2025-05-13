@@ -507,6 +507,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
             .update("rating", rating)
             .addOnSuccessListener {
               Toast.makeText(this, "Rating updated", Toast.LENGTH_SHORT).show()
+              fetchAndDisplayRatings()
             }
             .addOnFailureListener { e ->
               Toast.makeText(this, "Failed to update rating: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -521,6 +522,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
             .set(newRating)
             .addOnSuccessListener {
               Toast.makeText(this, "Rating submitted", Toast.LENGTH_SHORT).show()
+              fetchAndDisplayRatings()
             }
             .addOnFailureListener { e ->
               Toast.makeText(this, "Failed to submit rating: ${e.message}", Toast.LENGTH_SHORT).show()

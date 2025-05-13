@@ -44,6 +44,11 @@ import com.example.peerpro.models.Note
 import java.net.HttpURLConnection
 import java.net.URL
 import com.squareup.picasso.Picasso
+import com.example.peerpro.utils.RatingsUtils
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class ProfileFragment : Fragment() {
@@ -113,7 +118,6 @@ class ProfileFragment : Fragment() {
     binding.peerEmail.text = UserCache.getUser()?.email
     val imageUrl = UserCache.getUser()?.profilePicUrl
 
-    // Only load the profile image if the URL is not null or empty
     if (!imageUrl.isNullOrEmpty()) {
       binding.tutorImage.let { imageView ->
         loadProfileImage(imageUrl, imageView)
@@ -129,6 +133,7 @@ class ProfileFragment : Fragment() {
     }
     val userId = UserCache.getId() ?: return
     Log.d("L6", "Fetching user data for UID: $userId")
+    fetchAndDisplayRatings(userId)
 
     firestore.collection("users").document(userId).get()
       .addOnSuccessListener { document ->
@@ -178,6 +183,23 @@ class ProfileFragment : Fragment() {
       }
   }
 
+  private fun fetchAndDisplayRatings(peerId:String) {
+    lifecycleScope.launch {
+      try {
+        val (average, count) = RatingsUtils.fetchAverageRating(peerId)
+        withContext(Dispatchers.Main) {
+          binding.peerRating.text = "%.1f".format(average)
+          binding.peerRatingCount.text = "$count"
+        }
+      } catch (e: Exception) {
+        Log.e("ProfilePreview", "Error fetching ratings", e)
+        withContext(Dispatchers.Main) {
+          binding.peerRating.text = "0.0"
+          binding.peerRatingCount.text = "0"
+        }
+      }
+    }
+  }
   private fun selectTutoring() {
     Log.d("L6", "Selecting tutoring")
     binding.peerTutoringButton.setBackgroundResource(R.color.peerLight_30)
@@ -348,7 +370,6 @@ private fun updateProfilePictureUrl(imageUrl: String) {
   }
 
 
-  // Error handling functions
 private fun showImageSizeError() {
     AlertDialog.Builder(requireContext())
         .setTitle("Image Too Large")
@@ -365,43 +386,7 @@ private fun showUploadError(message: String) {
     Toast.makeText(requireContext(), "Upload failed: $message", Toast.LENGTH_LONG).show()
     Log.e("ProfilePic", "Upload error: $message")
 }
- /* override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-      val imageUri: Uri = data.data!!
 
-    
-      val storageRef = FirebaseStorage.getInstance().reference
-        .child("profile_pictures/${UserCache.getId()}.jpg")
-
-      storageRef.putFile(imageUri)
-        .addOnSuccessListener {
-          // Get the download URL
-          storageRef.downloadUrl.addOnSuccessListener { uri ->
-            val profilePicUrl = uri.toString()
-
-            // Update Firestore with the new profile picture URL
-            val userRef = firestore.collection("users").document(UserCache.getId()!!)
-            userRef.update("profilePicUrl", profilePicUrl)
-              .addOnSuccessListener {
-                // Update UserCache
-                val user = UserCache.getUser()
-                user?.profilePicUrl = profilePicUrl
-                UserCache.setUser(user!!)
-
-                Toast.makeText(requireContext(), "Profile picture updated successfully", Toast.LENGTH_LONG).show()
-              }
-              .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Failed to update profile picture: ${e.message}", Toast.LENGTH_LONG).show()
-              }
-          }
-        }
-        .addOnFailureListener { e ->
-          Toast.makeText(requireContext(), "Failed to upload profile picture: ${e.message}", Toast.LENGTH_LONG).show()
-        }
-    }
-  }
-*/
 
   fun logout() {
     val localStorage = SharedPrefHelper(requireContext())
