@@ -1,5 +1,6 @@
 package com.example.peerpro
 
+import android.graphics.Rect
 import android.os.Bundle
 
 import com.google.firebase.Timestamp
@@ -17,20 +18,28 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 import java.util.*
+import android.util.Log
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 
 class MessagesActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMessagesBinding
-    private lateinit var messagesAdapter: MessagesAdapter
-    private lateinit var chatId: String
-    private lateinit var receiverId: String
+    private lateinit var adapter: MessagesAdapter
     private val firestore = FirebaseFirestore.getInstance()
+    private var lastVisibleDocument: DocumentSnapshot? = null
+    private var isLoading = false
+    private var isLastPage = false
+
+    lateinit var chatId: String
+    lateinit var receiverId: String
+    lateinit var messages: MutableList<Message>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMessagesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         // Get data from intent
         chatId = intent.getStringExtra("chat_id").toString()
         receiverId = intent.getStringExtra("receiver_id").toString()
@@ -40,36 +49,30 @@ class MessagesActivity : AppCompatActivity() {
             finish()
             return
         }
-
-        // Setup UI
-        setupToolbar()
-        setupRecyclerView()
-        fetchReceiverProfile()
-
         binding.sendBtn.setOnClickListener {
             sendMessage()
         }
+        setupToolbar()
+        fetchReceiverProfile()
+        setupRecyclerView()
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            binding.root.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = binding.root.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+
+            if (keypadHeight > screenHeight * 0.15) { // Keyboard is open
+                binding.messagesRecyclerView.scrollToPosition(adapter.itemCount - 1)
+            }
+        }
+        setupScrollListener()
+        loadInitialMessages()
+        setupMessageListener()
     }
 
     private fun setupToolbar() {
         binding.peerName.text = intent.getStringExtra("receiver_name") ?: "Unknown"
         binding.backBtn.setOnClickListener { finish() }
-    }
-
-    //TODO: Search for stackFromEnd property
-    private fun setupRecyclerView() {
-        messagesAdapter = MessagesAdapter(chatId, UserCache.getId() ?: "")
-        binding.messagesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@MessagesActivity).apply {
-                stackFromEnd = true
-            }
-            adapter = messagesAdapter
-            addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
-                if (bottom < oldBottom) {
-                    post { scrollToPosition(messagesAdapter.itemCount - 1) }
-                }
-            }
-        }
     }
 
     private fun fetchReceiverProfile() {
@@ -81,44 +84,174 @@ class MessagesActivity : AppCompatActivity() {
                             .placeholder(R.drawable.default_peer)
                             .into(binding.peerImage)
                     }
+                    else{
+                        binding.peerImage.setImageResource(R.drawable.default_peer)
+                    }
                 }
             }
     }
 
+    private fun setupRecyclerView() {
+        adapter = MessagesAdapter(UserCache.getId() ?: "")
+        binding.messagesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MessagesActivity).apply {
+//                stackFromEnd = true  // This makes items stack from bottom
+//                reverseLayout = false  // Keep this false to maintain chronological order
+            }
+            adapter = this@MessagesActivity.adapter
+        }
+    }
+
+    private fun setupScrollListener() {
+//        binding.messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                if (!isLoading && !isLastPage && layoutManager.findFirstVisibleItemPosition() == 0) {
+//                    loadMoreMessages()
+//                }
+//            }
+//        })
+    }
+
+    private fun loadInitialMessages() {
+        isLoading = true
+        Log.d("L6", "Starting initial load")
+
+        firestore.collection("messages")
+            .whereEqualTo("chatId", chatId)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(15)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                Log.d("L6", "Initial load completed with ${snapshot.size()} messages")
+                lastVisibleDocument = snapshot.documents.lastOrNull()
+                messages = snapshot.toObjects(Message::class.java)
+
+                adapter.updateMessages(messages)
+                isLoading = false
+                Log.d("L6", "Initial load completed. ${messages.size} messages loaded")
+                binding.messagesRecyclerView.scrollToPosition(messages.size - 1)
+            }
+            .addOnFailureListener {
+                Log.d("L6", "Error loading initial messages: ${it.message}")
+            }
+    }
+
+    private fun loadMoreMessages() {
+        if (isLoading || isLastPage) return
+        isLoading = true
+        Log.d("L6", "Loading more messages")
+
+        lastVisibleDocument?.let { lastDoc ->
+            firestore.collection("messages")
+                .whereEqualTo("chatId", chatId)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .startAfter(lastDoc)
+                .limit(15)
+                .get()
+                .addOnSuccessListener { snapshot ->
+                    if (snapshot.isEmpty) {
+                        isLastPage = true
+                        Log.d("L6", "No more messages to load")
+                    } else {
+                        lastVisibleDocument = snapshot.documents.lastOrNull()
+                        val newMessages = snapshot.toObjects(Message::class.java)
+                        val combined: MutableList<Message> = (newMessages + messages) as MutableList<Message>
+                        messages = combined
+                        adapter.updateMessages(messages)
+                        Log.d("L6", "Loaded ${newMessages.size} additional messages")
+                    }
+                    isLoading = false
+                }
+        }
+    }
+
+    private fun setupMessageListener() {
+//        firestore.collection("messages")
+//            .whereEqualTo("chatId", chatId)
+//            .orderBy("timestamp", Query.Direction.DESCENDING)
+//            .limit(1)
+//            .addSnapshotListener { snapshot, _ ->
+//                snapshot?.documentChanges?.forEach { change ->
+//                    if (change.type == DocumentChange.Type.ADDED) {
+//                        val message = change.document.toObject(Message::class.java)
+//                        adapter.addNewMessage(message)
+//                        Log.d("L6", "Real-time message received: ${message.text}")
+//                    }
+//                }
+//            }
+    }
     private fun sendMessage() {
         val messageText = binding.messageInput.text.toString().trim()
         if (messageText.isEmpty()) return
 
         val myId = UserCache.getId() ?: return
+
+        // Disable input while sending
+        binding.sendBtn.isEnabled = false
+
+        val timestamp = Timestamp.now()
         val newMessage = hashMapOf(
             "chatId" to chatId,
             "senderId" to myId,
             "text" to messageText,
-            "timestamp" to Timestamp.now(),
-            "isSeen" to false
+            "timestamp" to timestamp,
+            "isSeen" to false,
+            "deletedBy" to ""
         )
-
+        adapter.addMessage(
+            Message(
+                senderId = myId,
+                chatId = chatId,
+                text = messageText,
+                timestamp = timestamp,
+                isSeen = false,
+                deletedBy = ""
+            )
+        )
         // Clear input
         binding.messageInput.text.clear()
-        //hideKeyboard()
+        // hideKeyboard()
+
+
+
+        // Add message to adapter immediately
+        //adapter.addMessage(message)
+        binding.messagesRecyclerView.scrollToPosition(adapter.itemCount - 1)
 
         // Add to Firestore
         firestore.collection("messages").add(newMessage)
             .addOnSuccessListener { documentReference ->
-                messagesAdapter.addMessage(
-                  Message(
-                    senderId = myId,
-                    chatId = chatId,
-                    text = messageText,
-                    timestamp = newMessage["timestamp"] as Timestamp,
-                    isSeen = false,
-                      deletedBy = ""
-                  )
-                )
-                binding.messagesRecyclerView.smoothScrollToPosition(messages.size - 1)
+                // Update session with last message
+                updateSessionLastMessage(messageText, myId)
+                binding.messagesRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                // Re-enable input
+                binding.messageInput.isEnabled = true
+                binding.sendBtn.isEnabled = true
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to send message, check your connection", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Log.e("L6", "Error sending message: ${e.message}")
+                Toast.makeText(this, "Error sending message", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateSessionLastMessage(messageText: String, senderId: String) {
+        firestore.collection("sessions").document(chatId)
+            .update(
+                mapOf(
+                    "lastMessage" to messageText,
+                    "sender" to senderId,
+                    "isSeen" to false,
+                    "timestamp" to Timestamp.now()
+                )
+            )
+            .addOnSuccessListener {
+                Log.d("L6", "Session updated with last message: $messageText")
+                (this as? SessionsFragment)?.refreshSessions()
+            }
+            .addOnFailureListener { e ->
+                Log.e("MessagesActivity", "Error updating session: ${e.message}")
             }
     }
 
@@ -129,6 +262,6 @@ class MessagesActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        messagesAdapter.cleanup()
+        //messagesAdapter.cleanup()
     }
 }
