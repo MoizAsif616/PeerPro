@@ -29,9 +29,14 @@ import com.example.peerpro.models.TutorSession
 import com.example.peerpro.models.User
 import com.example.peerpro.utils.ButtonLoadingUtils
 import com.example.peerpro.utils.ChatUtils
+import com.example.peerpro.utils.RatingsUtils
 import com.example.peerpro.utils.UserCache
 import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfilePreviewActivity : AppCompatActivity() {
 
@@ -121,7 +126,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
           } else {
             binding.tutorImage.setImageResource(R.drawable.default_peer)
           }
-
+          fetchAndDisplayRatings()
           fetchTutorSessions(user.tutorSessionIds)
           fetchNotes(user.notesIds)
         } else {
@@ -139,6 +144,23 @@ class ProfilePreviewActivity : AppCompatActivity() {
       }
   }
 
+  private fun fetchAndDisplayRatings() {
+    lifecycleScope.launch {
+      try {
+        val (average, count) = RatingsUtils.fetchAverageRating(peerId)
+        withContext(Dispatchers.Main) {
+          binding.peerRating.text = "%.1f".format(average)
+          binding.peerRatingCount.text = "$count"
+        }
+      } catch (e: Exception) {
+        Log.e("ProfilePreview", "Error fetching ratings", e)
+        withContext(Dispatchers.Main) {
+          binding.peerRating.text = "0.0"
+          binding.peerRatingCount.text = "0"
+        }
+      }
+    }
+  }
   private fun fetchTutorSessions(tutorSessionIds: List<String>) {
     if (tutorSessionIds.isEmpty()) {
       binding.tutorSessionsViewSwitcher.displayedChild = 1 // Show empty state
