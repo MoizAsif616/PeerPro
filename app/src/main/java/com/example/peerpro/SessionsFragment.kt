@@ -39,6 +39,14 @@ class SessionsFragment : Fragment() {
   private lateinit var sessionsAdapter: SessionsAdapter
   private val firestore: FirebaseFirestore = Firebase.firestore
 
+  companion object {
+    private var instance: SessionsFragment? = null
+
+    fun refreshIfVisible() {
+      instance?.refreshSessions()
+    }
+  }
+
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
@@ -50,6 +58,7 @@ class SessionsFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
+    instance = this
     sessionsAdapter = SessionsAdapter(mutableListOf()).apply {
       onItemClick = { session, otherUserId, peerName, peerRoll, chatId ->
         val intent = Intent(requireContext(), MessagesActivity::class.java).apply {
@@ -68,16 +77,16 @@ class SessionsFragment : Fragment() {
     }
 
     binding.sessionsSwipeRefreshLayout.setOnRefreshListener {
+      binding.sessionsSwipeRefreshLayout.isRefreshing = true
       refreshSessions()
     }
-
+    binding.sessionsSwipeRefreshLayout.isRefreshing = true
     refreshSessions()
     setupSessionListener()
   }
 
   internal fun refreshSessions() {
     Log.d("L6", "Refreshing sessions")
-    binding.sessionsSwipeRefreshLayout.isRefreshing = true
     val myId = UserCache.getId() ?: return
     val sessions = mutableListOf<Session>()
 
@@ -193,5 +202,6 @@ class SessionsFragment : Fragment() {
   override fun onDestroyView() {
     super.onDestroyView()
     _binding = null
+    instance = null
   }
 }

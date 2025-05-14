@@ -55,7 +55,8 @@ object ChatUtils {
       "lastMessage" to message,
       "sender" to myId,
       "isSeen" to false,
-      "timestamp" to Timestamp.now() // Use current date and time
+      "timestamp" to Timestamp.now(),
+      "chatId" to sessionId
     )
 
     db.collection("sessions").document(sessionId)

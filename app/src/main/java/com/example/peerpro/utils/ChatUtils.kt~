@@ -143,16 +143,6 @@ object ChatUtils {
       .set(newMessage)
       .addOnSuccessListener {
         Log.d(TAG, "Message created successfully")
-        db.collection("sessions").document(sessionId)
-          .update("messageIds", FieldValue.arrayUnion(messageId))
-          .addOnSuccessListener {
-            Log.d(TAG, "Message added to session successfully")
-            safelyAddToChatIds(db, myId, myId, sessionId, onSuccess, onError)
-          }
-          .addOnFailureListener { e ->
-            Log.e(TAG, "Error adding message to session", e)
-            onError(e)
-          }
       }
       .addOnFailureListener { e ->
         Log.e(TAG, "Error creating message", e)

@@ -138,6 +138,7 @@ class MessagesActivity : AppCompatActivity() {
                     }
                 }
                 adapter.updateMessages(messages)
+                SessionsFragment.refreshIfVisible()
                 isLoading = false
                 Log.d("L6", "Initial load completed. ${messages.size} messages loaded")
                 binding.messagesRecyclerView.scrollToPosition(messages.size - 1)
@@ -221,6 +222,7 @@ class MessagesActivity : AppCompatActivity() {
                             markMessageAsSeen(change.document.id)
                         }
                         adapter.addMessage(message)
+                        SessionsFragment.refreshIfVisible()
                         // Auto-scroll only if user is near bottom
                         val layoutManager = binding.messagesRecyclerView.layoutManager as LinearLayoutManager
                         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
@@ -294,6 +296,7 @@ class MessagesActivity : AppCompatActivity() {
                 // Update session with last message
                 updateSessionLastMessage(messageText, myId, false, timestamp)
                 binding.messagesRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                SessionsFragment.refreshIfVisible()
                 // Re-enable input
                 binding.messageInput.isEnabled = true
                 binding.sendBtn.isEnabled = true
@@ -331,7 +334,6 @@ class MessagesActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        SessionsFragment.refreshIfVisible()
         messageListener.remove()  // This stops the Firestore listener
     }
 }

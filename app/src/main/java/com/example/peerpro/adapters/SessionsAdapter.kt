@@ -49,11 +49,8 @@ class SessionsAdapter(private val sessions: MutableList<Session>) :
       }
 
       if (!session.isSeen) {
-        if (session.sender == myId) {
+        if (session.sender != myId) {
           Log.d("L6", "Sender is you and message is unseen, sender id is ${session.sender.toString()}")
-          status.setImageResource(R.drawable.red)
-        } else{
-          Log.d("L6", "Sender is not you and message is unseen , sender id is ${session.sender.toString()}")
           status.setImageResource(R.drawable.green)
         }
       }
