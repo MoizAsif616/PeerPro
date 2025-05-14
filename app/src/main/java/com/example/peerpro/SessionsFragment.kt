@@ -95,7 +95,7 @@ class SessionsFragment : Fragment() {
           val chatId = document.getString("chatId") ?: ""
           sessions.add(
             Session(
-              sender = "", // Sender will be fetched in the adapter
+              sender = document.getString("sender") ?: "",
               lastMessage = document.getString("lastMessage") ?: "",
               chatId = chatId,
               isSeen = document.getBoolean("isSeen") == true,
@@ -144,6 +144,7 @@ class SessionsFragment : Fragment() {
                 sessionsAdapter.addSession(session)
               }
               DocumentChange.Type.MODIFIED -> {
+                Log.d("L6", "Session modified: ${change.document.id}")
                 val session = change.document.toObject(Session::class.java)
                 sessionsAdapter.updateSession(session)
               }

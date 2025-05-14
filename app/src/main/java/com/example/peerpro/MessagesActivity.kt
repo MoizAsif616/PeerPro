@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 
 class MessagesActivity : AppCompatActivity() {
@@ -36,6 +37,7 @@ class MessagesActivity : AppCompatActivity() {
     lateinit var receiverId: String
     lateinit var messages: MutableList<Message>
     lateinit var latestMessageTimestamp: Timestamp
+    lateinit var messageListener: ListenerRegistration
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,8 +130,13 @@ class MessagesActivity : AppCompatActivity() {
             .addOnSuccessListener { snapshot ->
                 lastVisibleDocument = snapshot.documents.lastOrNull()
                 latestMessageTimestamp = lastVisibleDocument?.getTimestamp("timestamp") ?: Timestamp.now()
-                messages = snapshot.toObjects(Message::class.java)
-
+                messages = snapshot.toObjects(Message::class.java).apply {
+                    forEach { message ->
+                        if (message.senderId == receiverId && !message.isSeen) {
+                            markMessageAsSeen(snapshot.documents[this.indexOf(message)].id)
+                        }
+                    }
+                }
                 adapter.updateMessages(messages)
                 isLoading = false
                 Log.d("L6", "Initial load completed. ${messages.size} messages loaded")
@@ -161,6 +168,11 @@ class MessagesActivity : AppCompatActivity() {
                     latestMessageTimestamp = lastVisibleDocument?.getTimestamp("timestamp") ?: Timestamp.now()
 
                     val newMessages = snapshot.toObjects(Message::class.java)
+                    newMessages.forEach { message ->
+                        if (message.senderId == receiverId && !message.isSeen) {
+                            markMessageAsSeen(snapshot.documents[newMessages.indexOf(message)].id)
+                        }
+                    }
 
                     // Check if we've reached the end
                     if (newMessages.size < 15) {
@@ -190,7 +202,7 @@ class MessagesActivity : AppCompatActivity() {
     }
 
     private fun setupMessageListener() {
-        firestore.collection("messages")
+        messageListener = firestore.collection("messages")
             .whereEqualTo("chatId", chatId)
             .orderBy("timestamp", Query.Direction.ASCENDING) // Changed to ASCENDING for correct order
             .addSnapshotListener { snapshot, error ->
@@ -203,6 +215,11 @@ class MessagesActivity : AppCompatActivity() {
                 snapshot?.documentChanges?.forEach { change ->
                     if (change.type == DocumentChange.Type.ADDED && change.document.getTimestamp("timestamp")!! > latestMessageTimestamp) {
                         val message = change.document.toObject(Message::class.java)
+                        // Only mark as seen if message is from receiver and not already seen
+                        if (message.senderId == receiverId && !message.isSeen) {
+                            Log.d("L6","Marking the isSeen true")
+                            markMessageAsSeen(change.document.id)
+                        }
                         adapter.addMessage(message)
                         // Auto-scroll only if user is near bottom
                         val layoutManager = binding.messagesRecyclerView.layoutManager as LinearLayoutManager
@@ -216,6 +233,16 @@ class MessagesActivity : AppCompatActivity() {
                         }
                     }
                 }
+            }
+    }
+
+    private fun markMessageAsSeen(messageId: String) {
+        firestore.collection("messages").document(messageId)
+            .update("isSeen", true)
+            .addOnSuccessListener {
+                // Also update the session's isSeen status
+                firestore.collection("sessions").document(chatId)
+                    .update("isSeen", true)
             }
     }
 
@@ -303,6 +330,7 @@ class MessagesActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //messagesAdapter.cleanup()
+        (this as? SessionsFragment)?.refreshSessions()
+        messageListener.remove()  // This stops the Firestore listener
     }
 }

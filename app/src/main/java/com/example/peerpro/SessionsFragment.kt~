@@ -72,6 +72,7 @@ class SessionsFragment : Fragment() {
     }
 
     refreshSessions()
+    setupSessionListener()
   }
 
   internal fun refreshSessions() {
@@ -94,7 +95,7 @@ class SessionsFragment : Fragment() {
           val chatId = document.getString("chatId") ?: ""
           sessions.add(
             Session(
-              sender = "", // Sender will be fetched in the adapter
+              sender = document.getString("sender") ?: "",
               lastMessage = document.getString("lastMessage") ?: "",
               chatId = chatId,
               isSeen = document.getBoolean("isSeen") == true,
