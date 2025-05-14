@@ -5,10 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.databinding.FragmentProfileBinding
 import android.content.Intent
 import com.example.peerpro.utils.SharedPrefHelper
@@ -22,33 +20,23 @@ import com.example.peerpro.utils.UserCache
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import android.app.Activity
-import android.app.Dialog
 import android.content.res.Resources
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.net.Uri
-import android.provider.ContactsContract.CommonDataKinds.Website.URL
 import android.view.Gravity
 import android.widget.ImageView
-import androidx.core.content.ContentProviderCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toDrawable
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.peerpro.databinding.NotesProfileDetailsBinding
 import com.example.peerpro.databinding.TutorProfileDetailsBinding
-import com.google.firebase.storage.FirebaseStorage
 import com.example.peerpro.models.TutorSession
 import com.example.peerpro.models.User
 import com.example.peerpro.models.Note
-import java.net.HttpURLConnection
-import java.net.URL
 import com.squareup.picasso.Picasso
 import com.example.peerpro.utils.RatingsUtils
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.color.MaterialColors
+import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -108,15 +96,14 @@ class ProfileFragment : Fragment() {
 
     // Setup refresh listener
     binding.profileSwipeRefreshLayout.setOnRefreshListener {
-      val showTutoring = binding.tutorSessionsViewSwitcher.visibility == View.VISIBLE
-      refreshProfile(showTutoring)
+      refreshProfile()
     }
 
-    refreshProfile(true)
+    refreshProfile()
     Log.d("user data: ", UserCache.getUser().toString())
   }
 
-  private fun refreshProfile(showTutoring: Boolean = true) {
+  private fun refreshProfile() {
     binding.profileSwipeRefreshLayout.isRefreshing = true
     binding.peerBio.text = UserCache.getUser()?.bio
     binding.peerEmail.text = UserCache.getUser()?.email
@@ -179,11 +166,7 @@ class ProfileFragment : Fragment() {
           }
         }
         binding.profileSwipeRefreshLayout.isRefreshing = false
-        if (showTutoring) {
-          selectTutoring()
-        } else {
-          selectNotes()
-        }
+        selectTutoring()
       }
       .addOnFailureListener {
         Log.e("L6", "Error fetching user data: ${it.message}")
@@ -208,6 +191,7 @@ class ProfileFragment : Fragment() {
       }
     }
   }
+
   private fun selectTutoring() {
     Log.d("L6", "Selecting tutoring")
     binding.peerTutoringButton.setBackgroundResource(R.color.peerLight_30)
@@ -301,6 +285,7 @@ class ProfileFragment : Fragment() {
       } ?: showImageSelectionError()
     }
   }
+
   private fun uploadProfilePicture(imageUri: Uri) {
     Toast.makeText(requireContext(), "Uploading profile picture...", Toast.LENGTH_SHORT).show()
 
@@ -341,7 +326,7 @@ class ProfileFragment : Fragment() {
     }
   }
 
-private fun updateProfilePictureUrl(imageUrl: String) {
+  private fun updateProfilePictureUrl(imageUrl: String) {
   val userId = UserCache.getId() ?: run {
     Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
     return
@@ -394,7 +379,7 @@ private fun showUploadError(message: String) {
 }
 
 
-/*  fun logout() {
+  fun logout() {
     val localStorage = SharedPrefHelper(requireContext())
     localStorage.clearToken()
 
@@ -402,48 +387,127 @@ private fun showUploadError(message: String) {
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     auth.signOut()
     startActivity(intent)
-  }*/
-  fun logout() {
+  }
+
+  fun deleteAccount() {
+    val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_delete_account, null)
+    val emailInputLayout = dialogView.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.emailInputLayout)
+    val emailInput = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.emailEditText)
+    val deleteButton = dialogView.findViewById<MaterialButton>(R.id.deleteAccountButton)
+
     val dialog = AlertDialog.Builder(requireContext())
-      .setTitle("Logout")
-      .setMessage("Are you sure you want to logout?")
-      .setPositiveButton("Logout") { _, _ ->
-        performLogout()
-      }
-      .setNegativeButton("Cancel", null)
+      .setView(dialogView)
+      .setCancelable(true)
       .create()
 
-    dialog.setOnShowListener {
-      // Apply your custom styling
-      val backgroundColor = MaterialColors.getColor(
-        requireContext(),
-        R.attr.bgSecondary,
-        Color.BLACK
-      )
-      dialog.window?.setBackgroundDrawable(backgroundColor.toDrawable())
+    deleteButton.setOnClickListener {
+      ButtonLoadingUtils.setLoadingState(deleteButton, true)
+      val email = emailInput.text.toString()
+      if (email.isNotEmpty()) {
+        deleteUser(email) {
+          ButtonLoadingUtils.setLoadingState(deleteButton, true)
+          dialog.dismiss()
+        }
+      } else {
+        emailInputLayout.error = "Email is required"
+      }
+    }
 
+    dialog.window?.apply {
+      setBackgroundDrawableResource(android.R.color.transparent)
+      setLayout((Resources.getSystem().displayMetrics.widthPixels * 0.9).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
+      setGravity(Gravity.CENTER)
     }
 
     dialog.show()
   }
 
-  private fun performLogout() {
-    val localStorage = SharedPrefHelper(requireContext())
-    localStorage.clearToken()
+  private fun deleteUser(email: String, onSuccess: () -> Unit) {
+    if (email != UserCache.getUser()?.email) {
+      Toast.makeText(requireContext(), "Email does not match", Toast.LENGTH_LONG).show()
+      return
+    }
 
-    val intent = Intent(requireContext(), Auth::class.java)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-    auth.signOut()
-    startActivity(intent)
+    val userId = UserCache.getId().toString()
+    val userDocRef = firestore.collection("users").document(userId)
 
-    Toast.makeText(
-      requireContext(),
-      "Logged out successfully",
-      Toast.LENGTH_SHORT
-    ).show()
-  }
-  fun deleteAccount() {
-    Toast.makeText(requireContext(), "Delete Account clicked", Toast.LENGTH_LONG).show()
+    // Step 1: Get user document to access all related data
+    userDocRef.get().addOnSuccessListener { document ->
+      if (document.exists()) {
+        val userData = document.data!!
+        val chatIds = userData["chatIds"] as? List<String> ?: emptyList()
+        val tutoringSessionIds = userData["tutorSessionIds"] as? List<String> ?: emptyList()
+        val noteIds = userData["notesIds"] as? List<String> ?: emptyList()
+
+        // Step 2: Delete all messages in all chats
+        val deleteMessagesTasks = chatIds.map { chatId ->
+          firestore.collection("messages")
+            .whereEqualTo("chatId", chatId)
+            .get()
+            .continueWithTask { messagesTask ->
+              val batch = firestore.batch()
+              messagesTask.result?.forEach { doc ->
+                batch.delete(doc.reference)
+              }
+              batch.commit()
+            }
+        }
+
+        // Step 3: Delete all tutoring sessions
+        val deleteSessionsTasks = tutoringSessionIds.map { sessionId ->
+          firestore.collection("tutor_sessions").document(sessionId).delete()
+        }
+
+        // Step 4: Delete all notes
+        val deleteNotesTasks = noteIds.map { noteId ->
+          firestore.collection("notes").document(noteId).delete()
+        }
+
+        // Step 5: Delete all chat sessions
+        val deleteChatsTasks = chatIds.map { chatId ->
+          firestore.collection("sessions").document(chatId).delete()
+        }
+
+        // Combine all deletion tasks
+        Tasks.whenAllComplete(
+          deleteMessagesTasks +
+            deleteSessionsTasks +
+            deleteNotesTasks +
+            deleteChatsTasks
+        ).addOnCompleteListener { allDeletionsTask ->
+          if (allDeletionsTask.isSuccessful) {
+            // Step 6: Delete user document
+            userDocRef.delete().addOnSuccessListener {
+              // Step 7: Delete auth user
+              auth.currentUser?.delete()?.addOnCompleteListener { authTask ->
+                if (authTask.isSuccessful) {
+                  Toast.makeText(requireContext(), "Account deleted successfully", Toast.LENGTH_LONG).show()
+                  logout()
+                  onSuccess()
+                } else {
+                  Toast.makeText(requireContext(),
+                    "Failed to delete auth user: ${authTask.exception?.message}",
+                    Toast.LENGTH_LONG).show()
+                  Log.d("L6", "Failed to delete auth user: ${authTask.exception?.message}")
+                }
+              }
+            }.addOnFailureListener { e ->
+              Toast.makeText(requireContext(),
+                "Failed to delete user document: ${e.message}",
+                Toast.LENGTH_LONG).show()
+            }
+          } else {
+            Toast.makeText(requireContext(),
+              "Failed to delete some associated data",
+              Toast.LENGTH_LONG).show()
+          }
+        }
+      }
+    }.addOnFailureListener { e ->
+      Toast.makeText(requireContext(),
+        "Failed to fetch user data: ${e.message}",
+        Toast.LENGTH_LONG).show()
+    }
   }
 
   private fun tutorSessionClicked(tutorSession: TutorSession) {
@@ -454,29 +518,6 @@ private fun showUploadError(message: String) {
     showNotesDetailsDialog(note)
   }
 
-  private fun showDeleteConfirmation(
-    title: String,
-    message: String,
-    onConfirm: () -> Unit
-  ) {
-    val dialog = AlertDialog.Builder(requireContext())
-      .setTitle(title)
-      .setMessage(message)
-      .setPositiveButton("Delete") { _, _ -> onConfirm() }
-      .setNegativeButton("Cancel", null)
-      .create()
-
-    dialog.setOnShowListener {
-      val backgroundColor = MaterialColors.getColor(
-        requireContext(),
-        R.attr.bgSecondary,
-        Color.TRANSPARENT
-      )
-      dialog.window?.setBackgroundDrawable(backgroundColor.toDrawable())
-    }
-
-    dialog.show()
-  }
   private fun showTutoringDetailsDialog(tutoring: TutorSession) {
     val binding = TutorProfileDetailsBinding.inflate(LayoutInflater.from(requireContext()))
     val dialog = AlertDialog.Builder(requireContext())
@@ -520,28 +561,22 @@ private fun showUploadError(message: String) {
     binding.genderLabel.textSize = textSizeSmall
 
     binding.tutorDeleteButton.setOnClickListener {
-      showDeleteConfirmation(
-        title = "Delete Tutoring Session",
-        message = "Are you sure you want to delete ${tutoring.skillName} tutoring session ?")
-      {
-        binding.tutorDeleteButton.isEnabled = false
-        firestore.collection("tutor_sessions")
-          .whereEqualTo("skillName", tutoring.skillName)
-          .whereEqualTo("peerId", tutoring.peerId)
-          .whereEqualTo("createdAt", tutoring.createdAt)
-          .get()
-          .addOnSuccessListener { querySnapshot ->
-            querySnapshot.documents.firstOrNull()?.reference?.delete()
-            Toast.makeText(requireContext(), "Tutoring deleted", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-            refreshProfile(true)
-          }
-          .addOnFailureListener { e ->
-            binding.tutorDeleteButton.isEnabled = true
-            Toast.makeText(requireContext(), "Delete failed: ${e.message}", Toast.LENGTH_SHORT)
-              .show()
-          }
-      }
+      Toast.makeText(requireContext(), "Delete tutoring: ${tutoring.skillName}", Toast.LENGTH_SHORT).show()
+      binding.tutorDeleteButton.isEnabled = false
+      firestore.collection("tutor_sessions")
+        .whereEqualTo("skillName", tutoring.skillName)
+        .whereEqualTo("peerId", tutoring.peerId)
+        .whereEqualTo("createdAt", tutoring.createdAt)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          querySnapshot.documents.firstOrNull()?.reference?.delete()
+          Toast.makeText(requireContext(), "Tutoring deleted", Toast.LENGTH_SHORT).show()
+          dialog.dismiss()
+        }
+        .addOnFailureListener { e ->
+          binding.tutorDeleteButton.isEnabled = true
+          Toast.makeText(requireContext(), "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -588,33 +623,23 @@ private fun showUploadError(message: String) {
     dialogBinding.type.textSize = textSizeSmall
 
     dialogBinding.notesDeleteButton.setOnClickListener {
-      //Toast.makeText(requireContext(), "Delete notes: ${note.name}", Toast.LENGTH_SHORT).show()
+      Toast.makeText(requireContext(), "Delete notes: ${note.name}", Toast.LENGTH_SHORT).show()
 
       dialogBinding.notesDeleteButton.isEnabled = false
-      showDeleteConfirmation(
-        title = "Delete Notes",
-        message = "Are you sure you want to delete these  ${note.name} notes? "
-      )
-      {
-        dialogBinding.notesDeleteButton.isEnabled = false
-        firestore.collection("notes")
-          .whereEqualTo("name", note.name)
-          .whereEqualTo("peerId", note.peerId)
-          .whereEqualTo("createdAt", note.createdAt)
-          .get()
-          .addOnSuccessListener { querySnapshot ->
-            querySnapshot.documents.firstOrNull()?.reference?.delete()
-            Toast.makeText(requireContext(), "Notes deleted", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-            refreshProfile(false)
-
-          }
-          .addOnFailureListener { e ->
-            dialogBinding.notesDeleteButton.isEnabled = true
-            Toast.makeText(requireContext(), "Delete failed: ${e.message}", Toast.LENGTH_SHORT)
-              .show()
-          }
-      }
+      firestore.collection("notes")
+        .whereEqualTo("name", note.name)
+        .whereEqualTo("peerId", note.peerId)
+        .whereEqualTo("createdAt", note.createdAt)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          querySnapshot.documents.firstOrNull()?.reference?.delete()
+          Toast.makeText(requireContext(), "Notes deleted", Toast.LENGTH_SHORT).show()
+          dialog.dismiss()
+        }
+        .addOnFailureListener { e ->
+          dialogBinding.notesDeleteButton.isEnabled = true
+          Toast.makeText(requireContext(), "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
