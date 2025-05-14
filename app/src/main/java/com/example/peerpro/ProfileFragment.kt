@@ -108,7 +108,8 @@ class ProfileFragment : Fragment() {
 
     // Setup refresh listener
     binding.profileSwipeRefreshLayout.setOnRefreshListener {
-      refreshProfile(true)
+      val showTutoring = binding.tutorSessionsViewSwitcher.visibility == View.VISIBLE
+      refreshProfile(showTutoring)
     }
 
     refreshProfile(true)
@@ -531,10 +532,9 @@ private fun showUploadError(message: String) {
           .get()
           .addOnSuccessListener { querySnapshot ->
             querySnapshot.documents.firstOrNull()?.reference?.delete()
-            refreshProfile(true)
             Toast.makeText(requireContext(), "Tutoring deleted", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
-
+            refreshProfile(true)
           }
           .addOnFailureListener { e ->
             binding.tutorDeleteButton.isEnabled = true
@@ -607,6 +607,7 @@ private fun showUploadError(message: String) {
             Toast.makeText(requireContext(), "Notes deleted", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
             refreshProfile(false)
+
           }
           .addOnFailureListener { e ->
             dialogBinding.notesDeleteButton.isEnabled = true

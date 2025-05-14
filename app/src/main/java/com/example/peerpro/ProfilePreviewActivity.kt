@@ -5,7 +5,9 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.view.WindowManager
 import android.content.res.Resources
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -17,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -131,6 +134,9 @@ class ProfilePreviewActivity : AppCompatActivity() {
           if (!imageUrl.isNullOrEmpty()) {
             binding.tutorImage?.let { imageView ->
               loadProfileImage(imageUrl, imageView)
+              imageView.setOnClickListener {
+                showEnlargedProfileImage(imageUrl)
+              }
             }
           } else {
             binding.tutorImage.setImageResource(R.drawable.default_peer)
@@ -153,6 +159,39 @@ class ProfilePreviewActivity : AppCompatActivity() {
       }
   }
 
+  private fun showEnlargedProfileImage(imageUrl: String) {
+    val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen).apply {
+      // Get screen dimensions
+      val displayMetrics = DisplayMetrics()
+      windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+      val screenWidth = displayMetrics.widthPixels
+      val screenHeight = displayMetrics.heightPixels
+
+      // Calculate dialog dimensions
+      val dialogWidth = (screenWidth * 0.8).toInt()
+      val dialogHeight = (screenHeight * 0.5).toInt()
+
+      // Set dialog window dimensions
+      window?.apply {
+        setLayout(dialogWidth, dialogHeight)
+        setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+        setGravity(Gravity.CENTER) // Center the dialog
+      }
+      setCancelable(true)  // Allows dismissal by back button or outside touch
+      setCanceledOnTouchOutside(true)
+    }
+
+    dialog.setContentView(R.layout.dialog_enlarged_image)
+
+    val imageView = dialog.findViewById<ImageView>(R.id.enlargedImageView)
+    Picasso.get()
+      .load(imageUrl)
+      .resize(0, (resources.displayMetrics.heightPixels * 0.5).toInt())
+      .onlyScaleDown()
+      .centerInside()
+      .into(imageView)
+    dialog.show()
+  }
   private fun fetchAndDisplayRatings() {
     lifecycleScope.launch {
       try {
