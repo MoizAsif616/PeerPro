@@ -325,14 +325,15 @@ class NotesFragment : Fragment() {
         peerId = peerId,
         message = "Hi, $name from this side. I want to get ${note.name} notes from you.",
         onSuccess = {
-          Toast.makeText(requireContext(), "Your request has been sent", Toast.LENGTH_SHORT).show()
+          Toast.makeText(requireContext(),  "Request sent, check in your sessions", Toast.LENGTH_SHORT).show()
           ButtonLoadingUtils.setLoadingState(requestBtn, false)
-          // Optional: Navigate to chat screen
+          dialog.dismiss()
+          SessionsFragment.refreshIfVisible()
         },
         onError = { e ->
           Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
           ButtonLoadingUtils.setLoadingState(requestBtn, false)
-
+          dialog.dismiss()
         }
       )
     }

@@ -85,7 +85,7 @@ object ChatUtils {
 
     val messageId = db.collection("messages").document().id
     val newMessage = hashMapOf(
-      "sender" to myId,
+      "senderId" to myId,
       "text" to message,
       "isSeen" to false,
       "timestamp" to Timestamp.now(), // Use current date and time
@@ -132,7 +132,7 @@ object ChatUtils {
 
     val messageId = db.collection("messages").document().id
     val newMessage = hashMapOf(
-      "sender" to myId,
+      "senderId" to myId,
       "text" to message,
       "isSeen" to false,
       "timestamp" to Timestamp.now(), // Use current date and time
@@ -143,6 +143,7 @@ object ChatUtils {
     db.collection("messages").document(messageId)
       .set(newMessage)
       .addOnSuccessListener {
+        onSuccess()
         Log.d(TAG, "Message created successfully")
       }
       .addOnFailureListener { e ->

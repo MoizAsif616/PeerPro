@@ -116,7 +116,6 @@ class ProfilePreviewActivity : AppCompatActivity() {
       .centerCrop()
       .into(imageView)
   }
-
   private fun fetchProfileData(peerId: String) {
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = true
 
@@ -170,7 +169,6 @@ class ProfilePreviewActivity : AppCompatActivity() {
       }
     }
   }
-
   private fun fetchTutorSessions(tutorSessionIds: List<String>) {
     if (tutorSessionIds.isEmpty()) {
       binding.tutorSessionsViewSwitcher.displayedChild = 1 // Show empty state
@@ -291,16 +289,14 @@ class ProfilePreviewActivity : AppCompatActivity() {
         peerId = peerId,
         message = "Hi, $name from this side. I want to learn ${tutor.skillName} from you.",
         onSuccess = {
-          Toast.makeText(this, "Request sent, check in your sessions", Toast.LENGTH_SHORT).show()
+          Toast.makeText(this, "Your request has been sent", Toast.LENGTH_SHORT).show()
           ButtonLoadingUtils.setLoadingState(requestBtn, false)
-          dialog.dismiss()
-          SessionsFragment.refreshIfVisible()
-
+          // Optional: Navigate to chat screen
         },
         onError = { e ->
           Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
           ButtonLoadingUtils.setLoadingState(requestBtn, false)
-          dialog.dismiss()
+
         }
       )
     }
@@ -417,15 +413,14 @@ class ProfilePreviewActivity : AppCompatActivity() {
         peerId = peerId,
         message = "Hi, $name from this side. I want to get ${note.name} notes from you.",
         onSuccess = {
-          Toast.makeText(this, "Request sent, check in your sessions", Toast.LENGTH_SHORT).show()
+          Toast.makeText(this, "Your request has been sent", Toast.LENGTH_SHORT).show()
           ButtonLoadingUtils.setLoadingState(requestBtn, false)
-          dialog.dismiss()
-          SessionsFragment.refreshIfVisible()
+          // Optional: Navigate to chat screen
         },
         onError = { e ->
           Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
           ButtonLoadingUtils.setLoadingState(requestBtn, false)
-          dialog.dismiss()
+
         }
       )
     }
