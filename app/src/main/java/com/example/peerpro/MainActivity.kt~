@@ -316,7 +316,7 @@ class MainActivity : AppCompatActivity() {
           true
         }
         R.id.delete_account -> {
-          callProfileFragmentFunction("deleteAccount")
+          showDeleteConfirmationDialog()
           true
         }
         else -> false
