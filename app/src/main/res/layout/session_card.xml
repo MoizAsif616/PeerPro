@@ -35,6 +35,12 @@
                 android:orientation="vertical"
                 android:layout_marginTop="5dp"
                 >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1"
+                    >
                 <TextView
                     android:id="@+id/peerName"
                     android:layout_width="wrap_content"
@@ -42,8 +48,20 @@
                     android:layout_marginBottom="-4dp"
                     android:text="Loading..."
                     android:textSize="16sp"
+                    android:layout_weight="1"
                     android:textColor="?attr/textPrimary"
                     android:fontFamily="@font/poppins_regular"/>
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="-4dp"
+                    android:text="Loading..."
+                    android:textSize="12sp"
+                    android:textColor="@color/grey_1"
+                    android:fontFamily="@font/poppins_regular"
+                    />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/peerRoll"
                     android:layout_width="wrap_content"

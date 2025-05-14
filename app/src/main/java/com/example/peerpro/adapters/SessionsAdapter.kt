@@ -12,6 +12,8 @@ import com.example.peerpro.utils.UserCache
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.material.imageview.ShapeableImageView
 import com.squareup.picasso.Picasso
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class SessionsAdapter(private val sessions: MutableList<Session>) :
   RecyclerView.Adapter<SessionsAdapter.SessionViewHolder>() {
@@ -24,10 +26,15 @@ class SessionsAdapter(private val sessions: MutableList<Session>) :
     private val peerName: TextView = itemView.findViewById(R.id.peerName)
     private val peerRoll: TextView = itemView.findViewById(R.id.peerRoll)
     private val lastMessage: TextView = itemView.findViewById(R.id.lastMessage)
-
+    private val time: TextView = itemView.findViewById(R.id.time)
     fun bind(session: Session) {
       lastMessage.text = session.lastMessage
+      // Convert Firestore Timestamp to Date
+      val date = session.timestamp.toDate()
 
+      // Format to show just time (e.g., "2:30 PM")
+      val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+      time.text = timeFormat.format(date)
       // Set last message color
       val myId = UserCache.getId() ?: ""
       if (session.sender == myId) {
