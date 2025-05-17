@@ -1,7 +1,4 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-  <solid android:color="?attr/bgSecondary" />
-  <!-- <corners android:radius="20dp" /> -->
-  <stroke
-    android:width="0.6dp"
-    android:color="@color/peerLight" />
+    <solid android:color="?attr/bgSecondary" />
+    <corners android:radius="16dp" />
 </shape>

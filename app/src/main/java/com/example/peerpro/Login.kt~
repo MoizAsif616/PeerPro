@@ -87,19 +87,20 @@ class Login : Fragment() {
       .addOnCompleteListener(requireActivity()) { task ->
         if (task.isSuccessful) {
           val user = auth.currentUser
-          if (user?.isEmailVerified == true) {
-            user.getIdToken(true).addOnSuccessListener { result ->
+          if (user?.isEmailVerified != true) {
+            user?.getIdToken(true)?.addOnSuccessListener { result ->
               val accessToken = result.token
               sharedPrefHelper.saveToken(accessToken ?: "")
 
               // Fetch user object from Firestore
               val firestore = FirebaseFirestore.getInstance()
-              firestore.collection("users").document(user.uid).get()
+              firestore.collection("users").document(user.uid ).get()
                 .addOnSuccessListener { document ->
                   if (document.exists()) {
                     val userData = document.toObject(User::class.java)
                     UserCache.setUser(userData!!)
-                    
+                    UserCache.setId(user.uid)
+
                     // Navigate to MainActivity
                     val intent = Intent(requireContext(), MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

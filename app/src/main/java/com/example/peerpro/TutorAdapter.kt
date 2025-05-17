@@ -7,13 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.peerpro.databinding.TutorCardBinding
 import com.example.peerpro.models.TutorSession
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date
-
 class TutorsAdapter(private val tutors: MutableList<TutorSession> , private val onTutorClick: (TutorSession) -> Unit) :
   RecyclerView.Adapter<TutorsAdapter.TutorViewHolder>() {
 
@@ -104,20 +105,27 @@ class TutorsAdapter(private val tutors: MutableList<TutorSession> , private val 
 
       // Set profile picture
       if (profilePicUrl.isNullOrEmpty()) {
-        item.tutorImage.setImageResource(R.color.black)
+        item.tutorImage.setImageResource(R.drawable.default_peer)
       } else {
-        // Load image using a library like Glide or Picasso
-        // Example using Glide:
-        // Glide.with(itemView.context).load(profilePicUrl).into(item.tutorImage)
+        item.tutorImage?.let { imageView ->
+          loadProfileImage(profilePicUrl, imageView)
+        }
       }
       item.mainContainer.visibility = View.VISIBLE
     }
   }
 
+  private fun loadProfileImage(imageUrl: String, imageView: ImageView) {
+    Picasso.get()
+      .load(imageUrl)
+      .resize(250, 250) // Resize if needed
+      .centerCrop()
+      .into(imageView)
+  }
   @SuppressLint("ServiceCast")
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TutorViewHolder {
     // Calculate sizes only once when first ViewHolder is created
-    if (itemHeight == 0) {
+      if (itemHeight == 0) {
       val displayMetrics = DisplayMetrics()
       val windowManager = parent.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
       windowManager.defaultDisplay.getMetrics(displayMetrics)

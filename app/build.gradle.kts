@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-  alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.gms.google.services)
 }
+apply(plugin = "org.jetbrains.kotlin.kapt")
 
 android {
     namespace = "com.example.peerpro"
@@ -70,9 +71,9 @@ dependencies {
     implementation(libs.androidx.databinding.compiler)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-  implementation(libs.androidx.swiperefreshlayout)
-  implementation(libs.firebase.storage)
-  testImplementation(libs.junit)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.firebase.storage)
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -97,4 +98,6 @@ dependencies {
   // Firebase Auth + Firestore
 //  implementation (libs.firebase.auth.ktx)
 //  implementation (libs.firebase.firestore.ktx)
+    implementation(libs.cloudinary.android)
+    implementation(libs.picasso)
 }

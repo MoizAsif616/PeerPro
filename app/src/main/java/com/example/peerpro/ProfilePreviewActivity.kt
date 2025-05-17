@@ -5,7 +5,9 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.view.WindowManager
 import android.content.res.Resources
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -17,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,8 +30,16 @@ import com.example.peerpro.databinding.TutorProfileDetailsBinding
 import com.example.peerpro.models.Note
 import com.example.peerpro.models.TutorSession
 import com.example.peerpro.models.User
+import com.example.peerpro.utils.ButtonLoadingUtils
+import com.example.peerpro.utils.ChatUtils
+import com.example.peerpro.utils.RatingsUtils
 import com.example.peerpro.utils.UserCache
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.picasso.Picasso
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfilePreviewActivity : AppCompatActivity() {
 
@@ -50,15 +61,23 @@ class ProfilePreviewActivity : AppCompatActivity() {
       finish()
       return
     }
+    binding.profilePreviewSwipeRefreshLayout.isEnabled = false
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = true
     binding.profilePreviewContainer.visibility = View.GONE
+
     setupUI()
     fetchProfileData(peerId)
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = false
     binding.profilePreviewContainer.visibility = View.VISIBLE
-    binding.rateButton.setOnClickListener {
-      showRatingDialog()
+    if (UserCache.getId() != peerId) {
+      binding.rateButton.visibility = View.VISIBLE
+      binding.rateButton.setOnClickListener {
+        showRatingDialog()
+      }
+    } else {
+      binding.rateButton.visibility = View.GONE
     }
+
   }
 
   private fun setupUI() {
@@ -93,6 +112,14 @@ class ProfilePreviewActivity : AppCompatActivity() {
     selectTutoring()
   }
 
+  private fun loadProfileImage(imageUrl: String, imageView: ImageView) {
+    Picasso.get()
+      .load(imageUrl)
+      .resize(250, 250) // Resize if needed
+      .centerCrop()
+      .into(imageView)
+  }
+
   private fun fetchProfileData(peerId: String) {
     binding.profilePreviewSwipeRefreshLayout.isRefreshing = true
 
@@ -103,7 +130,18 @@ class ProfilePreviewActivity : AppCompatActivity() {
           binding.peerEmail.text = user.email
           binding.peerBio.text = user.bio
           binding.headerText.text = user.name
-
+          val imageUrl = user.profilePicUrl
+          if (!imageUrl.isNullOrEmpty()) {
+            binding.tutorImage?.let { imageView ->
+              loadProfileImage(imageUrl, imageView)
+              imageView.setOnClickListener {
+                showEnlargedProfileImage(imageUrl)
+              }
+            }
+          } else {
+            binding.tutorImage.setImageResource(R.drawable.default_peer)
+          }
+          fetchAndDisplayRatings()
           fetchTutorSessions(user.tutorSessionIds)
           fetchNotes(user.notesIds)
         } else {
@@ -119,6 +157,57 @@ class ProfilePreviewActivity : AppCompatActivity() {
       .addOnCompleteListener {
         binding.profilePreviewSwipeRefreshLayout.isRefreshing = false
       }
+  }
+
+  private fun showEnlargedProfileImage(imageUrl: String) {
+    val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen).apply {
+      // Get screen dimensions
+      val displayMetrics = DisplayMetrics()
+      windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+      val screenWidth = displayMetrics.widthPixels
+      val screenHeight = displayMetrics.heightPixels
+
+      // Calculate dialog dimensions
+      val dialogWidth = (screenWidth * 0.8).toInt()
+      val dialogHeight = (screenHeight * 0.5).toInt()
+
+      // Set dialog window dimensions
+      window?.apply {
+        setLayout(dialogWidth, dialogHeight)
+        setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+        setGravity(Gravity.CENTER) // Center the dialog
+      }
+      setCancelable(true)  // Allows dismissal by back button or outside touch
+      setCanceledOnTouchOutside(true)
+    }
+
+    dialog.setContentView(R.layout.dialog_enlarged_image)
+
+    val imageView = dialog.findViewById<ImageView>(R.id.enlargedImageView)
+    Picasso.get()
+      .load(imageUrl)
+      .resize(0, (resources.displayMetrics.heightPixels * 0.5).toInt())
+      .onlyScaleDown()
+      .centerInside()
+      .into(imageView)
+    dialog.show()
+  }
+  private fun fetchAndDisplayRatings() {
+    lifecycleScope.launch {
+      try {
+        val (average, count) = RatingsUtils.fetchAverageRating(peerId)
+        withContext(Dispatchers.Main) {
+          binding.peerRating.text = "%.1f".format(average)
+          binding.peerRatingCount.text = "$count"
+        }
+      } catch (e: Exception) {
+        Log.e("ProfilePreview", "Error fetching ratings", e)
+        withContext(Dispatchers.Main) {
+          binding.peerRating.text = "0.0"
+          binding.peerRatingCount.text = "0"
+        }
+      }
+    }
   }
 
   private fun fetchTutorSessions(tutorSessionIds: List<String>) {
@@ -224,9 +313,39 @@ class ProfilePreviewActivity : AppCompatActivity() {
     val timeWindowLabel = dialogView.findViewById<TextView>(R.id.timeLabel)
     val text = dialogView.findViewById<TextView>(R.id.text)
     val requestBtn= dialogView.findViewById<TextView>(R.id.requestButton)
+    requestBtn.setOnClickListener {
+      ButtonLoadingUtils.setLoadingState(requestBtn, true)
+      val myId = UserCache.getId()
+      val peerId = tutor.peerId
+      if (myId == peerId) {
+        Toast.makeText(this, "You cannot send a request to yourself", Toast.LENGTH_SHORT).show()
+        ButtonLoadingUtils.setLoadingState(requestBtn, false)
+        return@setOnClickListener
+      }
+      val name = UserCache.getUser()?.name
+
+      ChatUtils.startNewChat(
+        context = this,
+        myId = myId.toString(),
+        peerId = peerId,
+        message = "Hi, $name from this side. I want to learn ${tutor.skillName} from you.",
+        onSuccess = {
+          Toast.makeText(this, "Request sent, check in your sessions", Toast.LENGTH_SHORT).show()
+          ButtonLoadingUtils.setLoadingState(requestBtn, false)
+          dialog.dismiss()
+          SessionsFragment.refreshIfVisible()
+
+        },
+        onError = { e ->
+          Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+          ButtonLoadingUtils.setLoadingState(requestBtn, false)
+          dialog.dismiss()
+        }
+      )
+    }
 
     top.visibility = View.GONE
-    main.weightSum = 8.2f
+    main.weightSum = 9f
 
     var tutorName: String? = null
     var tutorRollNumber: String? = null
@@ -320,11 +439,40 @@ class ProfilePreviewActivity : AppCompatActivity() {
     val requestBtn= dialogView.findViewById<TextView>(R.id.requestButton)
     val top = dialogView.findViewById<LinearLayout>(R.id.infoLayout)
     val main = dialogView.findViewById<LinearLayout>(R.id.main)
+    requestBtn.setOnClickListener {
+      ButtonLoadingUtils.setLoadingState(requestBtn, true)
+      val myId = UserCache.getId()
+      val peerId = note.peerId
+      if (myId == peerId) {
+        Toast.makeText(this, "You cannot send a request to yourself", Toast.LENGTH_SHORT).show()
+        ButtonLoadingUtils.setLoadingState(requestBtn, false)
+        return@setOnClickListener
+      }
+      val name = UserCache.getUser()?.name
+
+      ChatUtils.startNewChat(
+        context = this,
+        myId = myId.toString(),
+        peerId = peerId,
+        message = "Hi, $name from this side. I want to get ${note.name} notes from you.",
+        onSuccess = {
+          Toast.makeText(this, "Request sent, check in your sessions", Toast.LENGTH_SHORT).show()
+          ButtonLoadingUtils.setLoadingState(requestBtn, false)
+          dialog.dismiss()
+          SessionsFragment.refreshIfVisible()
+        },
+        onError = { e ->
+          Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+          ButtonLoadingUtils.setLoadingState(requestBtn, false)
+          dialog.dismiss()
+        }
+      )
+    }
 
 
     //requestBtn.layoutParams.height = (windowHeight * 0.08f).toInt()
     top.visibility = View.GONE
-    main.weightSum = 8.2f
+    main.weightSum = 9.1f
     name.textSize = textSizeLarge
     roll.textSize = textSizeLarge
     subject.text = note.name
@@ -333,7 +481,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
     type.textSize = textSizeSmall
     instructorname.textSize = textSizeSmall
     instructorname.text = note.instructorName
-    cost.text = if (note.cost == 0) "Free" else note.cost.toString()
+    cost.text = if (note.cost == 0) "Free" else "Rs." + note.cost.toString()
     cost.textSize = textSizeSmall
     description.text = note.description
     description.textSize = textSizeSmall
@@ -411,6 +559,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
             .update("rating", rating)
             .addOnSuccessListener {
               Toast.makeText(this, "Rating updated", Toast.LENGTH_SHORT).show()
+              fetchAndDisplayRatings()
             }
             .addOnFailureListener { e ->
               Toast.makeText(this, "Failed to update rating: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -425,6 +574,7 @@ class ProfilePreviewActivity : AppCompatActivity() {
             .set(newRating)
             .addOnSuccessListener {
               Toast.makeText(this, "Rating submitted", Toast.LENGTH_SHORT).show()
+              fetchAndDisplayRatings()
             }
             .addOnFailureListener { e ->
               Toast.makeText(this, "Failed to submit rating: ${e.message}", Toast.LENGTH_SHORT).show()

@@ -17,4 +17,6 @@
   <color name="hint_color">#9897a9</color>
   <color name="grey_1">#73798C</color>
   <color name="red">#ff0000</color>
+  <color name="surface_variant_light">#E7E0EC</color> <!-- Example light color -->
+  <color name="surface_variant_dark">#49454F</color> <!-- Example dark color -->
 </resources>

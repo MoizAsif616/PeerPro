@@ -1,0 +1,39 @@
+package com.example.peerpro.utils
+
+import android.content.Context
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.drive.Drive
+import com.google.android.gms.drive.DriveClient
+import com.google.android.gms.drive.DriveResourceClient
+
+class GoogleDriveHelper(private val context: Context) {
+
+  private val googleSignInClient by lazy {
+    GoogleSignIn.getClient(
+      context,
+      GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestScopes(Drive.SCOPE_FILE)
+        .build()
+    )
+  }
+
+  val driveClient: DriveClient by lazy {
+    Drive.getDriveClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
+  }
+
+  val driveResourceClient: DriveResourceClient by lazy {
+    Drive.getDriveResourceClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
+  }
+
+  fun signIn(callback: (Boolean) -> Unit) {
+    (context as? Activity).startActivityForResult(
+      googleSignInClient.signInIntent,
+      RC_SIGN_IN
+    )
+  }
+
+  companion object {
+    const val RC_SIGN_IN = 1001
+  }
+}

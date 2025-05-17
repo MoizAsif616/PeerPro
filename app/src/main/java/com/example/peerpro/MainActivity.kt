@@ -263,6 +263,10 @@ class MainActivity : AppCompatActivity() {
       val tutorsFragment = supportFragmentManager.findFragmentByTag("f1") as? TutorsFragment
       tutorsFragment?.closeSearchView()
     }
+    if (currentPage == "notes") {
+      val notesFragment = supportFragmentManager.findFragmentByTag("f2") as? NotesFragment
+      notesFragment?.closeSearchView()
+    }
 
   }
 
@@ -312,7 +316,7 @@ class MainActivity : AppCompatActivity() {
           true
         }
         R.id.delete_account -> {
-          showDeleteConfirmationDialog()
+          callProfileFragmentFunction("deleteAccount")
           true
         }
         else -> false

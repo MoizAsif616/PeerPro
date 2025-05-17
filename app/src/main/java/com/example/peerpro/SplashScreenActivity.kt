@@ -22,6 +22,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    Log.d("APP_INIT", "SplashScreenActivity started")
     setContentView(R.layout.splashscreen)
     checkAuthAndRedirect()
   }

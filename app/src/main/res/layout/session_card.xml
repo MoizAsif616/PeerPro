@@ -5,14 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="90dp"
     android:orientation="horizontal"
     android:weightSum="5"
-    android:background="@drawable/session_bg">
+    android:background="@drawable/session_bg"
+    android:layout_marginBottom="6dp">
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/peerImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:src="@color/black"
             android:scaleType="centerCrop"
             android:paddingStart="2dp"
@@ -21,46 +22,88 @@
             app:shapeAppearanceOverlay="@style/CircleImageViewStyle"/>
         <LinearLayout
             android:id="@+id/nameRollContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingHorizontal="10dp"
-            android:layout_weight="4">
+            android:layout_weight="4"
+          android:layout_marginEnd="40dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginTop="5dp"
                 >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1"
+                    >
                 <TextView
                     android:id="@+id/peerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="-4dp"
-                    android:text="John Doe"
-                    android:textSize="28sp"
+                    android:text="Loading..."
+                    android:textSize="16sp"
+                    android:layout_weight="1"
                     android:textColor="?attr/textPrimary"
+                  android:maxLines="1"
+                  android:ellipsize="end"
+                  android:paddingRight="5dp"
                     android:fontFamily="@font/poppins_regular"/>
                 <TextView
-                    android:id="@+id/peerRoll"
+                    android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="-4dp"
-
-                    android:text="l22-6720"
-                    android:textSize="25sp"
+                    android:text="Loading..."
+                    android:textSize="12sp"
                     android:textColor="@color/grey_1"
                     android:fontFamily="@font/poppins_regular"
                     />
+                </LinearLayout>
+              <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:gravity="center_vertical">
+                <TextView
+                  android:id="@+id/peerRoll"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="-4dp"
+                  
+                  android:text="Loading..."
+                  android:textSize="16sp"
+                  android:textColor="@color/grey_1"
+                  android:fontFamily="@font/poppins_regular"
+                  android:layout_weight="0.96"
+                  />
+                <ImageView
+                  android:id="@+id/status"
+                  android:layout_width="15dp"
+                  android:layout_height="15dp"
+                  android:background="@android:color/transparent"
+                  android:layout_weight="0.04"
+                  />
+                  
+              </LinearLayout>
+               
 
                 <TextView
-                    android:id="@+id/Subject"
+                    android:id="@+id/lastMessage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Object Oriented Programming"
-                    android:fontFamily="@font/poppins_medium"
-                    android:textColor="@color/peerLight"
-                    android:textSize="27sp"/>
+                    android:text="Loading..."
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="16sp"
+                  android:maxLines="1"
+                  android:ellipsize="end"
+                    />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
